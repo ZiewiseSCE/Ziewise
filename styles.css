@@ -279,13 +279,14 @@ h1, h2, h3, .logo {
     z-index: 5;
 }
 
-.master-brain .core {
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, #fff 0%, var(--primary-cyan) 40%, #0044ff 100%);
+.master-brain .brain-img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
     border-radius: 50%;
-    box-shadow: 0 0 50px var(--primary-cyan), inset 0 0 20px #fff;
     animation: brain-breathe 3s infinite ease-in-out;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 15px var(--primary-cyan)) drop-shadow(0 0 30px rgba(0, 159, 227, 0.4));
 }
 
 .master-brain .pulse-ring {
@@ -298,8 +299,8 @@ h1, h2, h3, .logo {
 }
 
 @keyframes brain-breathe {
-    0%, 100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 20px var(--primary-cyan)); }
-    50% { transform: scale(1.15); filter: brightness(1.4) drop-shadow(0 0 40px var(--primary-cyan)); }
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--primary-cyan)) drop-shadow(0 0 30px rgba(0, 159, 227, 0.4)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 0 25px var(--primary-cyan)) drop-shadow(0 0 50px rgba(0, 159, 227, 0.6)) brightness(1.2); }
 }
 
 @keyframes ring-pulse {
@@ -344,15 +345,15 @@ h1, h2, h3, .logo {
 
 .flow-line {
     fill: none;
-    stroke: rgba(0, 159, 227, 0.15);
+    stroke: rgba(0, 159, 227, 0.25);
     stroke-width: 2;
-    stroke-dasharray: 5, 5;
-    animation: dash-flow 20s linear infinite;
+    stroke-dasharray: 6, 6;
+    animation: dash-flow 15s linear infinite;
 }
 
 @keyframes dash-flow {
-    from { stroke-dashoffset: 1000; }
-    to { stroke-dashoffset: 0; }
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: 1000; }
 }
 
 .packet {
@@ -367,34 +368,34 @@ h1, h2, h3, .logo {
 }
 
 /* Calculate rough paths for packets based on SVG paths */
-.packet-1 { top: 300px; left: 120px; animation: shoot-in-left 2.5s infinite ease-in; }
-.packet-2 { top: 300px; right: 120px; animation: shoot-in-right 2.8s infinite ease-in; animation-delay: 1s; }
-.packet-3 { top: 120px; left: 300px; animation: shoot-in-top 2.2s infinite ease-in; animation-delay: 0.5s; }
-.packet-4 { bottom: 120px; left: 300px; animation: shoot-in-bottom 3s infinite ease-in; animation-delay: 1.5s; }
+.packet-1 { top: 300px; left: 300px; animation: shoot-out-left 2.5s infinite ease-out; }
+.packet-2 { top: 300px; right: 300px; animation: shoot-out-right 2.8s infinite ease-out; animation-delay: 1s; }
+.packet-3 { top: 300px; left: 300px; animation: shoot-out-top 2.2s infinite ease-out; animation-delay: 0.5s; }
+.packet-4 { top: 300px; left: 300px; animation: shoot-out-bottom 3s infinite ease-out; animation-delay: 1.5s; }
 
-@keyframes shoot-in-left {
+@keyframes shoot-out-left {
     0% { transform: translate(0, 0); opacity: 0; }
     10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translate(160px, 0); opacity: 0; }
+    80% { opacity: 1; }
+    100% { transform: translate(-180px, 0); opacity: 0; }
 }
-@keyframes shoot-in-right {
+@keyframes shoot-out-right {
     0% { transform: translate(0, 0); opacity: 0; }
     10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translate(-160px, 0); opacity: 0; }
+    80% { opacity: 1; }
+    100% { transform: translate(180px, 0); opacity: 0; }
 }
-@keyframes shoot-in-top {
+@keyframes shoot-out-top {
     0% { transform: translate(0, 0); opacity: 0; }
     10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translate(0, 160px); opacity: 0; }
+    80% { opacity: 1; }
+    100% { transform: translate(0, -180px); opacity: 0; }
 }
-@keyframes shoot-in-bottom {
+@keyframes shoot-out-bottom {
     0% { transform: translate(0, 0); opacity: 0; }
     10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translate(0, -160px); opacity: 0; }
+    80% { opacity: 1; }
+    100% { transform: translate(0, 180px); opacity: 0; }
 }
 
 
