@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24">
+  <rect width="36" height="24" fill="#fff"/>
+  <g transform="translate(18,12)">
+    <circle r="5" fill="#cd2e3a"/>
+    <path d="M -5,0 A 2.5,2.5 0 0 1 0,0 A 2.5,2.5 0 0 0 5,0 A 5,5 0 0 1 -5,0 Z" fill="#0047a0"/>
+  </g>
+  <g fill="#000" stroke="#000" stroke-width="0.6">
+    <g transform="translate(7.5,5) rotate(-56.31)">
+      <line x1="-2.4" y1="-0.6" x2="2.4" y2="-0.6"/>
+      <line x1="-2.4" y1="0" x2="2.4" y2="0"/>
+      <line x1="-2.4" y1="0.6" x2="2.4" y2="0.6"/>
+    </g>
+    <g transform="translate(28.5,5) rotate(56.31)">
+      <line x1="-2.4" y1="-0.6" x2="-0.6" y2="-0.6"/>
+      <line x1="0.6" y1="-0.6" x2="2.4" y2="-0.6"/>
+      <line x1="-2.4" y1="0" x2="2.4" y2="0"/>
+      <line x1="-2.4" y1="0.6" x2="-0.6" y2="0.6"/>
+      <line x1="0.6" y1="0.6" x2="2.4" y2="0.6"/>
+    </g>
+    <g transform="translate(7.5,19) rotate(56.31)">
+      <line x1="-2.4" y1="-0.6" x2="-0.6" y2="-0.6"/>
+      <line x1="0.6" y1="-0.6" x2="2.4" y2="-0.6"/>
+      <line x1="-2.4" y1="0" x2="-0.6" y2="0"/>
+      <line x1="0.6" y1="0" x2="2.4" y2="0"/>
+      <line x1="-2.4" y1="0.6" x2="2.4" y2="0.6"/>
+    </g>
+    <g transform="translate(28.5,19) rotate(-56.31)">
+      <line x1="-2.4" y1="-0.6" x2="2.4" y2="-0.6"/>
+      <line x1="-2.4" y1="0" x2="-0.6" y2="0"/>
+      <line x1="0.6" y1="0" x2="2.4" y2="0"/>
+      <line x1="-2.4" y1="0.6" x2="-0.6" y2="0.6"/>
+      <line x1="0.6" y1="0.6" x2="2.4" y2="0.6"/>
+    </g>
+  </g>
+</svg>

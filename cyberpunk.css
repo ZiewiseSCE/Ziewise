@@ -3336,3 +3336,143 @@ section, .footer { scroll-snap-align: none !important; scroll-snap-stop: normal 
     color: transparent !important;
 }
 
+/* ============================================================
+   LANGUAGE BUTTON FLAG EMOJIS
+   ============================================================ */
+.lang-btn .flag-img {
+    display: inline-block;
+    width: 20px;
+    height: auto;
+    vertical-align: -4px;
+    margin-right: 5px;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(0, 240, 255, 0.45),
+                0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.lang-btn.active .flag-img {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.85),
+                0 0 14px rgba(0, 240, 255, 0.6);
+    transform: scale(1.06);
+}
+
+/* ============================================================
+   CERTIFICATION BADGES — vertical centering
+   Force every cert card to the same height so labels line up
+   and images are centered within their fixed icon area.
+   ============================================================ */
+.certification-badges {
+    align-items: stretch !important;
+}
+.certification-badges .badge {
+    justify-content: space-between !important;
+    min-height: 320px;
+}
+.certification-badges .badge-icon {
+    flex: 1 1 auto;
+    width: 220px;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.certification-badges .badge-img {
+    max-width: 200px;
+    max-height: 260px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* ============================================================
+   CONTACT (footer) — fill viewport so previous section
+   doesn't show through when nav-link scrolls to it.
+   Navbar height ~80px → 100vh - 80px guarantees full coverage.
+   ============================================================ */
+#contact.footer {
+    min-height: calc(100vh - 80px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+/* ============================================================
+   SWOOSH SCROLL — speed-streak overlay
+   Activated by cyberpunk.js smoothScrollTo()
+   ============================================================ */
+#scroll-streak {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9000;
+    opacity: 0;
+    mix-blend-mode: screen;
+    transition: opacity 0.18s ease-out;
+    background:
+        radial-gradient(ellipse at center,
+            rgba(0, 240, 255, 0) 35%,
+            rgba(0, 240, 255, 0.06) 70%,
+            rgba(0, 240, 255, 0.14) 100%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0, 240, 255, 0) 0px,
+            rgba(0, 240, 255, 0) 14px,
+            rgba(0, 240, 255, 0.18) 15px,
+            rgba(180, 240, 255, 0.32) 16px,
+            rgba(0, 240, 255, 0) 17px,
+            rgba(0, 240, 255, 0) 60px
+        );
+    background-size: 100% 100%, 100% 220px;
+    background-repeat: no-repeat, repeat-y;
+}
+
+#scroll-streak.active {
+    opacity: 1;
+}
+
+#scroll-streak.down {
+    animation: streakDown 0.55s linear infinite;
+}
+#scroll-streak.up {
+    animation: streakUp 0.55s linear infinite;
+}
+
+@keyframes streakDown {
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 0 0, 0 220px; }
+}
+@keyframes streakUp {
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 0 0, 0 -220px; }
+}
+
+/* Vignette flash on edges to sell the speed */
+#scroll-streak::before,
+#scroll-streak::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 22vh;
+    pointer-events: none;
+}
+#scroll-streak::before {
+    top: 0;
+    background: linear-gradient(to bottom,
+        rgba(0, 240, 255, 0.22) 0%,
+        rgba(0, 240, 255, 0.05) 60%,
+        rgba(0, 240, 255, 0) 100%);
+}
+#scroll-streak::after {
+    bottom: 0;
+    background: linear-gradient(to top,
+        rgba(255, 0, 200, 0.20) 0%,
+        rgba(255, 0, 200, 0.05) 60%,
+        rgba(255, 0, 200, 0) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #scroll-streak { display: none !important; }
+}
+
+

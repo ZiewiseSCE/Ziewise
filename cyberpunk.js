@@ -6,7 +6,6 @@
     'use strict';
 
     // -------- 0. Override app.js show/hide nav with continuous scroll --------
-    // Wait for app.js to finish, then unhide all sections and rebind nav clicks
     function setupContinuousScroll() {
         // Force all sections visible (app.js may have hidden them)
         document.querySelectorAll('#about, #solutions, #simulator, #technology, #contact').forEach((s) => {
@@ -15,13 +14,58 @@
         // Hero must stay GRID (3-col text/brain/cube), not flex
         const heroEl = document.getElementById('hero');
         if (heroEl) heroEl.style.display = 'grid';
-        // Ensure body/html don't carry leftover min-height from earlier states
         document.documentElement.style.minHeight = 'auto';
         document.body.style.minHeight = 'auto';
 
-        // Replace nav anchor clicks with smooth scroll (bypass warp / showSection)
+        // Remove any black hole overlay artifact
+        const bh = document.getElementById('blackhole-overlay');
+        if (bh) bh.remove();
+        document.body.classList.remove('warping');
+
+        // ===== SWOOSH-STYLE custom smooth scroll with speed-streak overlay =====
+        let streakEl = document.getElementById('scroll-streak');
+        if (!streakEl) {
+            streakEl = document.createElement('div');
+            streakEl.id = 'scroll-streak';
+            document.body.appendChild(streakEl);
+        }
+
+        // easeInOutQuint - strong acceleration and deceleration ("쓱~~" feel)
+        function easeInOutQuint(t) {
+            return t < 0.5 ? 16 * t * t * t * t * t : 1 - Math.pow(-2 * t + 2, 5) / 2;
+        }
+
+        let scrollAnim = null;
+        function smoothScrollTo(targetY, duration) {
+            if (scrollAnim) cancelAnimationFrame(scrollAnim);
+            const startY = window.pageYOffset;
+            const distance = targetY - startY;
+            if (Math.abs(distance) < 4) return;
+            // Adaptive duration: longer distance = a bit longer, but capped
+            const dur = duration || Math.min(1200, Math.max(550, Math.abs(distance) * 0.55));
+            const startT = performance.now();
+            // Activate speed streak overlay
+            streakEl.classList.add('active');
+            const dirClass = distance > 0 ? 'down' : 'up';
+            streakEl.classList.add(dirClass);
+
+            function step(now) {
+                const elapsed = now - startT;
+                const t = Math.min(1, elapsed / dur);
+                const eased = easeInOutQuint(t);
+                window.scrollTo(0, startY + distance * eased);
+                if (t < 1) {
+                    scrollAnim = requestAnimationFrame(step);
+                } else {
+                    scrollAnim = null;
+                    streakEl.classList.remove('active', 'up', 'down');
+                }
+            }
+            scrollAnim = requestAnimationFrame(step);
+        }
+
+        // Replace nav anchor clicks with custom swoosh scroll
         document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-            // Clone to remove all previously attached listeners from app.js
             const clone = anchor.cloneNode(true);
             anchor.parentNode.replaceChild(clone, anchor);
             clone.addEventListener('click', (e) => {
@@ -31,17 +75,16 @@
                 if (!target) return;
                 e.preventDefault();
                 const top = target.getBoundingClientRect().top + window.pageYOffset - 80;
-                window.scrollTo({ top, behavior: 'smooth' });
+                smoothScrollTo(top);
             });
         });
 
-        // ===== UNIFIED SCROLL SPY: manages BOTH classes, single source of truth =====
+        // ===== UNIFIED SCROLL SPY =====
         const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
         const sectionMap = Array.from(navLinks)
             .map((a) => ({ link: a, section: document.querySelector(a.getAttribute('href')) }))
             .filter((x) => x.section);
 
-        // First: clear ALL stale active classes from any nav link
         document.querySelectorAll('.nav-links a').forEach((a) => {
             a.classList.remove('active-nav', 'is-active');
         });
@@ -63,7 +106,6 @@
             }
             if (current) setActiveLink(current.link);
         }
-        // Bind click sync to the (already cloned) nav links
         navLinks.forEach((a) => {
             a.addEventListener('click', () => {
                 clickLock++;
@@ -80,9 +122,8 @@
             }
         }, { passive: true });
 
-        // ===== FORCE NO EXTRA HEIGHT + CLAMP BODY TO CONTENT =====
+        // ===== Clamp body to actual content (kill bottom whitespace) =====
         function killExtraHeight() {
-            // 1) Re-assert section visibility (app.js's showSection sets display:none)
             document.querySelectorAll('#about, #solutions, #simulator, #technology').forEach((s) => {
                 if (s.style.display === 'none' || !s.style.display) s.style.display = 'flex';
                 s.style.minHeight = '0';
@@ -101,20 +142,15 @@
                 heroElX.style.minHeight = '0';
                 heroElX.style.height = 'auto';
             }
-            // 2) Clamp body/html to natural content height
-            document.documentElement.style.height = 'auto';
             document.documentElement.style.minHeight = '0';
-            document.body.style.height = 'auto';
             document.body.style.minHeight = '0';
             document.body.style.paddingBottom = '0';
             document.body.style.marginBottom = '0';
 
-            // 3) NUCLEAR: Measure last section bottom and CLIP body at exactly that
             const last = document.getElementById('contact');
             if (last) {
                 const rect = last.getBoundingClientRect();
                 const contentBottom = Math.ceil(rect.bottom + window.scrollY);
-                // Hard-set body height and clip everything below
                 document.body.style.height = contentBottom + 'px';
                 document.body.style.maxHeight = contentBottom + 'px';
                 document.body.style.overflowX = 'hidden';
@@ -126,19 +162,16 @@
             }
         }
         killExtraHeight();
-        // Run a few times to catch app.js late updates, then stop
         let killTries = 0;
         const killTimer = setInterval(() => {
             killExtraHeight();
             if (++killTries > 10) clearInterval(killTimer);
         }, 200);
-        // Also run on resize and after iframe (map) loads
         window.addEventListener('resize', killExtraHeight, { passive: true });
         window.addEventListener('load', killExtraHeight);
         setTimeout(killExtraHeight, 1500);
         setTimeout(killExtraHeight, 3000);
     }
-    // Run after app.js DOMContentLoaded handler executes
     if (document.readyState === 'loading') {
         window.addEventListener('load', () => setTimeout(setupContinuousScroll, 50));
     } else {

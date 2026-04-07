@@ -146,9 +146,196 @@ const i18n = {
         'qa-1': 'Security Vulnerability Scan (Sec Scan)',
         'qa-2': '100k+ Large Scale Load Test',
         'qa-3': 'Anomaly Traffic Detection',
-        'qa-4': 'Zero-Downtime Deployment Approved'
+        'qa-4': 'Zero-Downtime Deployment Approved',
+        'badge-pmp': 'PMP Certified',
+        'tech-0-title': 'Always-On Automated Validation',
+        'tech-3-title': 'Ultra-Lightweight Edge AI Engine',
+        'tech-3-sub': 'Ultra-Lightweight Edge AI Engine',
+        'tech-3-desc': 'Even on constrained compute environments, our <strong>radically lightweight AI models</strong> deliver fast and accurate real-time inference.',
+        'about-desc': 'Based on existing IT infrastructure, security, and operation know-how, Ziewise accelerates digital transformation through the cutting-edge <strong>Edge MLOps OS (ZiewCore)</strong>.<br>We deliver higher-level business intelligence by combining AI with solid IT infrastructure capabilities such as Virtual PC, Smart CCTV, and Print Security.<br><br>Beyond simple model provision, we unify the entire AI lifecycle — <strong>data collection → self-learning → zero-downtime deployment → real-time inference</strong> — into a single OS so customers can focus on <strong>business value creation, not infrastructure burden</strong>.'
     }
 };
+
+// ============================================================
+// EXTRA DICTIONARY: covers Korean text without data-i18n keys
+// Walker translates by trimmed innerHTML or innerText match.
+// ============================================================
+const extraI18n = {
+    // Hero / Cube
+    "하나의 OS, 6개의 두뇌": "One OS, Six Brains",
+    "ZiewCore가 6대 핵심 AI를 동시 오케스트레이션": "ZiewCore orchestrates 6 core AIs simultaneously",
+    // Value cards
+    "한 번의 도입 후, 모델은 운영 중에도 스스로 학습하고 진화합니다. 사람의 손길 없이도 정확도가 매일 향상됩니다.": "After a single deployment, the model continues to learn and evolve during operation. Accuracy improves daily without human intervention.",
+    "ISO 27001 인증과 블록체인 기반 무결성 검증으로 금융권·공공기관급 보안 표준을 충족합니다.": "Meets financial and government-grade security standards through ISO 27001 certification and blockchain-based integrity verification.",
+    "기업부설연구소에서 매일 새로운 모델 아키텍처를 검증하며, 고객 환경에 맞는 최적화를 지속합니다.": "Our R&D Center validates new model architectures daily and continuously optimizes for each customer's environment.",
+    // Timeline
+    "지와이즈 설립 · IT 인프라 사업 런칭": "Ziewise founded · IT Infrastructure business launched",
+    "기업부설연구소 설립 · 벤처기업 인증": "R&D Center established · Venture certification",
+    "ZiewCore Edge MLOps OS Alpha 릴리즈": "ZiewCore Edge MLOps OS Alpha released",
+    "6대 AI 솔루션 정식 출시 · 엔터프라이즈 확장": "6 AI solutions officially launched · Enterprise expansion",
+    // Section intro (solutions)
+    "ZiewCore 위에서 동작하는 각 솔루션은 <strong>하나의 OS, 하나의 운영 체계</strong> 안에서 작동합니다. CCTV 영상, 에너지 IoT 신호, 커머스 트래픽, ERP 전표, 인쇄 작업, 시스템 메트릭까지 — 서로 다른 데이터를 <strong>같은 자가학습 파이프라인</strong>으로 처리하므로 도입 후 운영 부담이 비약적으로 줄어듭니다.": "Every solution running on ZiewCore operates within <strong>one OS, one runtime</strong>. CCTV video, energy IoT signals, commerce traffic, ERP vouchers, print jobs, and system metrics — all heterogeneous data flows through the <strong>same self-learning pipeline</strong>, drastically reducing operational burden after adoption.",
+    // Solution list items
+    "객체 탐지 · 행동 분석 · 이상 감지 통합": "Object detection · Behavior analysis · Anomaly detection integrated",
+    "NPU/GPU 자동 최적화 · 30fps 실시간 추론": "NPU/GPU auto-optimization · 30fps real-time inference",
+    "모호 케이스만 클라우드 전송 → 90% 트래픽 절감": "Only ambiguous cases sent to cloud → 90% traffic reduction",
+    "태양광·ESS·EV 충전기 통합 오케스트레이션": "Solar · ESS · EV charger unified orchestration",
+    "수요 예측 LSTM + 가격 신호 기반 자동 거래": "Demand-forecast LSTM + price-signal-based auto trading",
+    "모든 거래 내역 블록체인 해시로 위·변조 차단": "All transactions hash-locked on blockchain to prevent tampering",
+    "AR 페이스 트래킹 기반 가상 체험 + 톤 매칭": "AR face-tracking virtual try-on + tone matching",
+    "이탈 의도 0.5초 내 감지 · 즉시 리텐션 액션": "Exit intent detected within 0.5s · Instant retention action",
+    "A/B 캠페인 자동 생성 · 평균 CVR +18%": "A/B campaigns auto-generated · Average CVR +18%",
+    "국세청 OCR + 회사 규정 LLM 이중 검증": "NTS OCR + Company-policy LLM dual verification",
+    "ERP/그룹웨어 API 자동 전표화 · 결재 라우팅": "ERP/Groupware API auto-vouchering · Approval routing",
+    "월말 정산 8시간 → 12분으로 단축": "Month-end close: 8 hours → 12 minutes",
+    "QR/PIN/모바일 인증 · 출력물 워터마크 자동 삽입": "QR/PIN/Mobile auth · Auto watermark insertion",
+    "토너·용지 잔량 IoT 모니터링 + 자동 발주": "Toner / paper level IoT monitoring + auto reorder",
+    "부서별 출력 비용 자동 정산 리포트": "Per-department print cost auto-reporting",
+    "APM·NPM·로그·트레이스 단일 대시보드": "APM · NPM · Logs · Traces unified dashboard",
+    "이상 패턴 LSTM 학습 → 평균 7분 전 사전 알람": "Anomaly pattern LSTM → 7-min predictive alerts on average",
+    "장애 자동 격리 + 롤백 시나리오 자동 실행": "Auto fault isolation + automated rollback scenarios",
+    // Industry section
+    "ZiewCore가 적용된 산업별 대표 시나리오": "Industry-specific scenarios where ZiewCore is applied",
+    "제조 / Smart Factory": "Manufacturing / Smart Factory",
+    "생산 라인 비전 검사, 설비 이상 탐지, 작업자 안전 모니터링을 단일 ZiewCore 노드에서 동시 처리.": "Production-line vision inspection, equipment anomaly detection, and worker-safety monitoring — all processed simultaneously on a single ZiewCore node.",
+    "불량률 -42%": "Defect rate -42%",
+    "가동률 +18%": "Uptime +18%",
+    "에너지 / Smart Grid": "Energy / Smart Grid",
+    "분산 발전 자원의 실시간 통합 관제와 수요 예측, 블록체인 기반 P2P 전력 거래 인프라.": "Real-time unified control and demand forecasting of distributed generation, with blockchain-based P2P power-trading infrastructure.",
+    "예측 정확도 96%": "Prediction accuracy 96%",
+    "거래 지연 0.8s": "Trade latency 0.8s",
+    "커머스 / D2C Brand": "Commerce / D2C Brand",
+    "고객 행동 패턴 학습으로 이탈 직전 자동 개입, 초개인화 추천, AR 가상 체험 제공.": "Learns customer behavior to intervene right before exit, with hyper-personalized recommendations and AR virtual try-on.",
+    "이탈율 -27%": "Exit rate -27%",
+    "오피스 / Enterprise": "Office / Enterprise",
+    "경비 영수증 검증·전표 자동화, 인쇄 보안, 회의실 점유율 분석까지 전 사무 영역 자동화.": "Expense receipt verification, voucher automation, print security, and meeting-room occupancy analysis — full office automation.",
+    "업무시간 -65%": "Work hours -65%",
+    "오류 -91%": "Errors -91%",
+    "의료 / Healthcare": "Medical / Healthcare",
+    "의료 영상 보조 판독, 환자 동선 추적, 의료 IoT 장비 모니터링을 엣지에서 안전하게 처리.": "Medical imaging assistance, patient flow tracking, and medical IoT monitoring — all processed securely at the edge.",
+    "판독 +3.2x": "Reads +3.2x",
+    "HIPAA 준수": "HIPAA Compliant",
+    "공공 / Government": "Public / Government",
+    "스마트시티 CCTV 통합, 시민 안전 사전 예측, 행정 문서 자동 분류 및 검증.": "Smart-city CCTV integration, predictive citizen safety, and automated classification and verification of administrative documents.",
+    "응답 -60%": "Response -60%",
+    "망분리 호환": "Air-Gap Compatible",
+    // Simulator descriptions
+    "각 솔루션이 실제로 어떻게 작동하는지 인터랙티브 3D로 체험해 보세요": "Experience how each solution actually works through interactive 3D",
+    "엣지 디바이스의 카메라가 객체를 실시간 탐지하고, 모호한 케이스만 클라우드로 전송하여 자가 학습합니다. CCTV·생산라인·교통 인프라 어디서나 적용 가능합니다.": "Edge-device cameras detect objects in real time and only ambiguous cases are sent to the cloud for self-learning. Applicable to CCTV, production lines, and traffic infrastructure.",
+    "분산된 태양광·ESS·EV 충전 인프라를 하나의 가상 발전소로 통합합니다. 실시간 수요 예측과 블록체인 기반 P2P 전력 거래로 에너지 효율을 극대화합니다.": "Integrates distributed solar, ESS, and EV-charging infrastructure into a single virtual power plant. Maximizes energy efficiency with real-time demand forecasting and blockchain-based P2P power trading.",
+    "예측 정확도": "Accuracy",
+    "활성 노드": "Active Nodes",
+    "거래 지연": "Trade Latency",
+    "고객의 행동을 실시간 분석하고, AR로 가상 체험을 제공합니다. 이탈 직전을 0.5초 내에 감지해 자동으로 개인화 쿠폰을 발급, 전환율을 극대화합니다.": "Analyzes customer behavior in real time and provides AR virtual try-on. Detects exit intent within 0.5s and automatically issues personalized coupons to maximize conversion.",
+    "CVR 상승": "CVR Lift",
+    "이탈율": "Exit Rate",
+    "감지 속도": "Detection Speed",
+    "경비 영수증을 OCR로 읽고 회사 규정과 LLM으로 이중 검증한 뒤, ERP에 자동 전표화합니다. 월말 정산 8시간 작업이 단 12분으로 단축됩니다.": "Reads expense receipts with OCR, double-checks them against company policy with an LLM, and auto-vouchers in ERP. An 8-hour month-end close shrinks to just 12 minutes.",
+    "월말 정산": "Month-End Close",
+    "오류율": "Error Rate",
+    "검증 정확도": "Verification Accuracy",
+    "심야택시": "Late-Night Taxi",
+    "구내식당": "Cafeteria",
+    "호텔": "Hotel",
+    "<span>✓</span> 식대 8,000원 → 승인": "<span>✓</span> Meal $8.00 → Approved",
+    "<span>⚠</span> 심야택시 → 규정 검토": "<span>⚠</span> Late-Night Taxi → Policy Review",
+    "<span>✓</span> 호텔 120,000원 → 출장 매핑": "<span>✓</span> Hotel $120.00 → Trip Mapping",
+    "제조사·모델 무관 1-드라이버로 모든 프린터를 통합 관리합니다. QR/PIN 인증, 워터마크 자동 삽입, 토너 자동 발주까지 인쇄 보안을 완성합니다.": "Manages all printers through a single vendor- and model-agnostic driver. Completes print security with QR/PIN authentication, automatic watermarking, and automated toner reordering.",
+    "통합 드라이버": "Unified Driver",
+    "인증 출력": "Authenticated Print",
+    "토너 발주": "Toner Reorder",
+    "🔋 토너 8% · 자동 발주 완료": "🔋 Toner 8% · Auto-reorder complete",
+    "애플리케이션부터 네트워크까지 통합 3D 토폴로지로 시각화합니다. LSTM 학습으로 평균 7분 전 사전 알람, 장애를 자동 격리하고 롤백합니다.": "Visualizes everything from applications to networks in unified 3D topology. LSTM learning provides 7-minute predictive alerts on average, then auto-isolates and rolls back faults.",
+    "사전 알람": "Predictive Alert",
+    "롤백": "Rollback",
+    // Use cases
+    "검증된 산업별 도입 사례": "Proven Industry Adoption Cases",
+    "제조부터 금융까지 — ZiewCore는 모든 산업 환경에 적응합니다.": "From manufacturing to finance — ZiewCore adapts to every industry environment.",
+    "스마트 팩토리": "Smart Factory",
+    "제조 공정 실시간 불량 검출, 작업자 안전 모니터링, 설비 고장 사전 예측까지 통합 운영.": "Integrated operations covering real-time defect detection, worker safety monitoring, and predictive equipment-failure detection.",
+    "에너지 · 발전소": "Energy · Power Plant",
+    "분산 에너지 자원의 실시간 통합 운영, 수요 예측 기반 자동 거래 및 무결성 검증.": "Real-time integrated operation of distributed energy resources, demand-forecast-based auto trading, and integrity verification.",
+    "리테일 · 커머스": "Retail · Commerce",
+    "AR 가상 체험, 이탈 의도 즉시 감지, 초개인화 추천으로 평균 전환율 18% 향상.": "AR virtual try-on, instant exit-intent detection, and hyper-personalized recommendations lift conversion by 18% on average.",
+    "금융 · 공공기관": "Finance · Public Sector",
+    "ISO 27001 보안 표준, 블록체인 기반 감사 추적, 무중단 모델 배포로 컴플라이언스 충족.": "ISO 27001 security standards, blockchain-based audit trails, and zero-downtime model deployment ensure compliance.",
+    "의료 · 헬스케어": "Medical · Healthcare",
+    "의료 영상 보조 분석, 환자 동선 모니터링, 병원 인쇄물 보안과 자동 발주 통합.": "Medical imaging assistance, patient flow monitoring, and integrated hospital print security with auto-reordering.",
+    "스마트 오피스": "Smart Office",
+    "경비 처리 자동화, 인쇄 보안, 회의실 점유 분석, 전사 시스템 무중단 모니터링.": "Expense automation, print security, meeting-room occupancy analysis, and zero-downtime enterprise system monitoring.",
+    // Tech section intro
+    "ZiewCore의 핵심은 <strong>\"한 번 배포 후 스스로 진화한다\"</strong>는 단 한 가지 원칙입니다. 엣지에서 데이터를 선별 수집하고, 자동으로 검증·재학습한 뒤, 무중단으로 모델을 교체합니다. 이 모든 과정은 운영자의 개입 없이 24/7 진행됩니다.": "ZiewCore's core principle is simple: <strong>\"Deploy once, then evolve on its own.\"</strong> Data is selectively collected at the edge, automatically validated and retrained, then models are swapped with zero downtime — all 24/7 without operator intervention.",
+    // Process steps
+    "엣지에서 모호 데이터만 선별 수집": "Selectively collect only ambiguous data at the edge",
+    "자가 라벨링 + 분산 재학습": "Self-labeling + distributed retraining",
+    "10만+ 시뮬레이션 자동 검증": "100K+ simulations auto-validation",
+    "무중단 모델 핫스왑 배포": "Zero-downtime model hot-swap deployment",
+    "엣지 실시간 추론 (45ms)": "Edge real-time inference (45ms)",
+    // Tech card descriptions
+    "모든 AI 모델과 엔진은 배포 전 수만 건의 <strong>시뮬레이션 및 부하 테스트를 자동으로 통과</strong>해야만 실운영 환경에 적용됩니다.": "Every AI model and engine must <strong>automatically pass tens of thousands of simulations and load tests</strong> before being deployed to production.",
+    "모든 데이터를 서버로 전송하지 않습니다. Edge 단에서 <strong>'모호한 데이터(Yellow Point)'만을 선별 수집</strong>하여 네트워크 트래픽과 클라우드 비용을 혁신적으로 절감합니다.": "We do not send everything to the server. By <strong>selectively collecting only 'ambiguous data (Yellow Points)'</strong> at the edge, we drastically cut network traffic and cloud costs.",
+    "AI 모델 업데이트 시 발생하는 다운타임을 원천 차단합니다. <strong>마이크로서비스 아키텍처(MSA)를 통해 실시간으로 신규 모델이 기존 모델을 대체</strong>하여 서비스의 연속성을 보장합니다.": "Eliminates downtime during AI model updates at the source. <strong>Microservices Architecture (MSA) replaces legacy models with new ones in real time</strong>, ensuring service continuity.",
+    "제한된 컴퓨팅 환경에서도 원활하게 동작하도록 <strong>AI 모델을 혁신적으로 경량화</strong>하여, 빠르고 정확한 실시간 추론(Inference)을 가능하게 합니다.": "Even on constrained compute environments, our <strong>radically lightweight AI models</strong> deliver fast and accurate real-time inference.",
+    // Performance dashboard
+    "실제 운영 환경에서 측정된 ZiewCore 성능 지표": "ZiewCore performance metrics measured in real production environments",
+    "▲ 업계 평균 대비 6.2배 빠름": "▲ 6.2× faster than industry average",
+    "1.2GB → 45MB · 정확도 유지 99.4%": "1.2 GB → 45 MB · 99.4% accuracy preserved",
+    "MSA 기반 무중단 모델 교체": "MSA-based zero-downtime model swap",
+    "Active Learning 선별 수집": "Active Learning selective collection",
+    "배포 전 자동 시뮬레이션 횟수": "Pre-deployment auto-simulation count",
+    "연간 다운타임 8.7시간 미만": "Annual downtime under 8.7 hours",
+    // Form select option (Korean fallback)
+    "기타 문의 (Other)": "Other / General Inquiry"
+};
+
+function normalizeKey(s) {
+    return (s || '').replace(/\s+/g, ' ').trim();
+}
+
+function applyExtraTranslations(lang) {
+    // Walk all leaf-ish elements (no block children) and translate
+    const candidates = document.querySelectorAll(
+        'h1, h2, h3, h4, h5, h6, p, li, span, div, button, option, a'
+    );
+    candidates.forEach((el) => {
+        // Skip elements that already have data-i18n (handled elsewhere)
+        if (el.hasAttribute('data-i18n')) return;
+        // Skip nav language buttons
+        if (el.id === 'btn-ko' || el.id === 'btn-en') return;
+        // Skip if it has block-level children (it's a container, not a leaf)
+        const hasBlockChild = Array.from(el.children).some((c) =>
+            /^(DIV|P|UL|OL|LI|H[1-6]|SECTION|ARTICLE|HEADER|FOOTER|NAV|TABLE|FORM|IFRAME|IMG|VIDEO|CANVAS|SVG)$/i.test(c.tagName)
+        );
+        if (hasBlockChild) return;
+
+        // Save original innerHTML once
+        if (!el.dataset.kOrig) {
+            const original = el.innerHTML;
+            // Only track elements that originally contained Korean
+            if (!/[\uAC00-\uD7AF]/.test(original)) return;
+            el.dataset.kOrig = original;
+        }
+
+        const original = el.dataset.kOrig;
+        if (lang === 'ko') {
+            if (el.innerHTML !== original) el.innerHTML = original;
+        } else {
+            const trimmed = normalizeKey(original);
+            if (extraI18n[trimmed]) {
+                el.innerHTML = extraI18n[trimmed];
+            } else {
+                // Fallback: try replacing each known phrase substring
+                let updated = original;
+                for (const k in extraI18n) {
+                    if (updated.indexOf(k) !== -1) {
+                        updated = updated.split(k).join(extraI18n[k]);
+                    }
+                }
+                el.innerHTML = updated;
+            }
+        }
+    });
+}
 
 let currentLang = 'ko';
 
@@ -182,6 +369,9 @@ function setLanguage(lang) {
         const today = new Date().toISOString().split('T')[0];
         typingElement.textContent = `${today}${i18n[currentLang]['sigming-live-text']}`;
     }
+
+    // Apply extra dictionary translations to non-data-i18n Korean text
+    try { applyExtraTranslations(lang); } catch (e) { console.warn('extra i18n failed', e); }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

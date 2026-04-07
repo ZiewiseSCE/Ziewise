@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 24">
+  <rect width="36" height="24" fill="#b22234"/>
+  <g fill="#fff">
+    <rect y="1.85" width="36" height="1.85"/>
+    <rect y="5.54" width="36" height="1.85"/>
+    <rect y="9.23" width="36" height="1.85"/>
+    <rect y="12.92" width="36" height="1.85"/>
+    <rect y="16.62" width="36" height="1.85"/>
+    <rect y="20.31" width="36" height="1.85"/>
+  </g>
+  <rect width="14.4" height="12.92" fill="#3c3b6e"/>
+  <g fill="#fff" font-family="Arial" font-size="2.5" text-anchor="middle">
+    <g>
+      <text x="2" y="2.6">★</text><text x="4.4" y="2.6">★</text><text x="6.8" y="2.6">★</text><text x="9.2" y="2.6">★</text><text x="11.6" y="2.6">★</text>
+      <text x="3.2" y="4.7">★</text><text x="5.6" y="4.7">★</text><text x="8" y="4.7">★</text><text x="10.4" y="4.7">★</text>
+      <text x="2" y="6.8">★</text><text x="4.4" y="6.8">★</text><text x="6.8" y="6.8">★</text><text x="9.2" y="6.8">★</text><text x="11.6" y="6.8">★</text>
+      <text x="3.2" y="8.9">★</text><text x="5.6" y="8.9">★</text><text x="8" y="8.9">★</text><text x="10.4" y="8.9">★</text>
+      <text x="2" y="11">★</text><text x="4.4" y="11">★</text><text x="6.8" y="11">★</text><text x="9.2" y="11">★</text><text x="11.6" y="11">★</text>
+    </g>
+  </g>
+</svg>
