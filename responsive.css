@@ -268,93 +268,37 @@ section { padding-left: 4% !important; padding-right: 4% !important; }
     }
     .navbar .logo-link,
     .navbar > a.logo-link {
-        margin-right: auto !important;
         display: inline-flex !important;
         align-items: center !important;
         gap: 8px !important;
-        flex: 0 1 auto !important;
-        min-width: 0 !important;
-    }
-    .mobile-toggle {
-        display: inline-flex !important;
-        order: 99 !important;
-        margin-left: 4px !important;
         flex: 0 0 auto !important;
+        min-width: 0 !important;
+        margin: 0 !important;
     }
     .navbar .lang-switch {
-        order: 50 !important;
-        margin: 0 !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
         flex: 0 0 auto !important;
     }
     .navbar .lang-switch .lang-btn { padding: 4px 8px !important; font-size: 0.75rem !important; }
     .navbar .logo-symbol { height: 26px !important; }
     .navbar .logo-text { font-size: 1.15rem !important; white-space: nowrap !important; }
 
-    /* Slide-in menu panel — high specificity so it beats cyberpunk defaults */
+    /* Hamburger + slide-in menu: HIDE entirely on mobile per user request.
+       Users can scroll normally; the logo area stays uncluttered. */
+    .mobile-toggle,
+    #mobileToggle,
+    button.mobile-toggle {
+        display: none !important;
+    }
     .navbar .nav-links,
     .navbar ul.nav-links,
     body .navbar .nav-links,
     body .navbar ul#primaryNav {
-        position: fixed !important;
-        top: 0 !important;
-        right: 0 !important;
-        left: auto !important;
-        bottom: auto !important;
-        width: min(82vw, 340px) !important;
-        max-width: 340px !important;
-        height: 100vh !important;
-        height: 100dvh !important;
-        margin: 0 !important;
-        list-style: none !important;
-        display: flex !important;
-        padding: 80px 24px 40px !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        justify-content: flex-start !important;
-        gap: 6px !important;
-        background: linear-gradient(180deg, rgba(4,8,20,0.98) 0%, rgba(8,14,30,0.98) 100%) !important;
-        backdrop-filter: blur(18px) saturate(140%) !important;
-        -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
-        border-left: 1px solid rgba(0,240,255,0.3) !important;
-        box-shadow: -8px 0 40px rgba(0,0,0,0.6), -1px 0 0 rgba(0,240,255,0.25) inset !important;
-        transform: translateX(110%) !important;
-        transition: transform .35s cubic-bezier(.4,.1,.2,1) !important;
-        z-index: 1050 !important;
-        overflow-y: auto !important;
+        display: none !important;
     }
-    body.nav-open .navbar .nav-links { transform: translateX(0) !important; }
-    body.nav-open { overflow: hidden !important; }
-
-    .navbar .nav-links li {
-        width: 100% !important;
-        border-bottom: 1px dashed rgba(0,240,255,0.15) !important;
-    }
-    .navbar .nav-links a {
-        display: block !important;
-        width: 100% !important;
-        padding: 16px 8px !important;
-        font-size: 0.95rem !important;
-        letter-spacing: 0.5px !important;
-    }
-    .navbar .nav-links a.nav-try-btn,
-    .navbar .nav-links .nav-try-btn {
-        margin-top: 14px !important;
-        border: 1px solid rgba(0,240,255,0.5) !important;
-        border-radius: 8px !important;
-        text-align: center !important;
-        background: rgba(0,240,255,0.1) !important;
-    }
-
-    /* Nav overlay backdrop */
-    body.nav-open::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 1040;
-    }
+    body.nav-open { overflow: auto !important; }
+    body.nav-open::before { content: none !important; display: none !important; }
 
     /* Hero: single column, readable text */
     .hero-section {
