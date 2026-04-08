@@ -1,0 +1,437 @@
+/* =========================================================================
+   Matrix rain effect — fully disabled per request
+   ========================================================================= */
+#matrix-top-mask { display: none !important; }
+
+/* =========================================================================
+   Ziewise — Responsive Rescue Sheet (tablet & mobile)
+   Loaded LAST so it overrides styles.css and cyberpunk.css (both use !important heavily).
+   Target breakpoints:
+     - ≤1280px : small desktop / large tablet landscape
+     - ≤1024px : tablet landscape
+     - ≤900px  : tablet portrait (hamburger appears here)
+     - ≤768px  : large mobile
+     - ≤560px  : small mobile
+     - ≤400px  : very small mobile
+   ========================================================================= */
+
+/* -------- Global: kill horizontal scroll + better touch -------- */
+html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    -webkit-text-size-adjust: 100%;
+}
+*, *::before, *::after { box-sizing: border-box; }
+img, svg, iframe, video { max-width: 100%; }
+
+/* Safe fallback — every section padded in % */
+section { padding-left: 4% !important; padding-right: 4% !important; }
+
+/* =========================================================================
+   HAMBURGER / MOBILE NAV
+   ========================================================================= */
+.mobile-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid rgba(0, 240, 255, 0.45);
+    border-radius: 6px;
+    width: 40px;
+    height: 36px;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.2) inset;
+    flex-shrink: 0;
+    z-index: 1100;
+}
+.mobile-toggle span,
+.mobile-toggle span::before,
+.mobile-toggle span::after {
+    display: block;
+    position: absolute;
+    left: 50%;
+    width: 20px;
+    height: 2px;
+    background: #00f0ff;
+    border-radius: 2px;
+    transform: translateX(-50%);
+    transition: transform .25s ease, top .25s ease, opacity .2s ease;
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
+}
+.mobile-toggle span { top: 50%; margin-top: -1px; }
+.mobile-toggle span::before { content: ""; top: -7px; }
+.mobile-toggle span::after  { content: ""; top: 7px; }
+.mobile-toggle[aria-expanded="true"] span { background: transparent; box-shadow: none; }
+.mobile-toggle[aria-expanded="true"] span::before { top: 0; transform: translateX(-50%) rotate(45deg); }
+.mobile-toggle[aria-expanded="true"] span::after  { top: 0; transform: translateX(-50%) rotate(-45deg); }
+
+/* =========================================================================
+   ≤1280px — shrink hero cube column, shrink brain
+   ========================================================================= */
+@media (max-width: 1280px) {
+    .hero-section {
+        grid-template-columns: 1fr 1fr !important;
+        padding-top: 120px !important;
+    }
+    .hero-cube { grid-column: 1 / -1 !important; margin-top: 20px !important; }
+    .brain-orbit { transform: scale(0.78) !important; }
+}
+
+/* =========================================================================
+   ≤1024px — tablet landscape
+   ========================================================================= */
+@media (max-width: 1024px) {
+    .grid-container { grid-template-columns: repeat(2, 1fr) !important; }
+    .tech-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .industry-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .usecase-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .perf-grid { grid-template-columns: repeat(3, 1fr) !important; }
+    .value-grid { grid-template-columns: 1fr 1fr !important; }
+    .process-strip { flex-wrap: wrap !important; gap: 16px !important; }
+    .process-strip .process-step { flex: 1 1 30% !important; min-width: 140px !important; }
+    .about-stats { grid-template-columns: repeat(4, 1fr) !important; }
+
+    .footer-content { flex-direction: column !important; align-items: stretch !important; gap: 30px !important; }
+    .map-container { width: 100% !important; height: 280px !important; }
+}
+
+/* =========================================================================
+   ≤900px — tablet portrait / hamburger starts
+   ========================================================================= */
+@media (max-width: 900px) {
+    /* Navbar: show hamburger, hide inline menu */
+    .navbar {
+        grid-template-columns: auto 1fr auto !important;
+        gap: 10px !important;
+        padding: 10px 14px !important;
+        width: calc(100% - 20px) !important;
+        max-width: none !important;
+        top: 10px !important;
+    }
+    .mobile-toggle { display: inline-flex !important; justify-self: end !important; }
+    .navbar .lang-switch {
+        order: 2;
+        justify-self: end !important;
+        margin-right: 8px !important;
+    }
+    .navbar .lang-switch .lang-btn { padding: 4px 8px !important; font-size: 0.75rem !important; }
+    .navbar .logo-symbol { height: 28px !important; }
+    .navbar .logo-text { font-size: 1.25rem !important; }
+
+    /* Slide-in menu panel */
+    .navbar .nav-links {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        width: min(82vw, 340px) !important;
+        height: 100vh !important;
+        padding: 80px 24px 40px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 6px !important;
+        background: linear-gradient(180deg, rgba(4,8,20,0.98) 0%, rgba(8,14,30,0.98) 100%) !important;
+        backdrop-filter: blur(18px) saturate(140%) !important;
+        -webkit-backdrop-filter: blur(18px) saturate(140%) !important;
+        border-left: 1px solid rgba(0,240,255,0.3) !important;
+        box-shadow: -8px 0 40px rgba(0,0,0,0.6), -1px 0 0 rgba(0,240,255,0.25) inset !important;
+        transform: translateX(110%) !important;
+        transition: transform .35s cubic-bezier(.4,.1,.2,1) !important;
+        z-index: 1050 !important;
+        overflow-y: auto !important;
+    }
+    body.nav-open .navbar .nav-links { transform: translateX(0) !important; }
+    body.nav-open { overflow: hidden !important; }
+
+    .navbar .nav-links li {
+        width: 100% !important;
+        border-bottom: 1px dashed rgba(0,240,255,0.15) !important;
+    }
+    .navbar .nav-links a {
+        display: block !important;
+        width: 100% !important;
+        padding: 16px 8px !important;
+        font-size: 0.95rem !important;
+        letter-spacing: 0.5px !important;
+    }
+    .navbar .nav-links a.nav-try-btn,
+    .navbar .nav-links .nav-try-btn {
+        margin-top: 14px !important;
+        border: 1px solid rgba(0,240,255,0.5) !important;
+        border-radius: 8px !important;
+        text-align: center !important;
+        background: rgba(0,240,255,0.1) !important;
+    }
+
+    /* Nav overlay backdrop */
+    body.nav-open::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1040;
+    }
+
+    /* Hero: single column, readable text */
+    .hero-section {
+        display: block !important;
+        padding: 100px 5% 30px !important;
+        min-height: auto !important;
+        height: auto !important;
+        text-align: center !important;
+    }
+    .hero-content { text-align: center !important; padding: 0 !important; }
+    .hero-content h1,
+    .hero-content .subtitle { text-align: center !important; }
+    .hero-content h1 { font-size: 2.4rem !important; line-height: 1.15 !important; }
+    .subtitle { border-left: none !important; padding-left: 0 !important; font-size: 0.9rem !important; }
+
+    /* Brain container: responsive square, no scale(), no negative margins */
+    .brain-container,
+    .brain-orbit {
+        position: relative !important;
+        width: min(88vw, 460px) !important;
+        height: min(88vw, 460px) !important;
+        max-width: 100% !important;
+        margin: 24px auto 0 !important;
+        transform: none !important;
+    }
+    .brain-container .synapses-v2 { width: 100% !important; height: 100% !important; }
+    .orbit-ring { transform-origin: center center !important; }
+
+    /* Hero cube: center beneath */
+    .hero-cube {
+        grid-column: auto !important;
+        margin: 28px auto 0 !important;
+        max-width: 320px !important;
+    }
+    .hero-cube .cube-stage { width: 160px !important; height: 160px !important; }
+    .hero-cube .cube-face { width: 160px !important; height: 160px !important; }
+    .hero-cube .cube-face.cf-front  { transform: translateZ(80px) !important; }
+    .hero-cube .cube-face.cf-back   { transform: rotateY(180deg) translateZ(80px) !important; }
+    .hero-cube .cube-face.cf-right  { transform: rotateY(90deg)  translateZ(80px) !important; }
+    .hero-cube .cube-face.cf-left   { transform: rotateY(-90deg) translateZ(80px) !important; }
+    .hero-cube .cube-face.cf-top    { transform: rotateX(90deg)  translateZ(80px) !important; }
+    .hero-cube .cube-face.cf-bottom { transform: rotateX(-90deg) translateZ(80px) !important; }
+
+    /* Hero bottom strip: wrap features */
+    .hero-bottom { padding: 24px 0 0 !important; }
+    .hero-feature-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 14px !important;
+    }
+    .hero-bottom-tagline { font-size: 0.78rem !important; line-height: 1.5 !important; padding: 0 4px !important; }
+
+    /* Grids */
+    .grid-container,
+    .tech-grid { grid-template-columns: 1fr !important; gap: 18px !important; }
+    .industry-grid,
+    .usecase-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
+    .perf-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 14px !important; }
+    .value-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+
+    /* About container padding */
+    .about-container { padding: 32px 22px !important; }
+    .about-container h2 { font-size: 1.8rem !important; }
+    .about-container h3 { font-size: 1.1rem !important; }
+    .about-container .desc { font-size: 0.92rem !important; }
+    .about-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+    .stat-item { border-left: none !important; padding: 10px 6px !important; }
+    .stat-num { font-size: 1.9rem !important; }
+    .certification-badges { gap: 14px !important; flex-wrap: wrap !important; justify-content: center !important; }
+    .badge { flex: 0 0 calc(50% - 14px) !important; }
+
+    /* Timeline: stack vertically */
+    .timeline {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 18px !important;
+        padding-left: 18px !important;
+        border-left: 1px dashed rgba(0,240,255,0.3) !important;
+    }
+    .timeline .t-item {
+        width: 100% !important;
+        padding-left: 12px !important;
+    }
+
+    /* Section titles */
+    .section-title h2 { font-size: 1.9rem !important; }
+    .section-title p { font-size: 0.9rem !important; }
+    .section-intro { font-size: 0.9rem !important; padding: 0 4px !important; }
+
+    /* Solution / tech cards — interior breathing room */
+    .solution-card, .tech-card {
+        padding: 20px 18px !important;
+        min-height: auto !important;
+        height: auto !important;
+    }
+    .card-header h3 { font-size: 1.35rem !important; }
+    .card-detail-list { font-size: 0.82rem !important; }
+    .differentiator { font-size: 0.82rem !important; padding: 8px 10px !important; }
+    .simulation-area { max-width: 100% !important; overflow: hidden !important; }
+
+    /* Process strip stacks */
+    .process-strip {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 14px !important;
+    }
+
+    /* Simulator scene tabs + stage */
+    .sim-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
+    }
+    .sim-tab { padding: 10px 6px !important; }
+    .sim-tab .tab-name { font-size: 0.78rem !important; }
+    .sim-tab .tab-meta { font-size: 0.6rem !important; }
+    .sim-scene, .sim-stage {
+        display: block !important;
+    }
+    .sim-scene {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    .scene-info, .scene-3d {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .scene-info h3 { font-size: 1.4rem !important; }
+    .scene-info p { font-size: 0.9rem !important; }
+    .scene-stats { flex-wrap: wrap !important; gap: 10px !important; }
+    .scene-3d {
+        min-height: 260px !important;
+        transform: none !important;
+    }
+
+    /* Footer */
+    .footer { padding: 70px 5% 40px !important; min-height: auto !important; }
+    .footer-content { flex-direction: column !important; align-items: stretch !important; gap: 24px !important; }
+    .footer-text-info { min-width: 0 !important; width: 100% !important; }
+    .map-container { width: 100% !important; min-width: 0 !important; height: 240px !important; }
+    .contact-form { width: 100% !important; }
+    .form-row { flex-direction: column !important; gap: 8px !important; }
+    .contact-form input,
+    .contact-form textarea,
+    .contact-form select { font-size: 16px !important; /* prevent iOS zoom */ }
+}
+
+/* =========================================================================
+   ≤768px — large mobile
+   ========================================================================= */
+@media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.1rem !important; }
+    .hero-content .subtitle { font-size: 0.85rem !important; }
+    .hero-feature-row { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+    .hero-feature { padding: 10px 8px !important; }
+    .hf-num { font-size: 1.4rem !important; }
+    .hf-label { font-size: 0.65rem !important; }
+
+    .industry-grid,
+    .usecase-grid,
+    .perf-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+    .industry-card, .uc-card, .perf-card { padding: 16px !important; }
+    .industry-card h5, .uc-card h5 { font-size: 0.95rem !important; }
+    .industry-card p, .uc-card p { font-size: 0.78rem !important; }
+
+    .sim-tabs { grid-template-columns: repeat(2, 1fr) !important; }
+
+    .section-title h2 { font-size: 1.6rem !important; }
+    h2 { font-size: 1.6rem !important; }
+
+    /* Cards simulation areas: avoid overflowing */
+    .vision-simulator,
+    .vpp-simulator,
+    .phone-frame,
+    .office-simulator,
+    .print-simulator,
+    .observer-simulator {
+        max-width: 100% !important;
+        transform: none !important;
+    }
+    .map-grid { min-height: 180px !important; }
+    .hash-stream-container { min-height: 100px !important; }
+    .scanner-area, .hotswap-area, .lightweight-area { height: auto !important; min-height: 200px !important; padding: 14px !important; }
+
+    /* Process strip */
+    .process-strip { grid-template-columns: 1fr 1fr !important; }
+    .process-step { padding: 12px 10px !important; }
+    .ps-title { font-size: 0.9rem !important; }
+    .ps-desc  { font-size: 0.72rem !important; }
+}
+
+/* =========================================================================
+   ≤560px — small mobile
+   ========================================================================= */
+@media (max-width: 560px) {
+    section { padding-left: 5% !important; padding-right: 5% !important; }
+
+    .hero-section { padding: 96px 5% 24px !important; }
+    .hero-content h1 { font-size: 1.85rem !important; }
+    .hero-content .subtitle { font-size: 0.82rem !important; }
+    .brain-container, .brain-orbit {
+        width: 92vw !important;
+        height: 92vw !important;
+    }
+    .hero-cube .cube-stage,
+    .hero-cube .cube-face { width: 140px !important; height: 140px !important; }
+    .hero-cube .cube-face.cf-front  { transform: translateZ(70px) !important; }
+    .hero-cube .cube-face.cf-back   { transform: rotateY(180deg) translateZ(70px) !important; }
+    .hero-cube .cube-face.cf-right  { transform: rotateY(90deg)  translateZ(70px) !important; }
+    .hero-cube .cube-face.cf-left   { transform: rotateY(-90deg) translateZ(70px) !important; }
+    .hero-cube .cube-face.cf-top    { transform: rotateX(90deg)  translateZ(70px) !important; }
+    .hero-cube .cube-face.cf-bottom { transform: rotateX(-90deg) translateZ(70px) !important; }
+
+    .hero-feature-row { grid-template-columns: 1fr 1fr !important; }
+    .industry-grid,
+    .usecase-grid,
+    .perf-grid { grid-template-columns: 1fr !important; }
+    .about-stats { grid-template-columns: 1fr 1fr !important; }
+    .sim-tabs { grid-template-columns: 1fr 1fr !important; }
+    .certification-badges .badge { flex: 0 0 100% !important; }
+
+    .section-title h2 { font-size: 1.45rem !important; }
+    .about-container { padding: 24px 16px !important; }
+    .about-container h2 { font-size: 1.5rem !important; }
+    .about-container h3 { font-size: 1rem !important; }
+
+    .solution-card, .tech-card { padding: 18px 14px !important; }
+    .card-header h3 { font-size: 1.2rem !important; }
+    .footer { padding: 60px 5% 30px !important; }
+    .map-container { height: 200px !important; }
+    .copyright { font-size: 0.7rem !important; }
+}
+
+/* =========================================================================
+   ≤400px — very small phones
+   ========================================================================= */
+@media (max-width: 400px) {
+    .navbar .logo-text { font-size: 1.1rem !important; }
+    .hero-content h1 { font-size: 1.6rem !important; }
+    .brain-container, .brain-orbit { width: 94vw !important; height: 94vw !important; }
+    .hero-cube .cube-stage,
+    .hero-cube .cube-face { width: 120px !important; height: 120px !important; }
+    .hero-cube .cube-face.cf-front  { transform: translateZ(60px) !important; }
+    .hero-cube .cube-face.cf-back   { transform: rotateY(180deg) translateZ(60px) !important; }
+    .hero-cube .cube-face.cf-right  { transform: rotateY(90deg)  translateZ(60px) !important; }
+    .hero-cube .cube-face.cf-left   { transform: rotateY(-90deg) translateZ(60px) !important; }
+    .hero-cube .cube-face.cf-top    { transform: rotateX(90deg)  translateZ(60px) !important; }
+    .hero-cube .cube-face.cf-bottom { transform: rotateX(-90deg) translateZ(60px) !important; }
+    .sim-tabs { grid-template-columns: 1fr !important; }
+}
+
+/* =========================================================================
+   Touch-device tweaks: disable hover-triggered simulations causing jitter
+   ========================================================================= */
+@media (hover: none) and (pointer: coarse) {
+    .interactive-card:hover .scan-line,
+    .interactive-card:hover .bounding-box { animation-play-state: running; }
+    /* Keep cube rotating but allow scroll */
+    .cube-stage { touch-action: pan-y; }
+}
