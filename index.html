@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=20260408k">
     <link rel="stylesheet" href="cyberpunk.css?v=20260408k">
+    <link rel="stylesheet" href="responsive.css?v=20260409a">
 </head>
 <body>
     <nav class="navbar glass">
@@ -14,7 +15,7 @@
             <img src="logo-symbol.png" alt="ZIEWISE Symbol" class="logo-symbol" onerror="this.style.display='none'">
             <span class="logo-text">ziewise</span>
         </a>
-        <ul class="nav-links">
+        <ul class="nav-links" id="primaryNav">
             <li><a href="#hero" data-i18n="nav-core">ZiewCore 소개</a></li>
             <li><a href="#about" data-i18n="nav-about">회사 소개</a></li>
             <li><a href="#solutions" data-i18n="nav-solutions">솔루션</a></li>
@@ -27,6 +28,7 @@
             <span class="lang-sep">|</span>
             <button id="btn-en" class="lang-btn"><img src="flag-us.svg" alt="US" class="flag-img"> EN</button>
         </div>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primaryNav"><span></span></button>
     </nav>
 
     <!-- 1. 메인 Hero Section -->
@@ -1190,6 +1192,36 @@
     <!-- Experience Simulator Modal (populated by simulator.js) -->
     <div id="sim-root" aria-hidden="true"></div>
 
+    <script>
+    // Mobile hamburger menu toggle
+    (function(){
+        var btn = document.getElementById('mobileToggle');
+        var nav = document.getElementById('primaryNav');
+        if(!btn || !nav) return;
+        function close(){ document.body.classList.remove('nav-open'); btn.setAttribute('aria-expanded','false'); btn.setAttribute('aria-label','메뉴 열기'); }
+        function open(){  document.body.classList.add('nav-open');    btn.setAttribute('aria-expanded','true');  btn.setAttribute('aria-label','메뉴 닫기'); }
+        btn.addEventListener('click', function(e){
+            e.stopPropagation();
+            if(document.body.classList.contains('nav-open')) close(); else open();
+        });
+        // Close on link click
+        nav.addEventListener('click', function(e){
+            if(e.target.tagName === 'A') close();
+        });
+        // Close on outside tap
+        document.addEventListener('click', function(e){
+            if(!document.body.classList.contains('nav-open')) return;
+            if(nav.contains(e.target) || btn.contains(e.target)) return;
+            close();
+        });
+        // Close on resize up
+        window.addEventListener('resize', function(){
+            if(window.innerWidth > 900) close();
+        });
+        // ESC closes
+        document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
+    })();
+    </script>
     <script src="app.js?v=20260408k"></script>
     <script src="cyberpunk.js?v=20260408k"></script>
     <script src="simulator.js?v=20260408k"></script>
