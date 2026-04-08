@@ -231,22 +231,40 @@ section { padding-left: 4% !important; padding-right: 4% !important; }
    ≤900px — tablet portrait / hamburger starts
    ========================================================================= */
 @media (max-width: 900px) {
-    /* Navbar: flex layout so hamburger panel (position:fixed) isn't
-       trapped by navbar's transform containing-block */
+    /* Navbar: flex row layout. Must kill transform / backdrop-filter / filter
+       so the slide-in menu (position:fixed child) escapes navbar as its
+       containing block (iOS Safari creates one for backdrop-filter too). */
     .navbar,
     nav.navbar,
-    body .navbar {
+    body .navbar,
+    .navbar.glass,
+    nav.navbar.glass {
         display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
         align-items: center !important;
-        gap: 10px !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
         padding: 10px 14px !important;
-        left: 10px !important;
-        right: 10px !important;
-        top: 10px !important;
+        left: 8px !important;
+        right: 8px !important;
+        top: 8px !important;
+        bottom: auto !important;
         width: auto !important;
         max-width: none !important;
+        min-width: 0 !important;
         transform: none !important;
+        -webkit-transform: none !important;
         grid-template-columns: none !important;
+        grid-template-rows: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        filter: none !important;
+        will-change: auto !important;
+        contain: none !important;
+        perspective: none !important;
+        border-radius: 14px !important;
+        background: linear-gradient(180deg, rgba(4,8,20,0.94) 0%, rgba(8,14,30,0.88) 100%) !important;
     }
     .navbar .logo-link,
     .navbar > a.logo-link {
@@ -272,13 +290,23 @@ section { padding-left: 4% !important; padding-right: 4% !important; }
     .navbar .logo-symbol { height: 26px !important; }
     .navbar .logo-text { font-size: 1.15rem !important; white-space: nowrap !important; }
 
-    /* Slide-in menu panel */
-    .navbar .nav-links {
+    /* Slide-in menu panel — high specificity so it beats cyberpunk defaults */
+    .navbar .nav-links,
+    .navbar ul.nav-links,
+    body .navbar .nav-links,
+    body .navbar ul#primaryNav {
         position: fixed !important;
         top: 0 !important;
         right: 0 !important;
+        left: auto !important;
+        bottom: auto !important;
         width: min(82vw, 340px) !important;
+        max-width: 340px !important;
         height: 100vh !important;
+        height: 100dvh !important;
+        margin: 0 !important;
+        list-style: none !important;
+        display: flex !important;
         padding: 80px 24px 40px !important;
         flex-direction: column !important;
         align-items: flex-start !important;
