@@ -619,8 +619,8 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
 #invRoute{position:absolute;left:60px;right:60px;bottom:24px;height:3px;border-radius:3px;background:repeating-linear-gradient(90deg,#1d3252 0 14px,transparent 14px 28px)}
 
 /* ============ S13 ZIEVIEW VMS UI DEMO ============ */
-#s13{padding:92px 70px 150px}
-#vmsFrame{position:relative;margin-top:26px;height:730px;border-radius:16px;overflow:hidden;border:1px solid var(--line2);
+#s13{padding:78px 70px 150px}
+#vmsFrame{position:relative;margin-top:16px;height:610px;border-radius:16px;overflow:hidden;border:1px solid var(--line2);
   background:#0a1128;box-shadow:0 30px 80px rgba(0,0,0,.6)}
 #vmsBar{display:flex;align-items:center;gap:14px;height:52px;padding:0 18px;background:linear-gradient(180deg,#0e1832,#0a1128);border-bottom:1px solid #17264a}
 #vmsBar .vlogo{display:flex;align-items:center;gap:9px;font-weight:900;font-size:16.5px;letter-spacing:.06em}
@@ -790,6 +790,20 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
 #s17 .calc{display:grid;grid-template-columns:1fr 1.25fr;gap:22px;margin-top:30px}
 #calIn{padding:26px 28px;display:flex;flex-direction:column;gap:19px}
 #calIn h4{font-size:14px;letter-spacing:.22em;color:var(--acc);font-weight:800}
+#roiDragGuide{--swipe:52px;position:absolute;right:22px;top:14px;z-index:8;display:flex;align-items:center;gap:11px;
+  padding:9px 13px;border-radius:13px;border:1px solid rgba(70,184,239,.55);pointer-events:none;opacity:0;transform:translateY(-8px) scale(.96);
+  background:linear-gradient(145deg,rgba(13,48,76,.96),rgba(8,22,40,.97));box-shadow:0 12px 28px rgba(0,0,0,.35),0 0 20px rgba(70,184,239,.18);transition:opacity .3s,transform .3s}
+#roiDragGuide.show{opacity:1;transform:none;animation:roiGuideFloat 2.4s ease-in-out infinite}
+#roiDragGuide.used{opacity:0;transform:translateY(-8px) scale(.96);animation:none}
+#roiDragGuide .rgCopy{display:flex;flex-direction:column;gap:1px;white-space:nowrap}
+#roiDragGuide .rgCopy b{font-size:13.5px;color:#eaf8ff;letter-spacing:.02em}
+#roiDragGuide .rgCopy small{font-size:10.5px;color:#8eccea}
+#roiDragGuide .rgMotion{position:relative;width:76px;height:24px;flex:none}
+#roiDragGuide .rgMotion::before{content:"";position:absolute;left:5px;right:5px;top:12px;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,var(--acc2),transparent)}
+#roiDragGuide .rgMotion::after{content:"↔";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(189,232,255,.65);font-size:17px;font-weight:900}
+#roiDragGuide .rgHand{position:absolute;left:0;top:-4px;z-index:2;font-size:20px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.4));animation:roiGuideSwipe 1.65s ease-in-out infinite}
+@keyframes roiGuideSwipe{0%,100%{transform:translateX(0) rotate(-10deg)}50%{transform:translateX(var(--swipe)) rotate(8deg)}}
+@keyframes roiGuideFloat{0%,100%{margin-top:0}50%{margin-top:-3px}}
 .sl .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
 .sl .nm{font-size:15.5px;font-weight:700;color:var(--ink2)}
 .sl .vv{font-size:17px;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums}
@@ -853,7 +867,7 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
 #s20 .cta{font-size:21px;color:var(--ink2);margin-top:14px}
 #s20 .cta b{color:var(--acc)}
 #s20 .contact{margin-top:40px;font-size:15.5px;color:var(--mut);letter-spacing:.06em;line-height:2}
-#s20 .again{margin-top:30px}
+#s20 .again{position:absolute;left:0;right:0;bottom:240px;margin:0;text-align:center}
 </style>
 <style id="scenes-e">
 /* ============ sAI SELF-EVOLVING PIPELINE ============ */
@@ -1942,6 +1956,7 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
       <div class="calc">
         <div class="panel stx" id="calIn" style="--d:2">
           <h4>입력 조건 (드래그로 조절)</h4>
+          <div id="roiDragGuide" role="status" aria-label="슬라이더를 좌우로 드래그해 조절해보세요"><span class="rgCopy"><b>조절해보세요</b><small>슬라이더를 좌우로 드래그</small></span><span class="rgMotion" aria-hidden="true"><span class="rgHand">☝️</span></span></div>
           <div class="sl"><div class="top"><span class="nm">대체 인원</span><span class="vv"><b id="cvP">30</b>명</span></div><input type="range" id="cP" min="2" max="40" value="30" step="1"><div class="hint">재고조사 + 관제 + 검사 + 보전 특근 합산 FTE</div></div>
           <div class="sl"><div class="top"><span class="nm">인당 연간 인건비</span><span class="vv"><b id="cvW">4,500</b>만 원</span></div><input type="range" id="cW" min="3000" max="7000" value="4500" step="100"><div class="hint">부대비 포함 — 동종 대형 제조 사업장 표준값 4,500만 원</div></div>
           <div class="sl"><div class="top"><span class="nm">부가 효익 (품질·다운타임)</span><span class="vv"><b id="cvB">3.0</b>억 원/년</span></div><input type="range" id="cB" min="0" max="60" value="30" step="5"><div class="hint">불량 유출·재작업↓ + 비계획 정지↓ 등</div></div>
@@ -2157,6 +2172,14 @@ body.small #setPop .volumeRow{gap:18px}
 body.small #setPop .volumeRow span{font-size:28px}
 body.small #volumeRange{height:44px}
 body.small #setPop .note{font-size:21px}
+body.small #roiDragGuide{--swipe:82px;right:24px;top:16px;gap:16px;padding:13px 18px;border-radius:18px}
+body.small #roiDragGuide .rgCopy b{font-size:22px}
+body.small #roiDragGuide .rgCopy small{font-size:16px}
+body.small #roiDragGuide .rgMotion{width:112px;height:34px}
+body.small #roiDragGuide .rgMotion::before{top:17px;height:3px}
+body.small #roiDragGuide .rgMotion::after{font-size:25px}
+body.small #roiDragGuide .rgHand{font-size:29px;top:-5px}
+body.small #s20 .again{bottom:350px}
 body.small #ovlGrid{grid-template-columns:repeat(4,1fr);gap:20px}
 body.small .ovtile .n{font-size:19px}
 body.small .ovtile .t{font-size:26px}
@@ -2216,6 +2239,13 @@ body.mobile-narrow #btnAuto::after{content:"▶";font-size:var(--control-font,34
 body.mobile-narrow #btnAuto.on::after{content:"⏸"}
 body.mobile-narrow #hudBrand .sub,body.mobile-narrow #hudMeta span:nth-child(2){display:none}
 body.mobile-narrow #capWrap{bottom:calc(var(--tap-size,80px) + 66px)}
+body.mobile-narrow.scene-s13 #s13{padding-top:72px}
+body.mobile-narrow.scene-s13 #vmsFrame{margin-top:12px;height:520px}
+body.mobile-narrow.scene-s13 #s13 .vmsfoot{display:none}
+body.mobile-narrow.scene-s13 #capWrap{bottom:calc(var(--tap-size,80px) + 44px);width:1760px;max-width:94%}
+body.mobile-narrow.scene-s13 #caption{font-size:30px;line-height:1.35;padding:16px 28px;border-radius:20px}
+body.mobile-narrow.scene-s20 #capWrap{bottom:calc(var(--tap-size,80px) + 44px);width:1760px;max-width:94%}
+body.mobile-narrow.scene-s20 #caption{font-size:28px;line-height:1.35;padding:16px 28px;border-radius:20px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -2440,7 +2470,7 @@ function go(n){n=Math.max(0,Math.min(scenes.length-1,n));
   const dir=n>(cur<0?-1:cur)?1:-1;
   if(cur>=0){const c=scenes[cur];c.classList.remove("active");c.classList.toggle("back",dir>0);
     const lf=FX[c.id];if(lf&&lf.leave)lf.leave()}
-  T.clear();cur=n;const s=scenes[n];
+  T.clear();cur=n;const s=scenes[n];document.body.classList.toggle("scene-s13",s.id==="s13");document.body.classList.toggle("scene-s20",s.id==="s20");
   s.classList.remove("back");void s.offsetWidth;s.classList.add("active");
   hudKick.textContent=s.dataset.kicker||"";hudIdx.textContent=String(n+1).padStart(2,"0")+" / "+scenes.length;
   progressBar.style.width=((n+1)/scenes.length*100)+"%";
@@ -2824,6 +2854,7 @@ FX[13]={enter(){
 /* ---------- S17 calculator — 구축·안정화 반영 현실 모델 ---------- */
 (function(){
   const P=$("#cP"),Wg=$("#cW"),Bn=$("#cB"),I=$("#cI"),O=$("#cO"),BD2=$("#cBD");if(!P)return;
+  const dragGuide=$("#roiDragGuide"),rangeInputs=[P,Wg,Bn,I,O,BD2];
   const RAMP=3; /* 안정화 3개월 · 효익 50% */
   const fmt1=v=>v.toLocaleString("ko-KR",{maximumFractionDigits:1,minimumFractionDigits:1});
   function upd(){
@@ -2860,8 +2891,9 @@ FX[13]={enter(){
     if(pay&&pay<=36)s+=`<g id="calPay"><line x1="${Xx(pay)}" x2="${Xx(pay)}" y1="${Yy(0)}" y2="${Tm2+8}" stroke="#d8bc8a" stroke-dasharray="4 5" stroke-width="1.5"/>
       <circle cx="${Xx(pay)}" cy="${Yy(0)}" r="6" fill="#d8bc8a" stroke="#0d1626" stroke-width="2.5"/><text x="${Xx(pay)+9}" y="${Tm2+24}" fill="#ffe9c4" font-weight="800">실질 회수 ${fmt1(pay)}개월</text></g>`;
     svg.innerHTML=s}
-  [P,Wg,Bn,I,O,BD2].forEach(el=>el.addEventListener("input",upd));
-  FX.s17={enter(){upd()}}})();
+  rangeInputs.forEach(el=>el.addEventListener("input",()=>{upd();dragGuide.classList.add("used")}));
+  FX.s17={enter(){upd();dragGuide.classList.remove("used");requestAnimationFrame(()=>dragGuide.classList.add("show"))},
+    leave(){dragGuide.classList.remove("show","used")}}})();
 
 /* ---------- S18 roadmap ---------- */
 FX[17]={enter(){const f=$("#laneFill"),ph=$$("#s18 .phase");
