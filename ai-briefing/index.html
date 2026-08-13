@@ -2047,7 +2047,7 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
     </div>
     <div class="panel" id="setPop">
       <h4>나레이션 설정</h4>
-      <label>목소리 — 자연스러운 신경망 음성만 표시됩니다</label>
+      <label>목소리 — 추천 혼합 · 여성 3종 · 남성 3종</label>
       <div id="voiceGrid"></div>
       <label>말하기 속도</label>
       <div class="rates">
@@ -2055,7 +2055,7 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
         <button class="cbtn on" data-rate="0.95">보통</button>
         <button class="cbtn" data-rate="1.08">빠르게</button>
       </div>
-      <div class="note">💡 <b>Microsoft Edge</b>에서 열면 여성 2종(선히·지민)·남성 2종(인준·현수) 신경망 음성이 모두 제공됩니다. 구형 기계음(Heami 등)은 목록에서 제외했습니다.</div>
+      <div class="note">💡 기본은 <b>추천 혼합</b>입니다. F2가 전체 흐름을 이끌고 M1이 기술·수치 장면만 설명합니다. 선택한 음성은 이 기기에 저장되며 Safari·Chrome·Edge에서 동일하게 재생됩니다.</div>
     </div>
   </div>
 
@@ -2075,8 +2075,19 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
         <button class="sbtn a" id="goAuto">▶&nbsp; 자동 재생 — 음성 설명과 함께 끝까지</button>
         <button class="sbtn b" id="goManual">🎤 발표 모드 — 직접 넘기며 설명</button>
       </div>
-      <div class="stip">🔊 음성 나레이션 포함 — 소리를 켜 주세요. 여성·남성 신경망 음성 4종은 <b>Microsoft Edge</b>에서 제공됩니다.<br>📱 태블릿·휴대폰에서는 자동으로 가로 화면에 맞춰지며, 좌우 스와이프로 넘길 수 있습니다.</div>
+      <div class="stip">🔊 기본은 F2·M1이 역할을 나눠 설명하는 <b>추천 혼합</b>이며, 여성 3종·남성 3종 단일 음성도 선택할 수 있습니다.<br>📱 태블릿·휴대폰은 가로 화면에서 가장 선명하며, 좌우 스와이프로 넘길 수 있습니다.</div>
       <div class="keys"><kbd>→</kbd><kbd>Space</kbd> 다음 &nbsp; <kbd>←</kbd> 이전 &nbsp; <kbd>A</kbd> 자동재생 &nbsp; <kbd>M</kbd> 음성 &nbsp; <kbd>G</kbd> 목차 &nbsp; <kbd>F</kbd> 전체화면</div>
+    </div>
+  </div>
+  <div id="sideRails" aria-hidden="true">
+    <div class="sideRail left"><span>ZIEWISE</span></div>
+    <div class="sideRail right"><span>AI BRIEFING</span></div>
+  </div>
+  <div id="rotateHint" role="status" aria-live="polite">
+    <div class="rotateCard">
+      <div class="rotatePhone" aria-hidden="true">↻</div>
+      <strong>휴대폰을 가로로 돌려주세요</strong>
+      <span>화면을 돌리면 브리핑이 자동으로 이어집니다.</span>
     </div>
   </div>
 </div>
@@ -2086,13 +2097,17 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
 .mm.aiok{border-color:rgba(56,189,248,.6);box-shadow:0 0 10px rgba(56,189,248,.35)}
 #caption:empty{display:none}
 select option{background:#0a1424;color:#e8eef8}
-/* ---- 음성 선택 4종 ---- */
+/* ---- 미리 생성된 한국어 음성: 추천 혼합 + 단일 음성 6종 ---- */
 #voiceGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .vopt{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;border:1px solid var(--line2);
   background:rgba(10,18,34,.82);font-size:14.5px;font-weight:700;color:var(--ink2);transition:.2s;text-align:left}
 .vopt:hover{border-color:var(--acc);color:#fff}
 .vopt.on{border-color:var(--acc);background:linear-gradient(135deg,rgba(14,74,110,.6),rgba(11,50,82,.6));color:#fff;box-shadow:0 0 18px rgba(70,184,239,.3)}
 .vopt .vi{font-size:19px}
+.vopt .vtxt{display:flex;min-width:0;flex-direction:column;gap:2px;line-height:1.2}
+.vopt .vtxt small{font-size:11.5px;font-weight:500;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vopt.on .vtxt small{color:#bfe9ff}
+.vopt .vdefault{margin-left:auto;padding:3px 6px;border-radius:999px;background:rgba(70,184,239,.15);color:var(--acc2);font-size:10px;letter-spacing:.05em}
 .novoice{font-size:13.5px;color:var(--mut);line-height:1.65;padding:4px 2px}
 /* 시작 전에는 하단 컨트롤·자막 숨김 — 게이트에 집중 */
 body:not(.started) #hud{visibility:hidden}
@@ -2142,6 +2157,57 @@ body.small #start .stip{font-size:22px}
 body.small #start .keys{display:none}
 body.small #startCard .d{font-size:27px}
 body.small #startCard h2{font-size:56px}
+
+/* ---- Mobile compatibility: iOS Safari · Android Chrome · Samsung Internet ---- */
+#stage,#bgfx{position:fixed}
+#stage{z-index:2}
+#sideRails{display:none;position:fixed;inset:0;z-index:1;pointer-events:none;justify-content:space-between;overflow:hidden}
+body.mobile-narrow #sideRails{display:flex}
+.sideRail{position:relative;width:var(--side-gutter,0px);min-width:var(--side-gutter,0px);height:100%;overflow:hidden;
+  border-color:rgba(125,217,255,.18);box-shadow:inset 0 0 34px rgba(70,184,239,.08)}
+.sideRail.left{border-right:1px solid rgba(125,217,255,.2);
+  background:linear-gradient(90deg,rgba(4,9,18,.96),rgba(11,31,52,.78) 72%,rgba(21,58,88,.38))}
+.sideRail.right{border-left:1px solid rgba(216,188,138,.18);
+  background:linear-gradient(270deg,rgba(4,9,18,.96),rgba(16,29,49,.78) 72%,rgba(72,60,38,.28))}
+.sideRail span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);
+  white-space:nowrap;font-size:10px;font-weight:800;letter-spacing:.38em;color:rgba(206,231,250,.28)}
+.sideRail.right span{transform:translate(-50%,-50%) rotate(90deg);color:rgba(232,214,178,.24)}
+.sideRail::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 22%,rgba(70,184,239,.17),transparent 36%),
+             radial-gradient(circle at 50% 78%,rgba(139,92,246,.1),transparent 34%)}
+#rotateHint{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;
+  padding:max(24px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right))
+          max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));
+  background:radial-gradient(circle at 50% 38%,rgba(32,103,154,.28),transparent 48%),rgba(4,8,15,.98);
+  color:var(--ink);text-align:center}
+.rotateCard{width:min(440px,100%);padding:34px 26px;border:1px solid var(--line2);border-radius:24px;
+  background:linear-gradient(165deg,rgba(22,38,63,.96),rgba(8,15,28,.98));
+  box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.rotatePhone{width:58px;height:92px;margin:0 auto 25px;border:3px solid var(--acc2);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;color:var(--acc2);font-size:34px;font-weight:800;
+  animation:turnPhone 1.8s ease-in-out infinite;box-shadow:0 0 24px rgba(70,184,239,.22)}
+.rotateCard strong{display:block;font-size:23px;line-height:1.35}
+.rotateCard span{display:block;margin-top:11px;color:var(--ink2);font-size:15px;line-height:1.6}
+@keyframes turnPhone{0%,20%{transform:rotate(0)}70%,100%{transform:rotate(90deg)}}
+body.orientation-blocked #rotateHint{display:flex}
+body.orientation-blocked #stage{visibility:hidden}
+
+/* Scale-aware variables are set in fit(); these keep real touch targets >= 44 CSS px. */
+body.mobile-device .cbtn{height:var(--tap-size,80px);min-width:var(--tap-size,80px);
+  padding:0 calc(var(--tap-size,80px)*.28);font-size:var(--control-font,27px)}
+body.mobile-device #caption{font-size:var(--caption-font,35px)}
+body.mobile-narrow #navArrows{left:34px;gap:18px}
+body.mobile-narrow #ctrl{right:34px;gap:18px}
+body.mobile-narrow #btnNext,body.mobile-narrow #btnMenu,body.mobile-narrow #btnAuto{font-size:0;padding:0}
+body.mobile-narrow #btnNext::after{content:"▶";font-size:var(--control-font,34px)}
+body.mobile-narrow #btnMenu::after{content:"☰";font-size:var(--control-font,34px)}
+body.mobile-narrow #btnAuto::after{content:"▶";font-size:var(--control-font,34px)}
+body.mobile-narrow #btnAuto.on::after{content:"⏸"}
+body.mobile-narrow #hudBrand .sub,body.mobile-narrow #hudMeta span:nth-child(2){display:none}
+body.mobile-narrow #capWrap{bottom:calc(var(--tap-size,80px) + 66px)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style>
 <script>
 "use strict";
@@ -2153,18 +2219,37 @@ const stage=$("#stage"), scenes=$$(".scene");
 const hudKick=$("#hudKick"), hudIdx=$("#hudIdx"), progressBar=$("#progress");
 const capText=$("#capText"), capBadge=$("#capBadge"), caption=$("#caption");
 
-/* ---------- fixed 1920x1080 stage + 모바일 가로모드 강제 ---------- */
-["hud","ovl","start"].forEach(id=>stage.appendChild(document.getElementById(id))); /* HUD가 무대와 함께 스케일·회전 */
+/* ---------- fixed 1920x1080 stage + mobile-safe viewport ---------- */
+["hud","ovl","start"].forEach(id=>stage.appendChild(document.getElementById(id))); /* HUD가 무대와 함께 스케일 */
+const IS_TOUCH_MOBILE=/Mobi|Android|iPad|iPhone|iPod|Tablet/i.test(navigator.userAgent)||
+  (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let stScale=1;
 function fit(){const vv=window.visualViewport,vw=vv?.width||innerWidth,vh=vv?.height||innerHeight;
-  /* 소개서는 반응형 재배치 없이 1920x1080 무대 전체를 축소한다. 세로 모바일은 무대만 90도 회전한다. */
-  const portrait=vh>vw&&vw<1100;
+  /* 세로 화면에서 무대를 억지로 90도 돌리면 Safari/iPad에서 터치 영역이 찌그러진다.
+     세로에서는 회전 안내를 보여주고, 가로가 되면 16:9 무대를 안전하게 맞춘다. */
+  const mobileLayout=IS_TOUCH_MOBILE||Math.min(vw,vh)<900;
+  const portrait=mobileLayout&&vh>vw;
+  document.body.classList.toggle("mobile-device",mobileLayout);
   document.body.classList.toggle("portrait",portrait);
-  stScale=portrait?Math.min(vh/1920,vw/1080):Math.min(vw/1920,vh/1080);
+  document.body.classList.toggle("orientation-blocked",portrait);
+  document.body.classList.toggle("mobile-narrow",mobileLayout&&!portrait&&(vw<900||vh<500));
+  stScale=Math.min(vw/1920,vh/1080);
   document.body.classList.toggle("small",stScale<0.55);
-  stage.style.transform=`translate(-50%,-50%)${portrait?" rotate(90deg)":""} scale(${stScale})`}
-addEventListener("resize",fit);addEventListener("orientationchange",()=>setTimeout(fit,120));
-if(window.visualViewport){visualViewport.addEventListener("resize",fit);visualViewport.addEventListener("scroll",fit)}
+  const tap=Math.min(150,Math.max(80,Math.ceil(48/Math.max(stScale,.01))));
+  const controlFont=Math.min(62,Math.max(27,Math.ceil(20/Math.max(stScale,.01))));
+  const captionFont=Math.min(48,Math.max(35,Math.ceil(15.5/Math.max(stScale,.01))));
+  stage.style.setProperty("--tap-size",tap+"px");
+  stage.style.setProperty("--control-font",controlFont+"px");
+  stage.style.setProperty("--caption-font",captionFont+"px");
+  document.getElementById("app").style.setProperty("--side-gutter",Math.max(0,(vw-1920*stScale)/2)+"px");
+  /* 픽셀 이동값을 스케일에 맞춰 계산해 Safari의 transform-origin 해석 차이를 제거한다. */
+  stage.style.transformOrigin="0 0";
+  stage.style.transform=`translate(${-960*stScale}px,${-540*stScale}px) scale(${stScale})`}
+let fitFrame=0;
+function scheduleFit(){cancelAnimationFrame(fitFrame);fitFrame=requestAnimationFrame(fit)}
+addEventListener("resize",scheduleFit);
+addEventListener("orientationchange",()=>{setTimeout(fit,120);setTimeout(fit,500)});
+if(window.visualViewport)visualViewport.addEventListener("resize",scheduleFit);
 addEventListener("fullscreenchange",()=>setTimeout(fit,80));
 addEventListener("pageshow",fit);fit();
 setTimeout(fit,300);setTimeout(fit,900); /* 모바일 주소창 정착 후 재보정 */
@@ -2173,9 +2258,7 @@ let _tx=0,_ty=0;
 addEventListener("touchstart",e=>{const t=e.touches[0];_tx=t.clientX;_ty=t.clientY},{passive:true});
 addEventListener("touchend",e=>{if(!started)return;
   const t=e.changedTouches[0],dx=t.clientX-_tx,dy=t.clientY-_ty;
-  const portrait=document.body.classList.contains("portrait");
-  const main=portrait?dy:dx,cross=portrait?dx:dy;
-  if(Math.abs(main)>52&&Math.abs(main)>Math.abs(cross)*1.2){main<0?next():prev()}},{passive:true});
+  if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)*1.2){dx<0?next():prev()}},{passive:true});
 
 /* ---------- per-scene timer registry ---------- */
 const T={ids:[],stops:[],
@@ -2218,6 +2301,27 @@ const NARRIDX={s01:0,s02:1,s03:2,s04:3,s05:4,s06:5,s07:6,s08:7,s09:8,s10:9,s11:1
 
 /* ---------- TTS engine ---------- */
 const synth=("speechSynthesis" in window)?window.speechSynthesis:null;
+const recordedNarration=new Audio();
+recordedNarration.preload="metadata";
+recordedNarration.playsInline=true;
+recordedNarration.setAttribute("playsinline","");
+recordedNarration.setAttribute("webkit-playsinline","");
+let recordedAudioAvailable=true;
+const RECORDED_VOICES=[
+  {id:"mix",ico:"🎙️",label:"추천 혼합",desc:"F2 진행 · M1 기술 설명",isDefault:true},
+  {id:"f1",ico:"👩",label:"여성 F1",desc:"따뜻하고 차분함"},
+  {id:"f2",ico:"👩",label:"여성 F2",desc:"밝고 지적인 기술 프레젠터"},
+  {id:"f3",ico:"👩",label:"여성 F3",desc:"낮고 성숙한 내레이션"},
+  {id:"m1",ico:"👨",label:"남성 M1",desc:"명료하고 신뢰감 있음"},
+  {id:"m2",ico:"👨",label:"남성 M2",desc:"깊고 차분함"},
+  {id:"m3",ico:"👨",label:"남성 M3",desc:"젊고 현대적인 기술 프레젠터"}
+];
+const DEFAULT_RECORDED_VOICE="mix";
+const MIXED_M1_SCENES={s06:1,s07:1,s09:1,s10:1,s11:1,s12:1,s13:1,s14:1,s15:1,s16:1,sAI:1};
+function sceneVoice(sceneId){return recordedVoice==="mix"?(MIXED_M1_SCENES[sceneId]?"m1":"f2"):recordedVoice}
+let recordedVoice=DEFAULT_RECORDED_VOICE;
+try{const saved=localStorage.getItem("ziewise-narrator-v2");
+  if(RECORDED_VOICES.some(v=>v.id===saved))recordedVoice=saved}catch(e){}
 let voices=[],chosen=null,rate=0.95,voiceOn=true,autoplay=false,speakToken=0,cur=-1,started=false;
 let roster=[];
 function dispName(v){const n=v.name;
@@ -2229,8 +2333,8 @@ function dispName(v){const n=v.name;
   return n.replace(/Microsoft |Online |\(Natural\)|Neural| - .*$/gi,"").trim()}
 function loadVoices(){if(!synth)return;const all=synth.getVoices();if(!all.length)return;
   const ko=all.filter(v=>/ko/i.test(v.lang)||/한국/.test(v.name));
-  /* 기계음(구형 SAPI · Heami 등) 제외 — 신경망/자연 음성만 */
-  const pool=ko.filter(v=>(/natural|neural/i.test(v.name)||/^Google/i.test(v.name)||/yuna|유나/i.test(v.name))&&!/heami|헤아미/i.test(v.name));
+  /* 브라우저 TTS는 데스크톱 예비 수단이다. iOS Yuna/구형 SAPI는 품질 편차가 커서 제외한다. */
+  const pool=ko.filter(v=>(/natural|neural/i.test(v.name)||/^Google/i.test(v.name))&&!/heami|헤아미|yuna|유나/i.test(v.name));
   const grab=re=>pool.find(v=>re.test(v.name));
   const F=[...new Set([grab(/sunhi|선히/i),grab(/jimin|지민/i),grab(/seohyeon|서현/i),grab(/yujin|유진/i),grab(/soonbok|순복/i),grab(/^Google/i),grab(/yuna|유나/i)].filter(Boolean))].slice(0,2);
   const M=[...new Set([grab(/injoon|인준/i),grab(/hyunsu|현수/i),grab(/bongjin|봉진/i),grab(/gookmin|국민/i)].filter(Boolean))].slice(0,2);
@@ -2239,32 +2343,75 @@ function loadVoices(){if(!synth)return;const all=synth.getVoices();if(!all.lengt
   if(!chosen||!roster.some(r=>r.v===chosen))chosen=(F[0]||roster[0]?.v)||null;
   renderVoices()}
 function renderVoices(){const g=$("#voiceGrid");if(!g)return;
+  if(recordedAudioAvailable){
+    g.innerHTML=RECORDED_VOICES.map(v=>`<button class="vopt${v.id===recordedVoice?" on":""}" data-voice="${v.id}" aria-pressed="${v.id===recordedVoice}"><span class="vi">${v.ico}</span><span class="vtxt"><span>${v.label}</span><small>${v.desc}</small></span>${v.isDefault?'<span class="vdefault">기본</span>':''}</button>`).join("");
+    const active=RECORDED_VOICES.find(v=>v.id===recordedVoice);
+    const badge=$("#capBadge span:last-child");if(badge&&active)badge.textContent=`NARRATION · ${active.label}`;
+    return
+  }
   g.innerHTML=roster.length?roster.map((r,i)=>`<button class="vopt${r.v===chosen?" on":""}" data-i="${i}"><span class="vi">${r.ico}</span>${r.label}</button>`).join(""):
-  `<div class="novoice">이 브라우저에는 자연스러운 한국어 음성이 없어 자막으로 진행됩니다.<br><b>Microsoft Edge</b>에서 열면 신경망 음성 4종이 제공됩니다.</div>`}
+  `<div class="novoice">이 브라우저에는 검증된 한국어 음성이 없어 자막으로 진행됩니다.</div>`}
 let renarrOnce=false;
 if(synth){loadVoices();
   synth.onvoiceschanged=()=>{loadVoices();
-    if(!renarrOnce&&started&&voiceOn&&chosen&&!synth.speaking){renarrOnce=true;narrate(cur)}};
+    if(!recordedAudioAvailable&&!renarrOnce&&started&&voiceOn&&chosen&&!synth.speaking){renarrOnce=true;narrate(cur)}};
   setInterval(()=>{if(synth.speaking&&!synth.paused)synth.resume()},4000)}
-const splitSents=t=>t.split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean); /* 소수점(6.6)에서 끊기지 않도록 공백 뒤에서만 분할 */
+renderVoices();
+/* 정규식 lookbehind를 피해서 구형 Safari에서도 문장 분리가 동작한다. */
+function splitSents(t){const out=[];let start=0;
+  for(let i=0;i<t.length;i++){const ch=t[i],decimal=ch==="."&&/\d/.test(t[i-1]||"")&&/\d/.test(t[i+1]||"");
+    if(!decimal&&(ch==="."||ch==="!"||ch==="?")&&(!t[i+1]||/\s/.test(t[i+1]))){
+      const s=t.slice(start,i+1).trim();if(s)out.push(s);start=i+1
+    }}
+  const tail=t.slice(start).trim();if(tail)out.push(tail);return out}
 const estimate=t=>Math.max(6500,t.length*105);
 function renderCaption(text){caption.classList.remove("hide");capText.innerHTML=splitSents(text).map(s=>`<span class="sent">${s}</span>`).join(" ")}
 function hl(k){$$("#capText .sent").forEach((el,i)=>el.classList.toggle("on",i===k))}
-function stopSpeak(){speakToken++;if(synth)synth.cancel();capBadge.classList.add("idle")}
+function stopSpeak(){speakToken++;
+  recordedNarration.pause();recordedNarration.onended=null;recordedNarration.onerror=null;
+  recordedNarration.ontimeupdate=null;recordedNarration.onloadedmetadata=null;
+  try{recordedNarration.currentTime=0}catch(e){}
+  if(synth)synth.cancel();capBadge.classList.add("idle")}
+function captionByTime(sents,current,duration){if(!duration||!isFinite(duration)){hl(0);return}
+  const weights=sents.map(s=>Math.max(1,s.replace(/\s/g,"").length)),total=weights.reduce((a,b)=>a+b,0);
+  let acc=0,k=0;for(let i=0;i<weights.length;i++){acc+=weights[i]/total;if(current/duration<=acc){k=i;break}}
+  hl(k)}
+function fallbackNarrate(text,sents,finish,token){
+  /* 모바일 내장 음성은 제조사/OS마다 편차가 크다. 녹음 파일이 없으면 기계음 대신 자막으로 진행한다. */
+  if(!document.body.classList.contains("mobile-device")&&voiceOn&&synth&&chosen){
+    let k=0;const one=()=>{if(token!==speakToken)return;
+      if(k>=sents.length){finish();return}hl(k);
+      const u=new SpeechSynthesisUtterance(sents[k]);u.voice=chosen;u.lang=chosen.lang||"ko-KR";u.rate=rate;u.pitch=1.02;
+      u.onend=()=>{if(token!==speakToken)return;k++;setTimeout(one,140)};
+      u.onerror=()=>{if(token!==speakToken)return;k++;setTimeout(one,80)};synth.speak(u)};
+    synth.cancel();setTimeout(one,80);return
+  }
+  let k=0;hl(0);const per=estimate(text)/sents.length;
+  T.every(()=>{if(token!==speakToken)return;k++;if(k<sents.length)hl(k)},per);
+  T.after(()=>{if(token===speakToken)finish()},estimate(text))
+}
+function playRecorded(i,text,sents,finish,token){let failed=false;
+  if(recordedVoice==="mix"){
+    const badge=$("#capBadge span:last-child"),speaker=sceneVoice(scenes[i].id).toUpperCase();
+    if(badge)badge.textContent=`NARRATION · 혼합 ${speaker}`
+  }
+  const fail=()=>{if(failed||token!==speakToken)return;failed=true;recordedAudioAvailable=false;renderVoices();fallbackNarrate(text,sents,finish,token)};
+  recordedNarration.onerror=fail;
+  recordedNarration.onloadedmetadata=()=>captionByTime(sents,0,recordedNarration.duration);
+  recordedNarration.ontimeupdate=()=>{if(token===speakToken)captionByTime(sents,recordedNarration.currentTime,recordedNarration.duration)};
+  recordedNarration.onended=()=>{if(!failed&&token===speakToken)finish()};
+  recordedNarration.playbackRate=rate;
+  if("preservesPitch" in recordedNarration)recordedNarration.preservesPitch=true;
+  recordedNarration.src=new URL(`audio/${sceneVoice(scenes[i].id)}/${scenes[i].id}.mp3`,document.baseURI).href;
+  recordedNarration.load();const playPromise=recordedNarration.play();
+  if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(fail)
+}
 function narrate(i){if(i<0||!scenes[i])return;stopSpeak();const text=NARR[NARRIDX[scenes[i].id]]||"";if(!text){capText.innerHTML="";return}
   renderCaption(text);const sents=splitSents(text);
   const finish=()=>{capBadge.classList.add("idle");if(autoplay)T.after(()=>go(cur+1),1000)};
-  if(voiceOn&&synth&&chosen){
-    capBadge.classList.remove("idle");const token=++speakToken;let k=0;
-    const one=()=>{if(token!==speakToken)return;
-      if(k>=sents.length){finish();return}
-      hl(k);
-      const u=new SpeechSynthesisUtterance(sents[k]);
-      u.voice=chosen;u.lang=chosen.lang||"ko-KR";u.rate=rate;u.pitch=1.02;
-      u.onend=()=>{if(token!==speakToken)return;k++;setTimeout(one,140)};
-      u.onerror=()=>{if(token!==speakToken)return;k++;setTimeout(one,80)};
-      synth.speak(u)};
-    synth.cancel();setTimeout(one,80);
+  if(voiceOn){
+    capBadge.classList.remove("idle");const token=++speakToken;
+    if(recordedAudioAvailable)playRecorded(i,text,sents,finish,token);else fallbackNarrate(text,sents,finish,token)
   }else{
     let k=0;hl(0);const per=estimate(text)/sents.length;
     T.every(function tick(){k++;if(k<sents.length)hl(k)},per);
@@ -2300,10 +2447,9 @@ function setAuto(v){autoplay=v;btnAuto.classList.toggle("on",v);btnAuto.innerHTM
 btnAuto.onclick=()=>setAuto(!autoplay);
 const btnVoice=$("#btnVoice");
 btnVoice.onclick=()=>{voiceOn=!voiceOn;btnVoice.textContent=voiceOn?"🔊":"🔇";btnVoice.classList.toggle("on",false);
-  if(!voiceOn)stopSpeak();else if(started)narrate(cur)};
+  if(started)narrate(cur);else if(!voiceOn)stopSpeak()};
 function mobileLike(){
-  return /Mobi|Android|iPad|iPhone|Tablet/i.test(navigator.userAgent)||
-    (navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1)
+  return IS_TOUCH_MOBILE
 }
 async function requestLandscapeFullscreen(){
   const root=document.documentElement;
@@ -2328,7 +2474,10 @@ $("#btnFull").onclick=async()=>{
 const setPop=$("#setPop");
 $("#btnSet").onclick=()=>setPop.classList.toggle("open");
 $("#voiceGrid").addEventListener("click",e=>{const b=e.target.closest(".vopt");if(!b)return;
-  chosen=roster[+b.dataset.i].v;renderVoices();if(started)narrate(cur)});
+  if(b.dataset.voice){recordedVoice=b.dataset.voice;recordedAudioAvailable=true;
+    try{localStorage.setItem("ziewise-narrator-v2",recordedVoice)}catch(e){}
+    renderVoices();if(started)narrate(cur);return}
+  const item=roster[+b.dataset.i];if(!item)return;chosen=item.v;renderVoices();if(started)narrate(cur)});
 $$("#setPop .rates .cbtn").forEach(b=>b.onclick=()=>{$$("#setPop .rates .cbtn").forEach(x=>x.classList.remove("on"));
   b.classList.add("on");rate=+b.dataset.rate;if(started)narrate(cur)});
 /* overview */
@@ -2349,15 +2498,13 @@ addEventListener("keydown",e=>{if(e.target.tagName==="SELECT"||e.target.tagName=
   else if(e.key==="Escape"){ovl.classList.remove("open");setPop.classList.remove("open")}});
 /* start overlay */
 function begin(auto){if(started)return;started=true;
-  if(synth){const u=new SpeechSynthesisUtterance(" ");u.volume=0;synth.speak(u)} /* unlock */
   loadVoices();
-  const shouldLockLandscape=mobileLike()&&innerHeight>innerWidth;
-  if(shouldLockLandscape)requestLandscapeFullscreen(); /* 세로 모바일만 가로 전체화면 요청 */
   /* 두 모드 — 자동 재생: 음성 켜고 끝까지 자동 진행 · 발표 모드: 수동 넘김 + 애니메이션, 음성은 기본 꺼짐(🔊로 켜기) */
   document.body.classList.add("started");
   voiceOn=auto;btnVoice.textContent=auto?"🔊":"🔇";
   $("#start").classList.add("gone");setAuto(auto);
-  setTimeout(()=>{if(cur===-1)go(0)},380)}
+  /* iOS Safari는 사용자 탭과 같은 호출 스택에서 첫 audio.play()가 실행되어야 한다. */
+  if(cur===-1)go(0)}
 $("#goAuto").onclick=()=>begin(true);
 $("#goManual").onclick=()=>begin(false);
 /* 모바일 인앱 브라우저에서 click 미발화 대비 — 터치로도 시작 */
