@@ -140,23 +140,6 @@ p.lead{margin-top:14px;font-size:21px;color:var(--ink2);letter-spacing:-.01em;li
 #hudMeta #hudKick{color:var(--acc)}
 #hudMeta #hudIdx{font-variant-numeric:tabular-nums;color:var(--ink2)}
 
-/* caption */
-#capWrap{position:absolute;left:50%;bottom:88px;transform:translateX(-50%);width:1310px;max-width:82%;
-  pointer-events:none;display:flex;justify-content:center;z-index:55}
-#caption{background:rgba(6,11,22,.82);backdrop-filter:blur(10px);border:1px solid var(--line);
-  border-radius:16px;padding:18px 30px;font-size:21px;line-height:1.55;color:#8fa2bd;text-align:center;
-  box-shadow:0 16px 44px rgba(0,0,0,.5);letter-spacing:-.005em;transition:opacity .4s}
-#caption .sent{transition:color .3s}
-#caption .sent.on{color:#f2f6fc;text-shadow:0 0 18px rgba(56,189,248,.25)}
-#caption.hide{opacity:0}
-#capBadge{position:absolute;top:-13px;left:28px;display:flex;align-items:center;gap:7px;padding:3px 12px;border-radius:999px;
-  font-size:12px;font-weight:700;letter-spacing:.22em;color:var(--acc);background:#0a1526;border:1px solid rgba(56,189,248,.35)}
-@keyframes voiceBar{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
-#capBadge .vb{display:inline-flex;gap:2.5px;align-items:flex-end;height:12px}
-#capBadge .vb i{width:2.5px;height:12px;background:var(--acc);border-radius:2px;transform-origin:bottom;animation:voiceBar 1s ease-in-out infinite}
-#capBadge .vb i:nth-child(2){animation-delay:.2s}#capBadge .vb i:nth-child(3){animation-delay:.4s}
-#capBadge.idle .vb i{animation-play-state:paused;transform:scaleY(.35)}
-
 /* controls */
 #ctrl{position:absolute;right:40px;bottom:26px;display:flex;align-items:center;gap:10px;pointer-events:auto;z-index:70}
 .cbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;min-width:46px;padding:0 16px;
@@ -2047,12 +2030,6 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
       </div>
       <div id="hudMeta"><span id="hudKick">COMPANY PROFILE</span><span>│</span><span id="hudIdx">01 / 20</span></div>
     </div>
-    <div id="capWrap">
-      <div id="caption">
-        <div id="capBadge" class="idle"><span class="vb"><i></i><i></i><i></i></span><span>NARRATION</span></div>
-        <span id="capText"></span>
-      </div>
-    </div>
     <div id="wm"><img class="brandimg" data-kind="mark" alt="">ZIEWCORE · EXPERT AI PLATFORM</div>
     <div id="navArrows">
       <button class="cbtn" id="btnPrev" title="이전 (←)">◀</button>
@@ -2117,7 +2094,6 @@ kbd{display:inline-block;padding:2px 8px;border-radius:6px;border:1px solid var(
 .chartCard{position:relative}
 #hudTop{pointer-events:none}
 .mm.aiok{border-color:rgba(56,189,248,.6);box-shadow:0 0 10px rgba(56,189,248,.35)}
-#caption:empty{display:none}
 select option{background:#0a1424;color:#e8eef8}
 /* ---- 미리 생성된 한국어 음성: 추천 혼합 + 단일 음성 6종 ---- */
 #voiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
@@ -2131,7 +2107,7 @@ select option{background:#0a1424;color:#e8eef8}
 .vopt.on .vtxt small{color:#bfe9ff}
 .vopt .vdefault{flex:none;margin-left:auto;padding:3px 6px;border-radius:999px;background:rgba(70,184,239,.15);color:var(--acc2);font-size:10px;letter-spacing:.05em}
 .novoice{font-size:13.5px;color:var(--mut);line-height:1.65;padding:4px 2px}
-/* 시작 전에는 하단 컨트롤·자막 숨김 — 게이트에 집중 */
+/* 시작 전에는 하단 컨트롤 숨김 — 게이트에 집중 */
 body:not(.started) #hud{visibility:hidden}
 /* ---- 커버 로고 크리스탈 연출 ---- */
 .logoHero{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
@@ -2152,9 +2128,6 @@ body:not(.started) #hud{visibility:hidden}
 body.small .cbtn{height:80px;min-width:80px;padding:0 28px;font-size:27px;border-radius:20px}
 body.small #navArrows{left:28px;bottom:20px;gap:14px}
 body.small #ctrl{right:28px;bottom:20px;gap:14px}
-body.small #caption{font-size:35px;line-height:1.5;padding:28px 42px;border-radius:24px}
-body.small #capWrap{bottom:130px;width:1560px;max-width:88%}
-body.small #capBadge{font-size:21px;top:-21px;padding:6px 20px;border-radius:999px}
 body.small #hudTop{height:104px;padding:0 54px}
 body.small #hudBrand{font-size:31px}
 body.small #hudBrand img{width:48px}
@@ -2229,7 +2202,6 @@ body.orientation-blocked #stage{visibility:hidden}
 /* Scale-aware variables are set in fit(); these keep real touch targets >= 44 CSS px. */
 body.mobile-device .cbtn{height:var(--tap-size,80px);min-width:var(--tap-size,80px);
   padding:0 calc(var(--tap-size,80px)*.28);font-size:var(--control-font,27px)}
-body.mobile-device #caption{font-size:var(--caption-font,35px)}
 body.mobile-narrow #navArrows{left:34px;gap:18px}
 body.mobile-narrow #ctrl{right:34px;gap:18px}
 body.mobile-narrow #btnNext,body.mobile-narrow #btnMenu,body.mobile-narrow #btnAuto{font-size:0;padding:0}
@@ -2237,15 +2209,11 @@ body.mobile-narrow #btnNext::after{content:"▶";font-size:var(--control-font,34
 body.mobile-narrow #btnMenu::after{content:"☰";font-size:var(--control-font,34px)}
 body.mobile-narrow #btnAuto::after{content:"▶";font-size:var(--control-font,34px)}
 body.mobile-narrow #btnAuto.on::after{content:"⏸"}
+body.mobile-narrow #btnAuto.paused::after{content:"▶"}
 body.mobile-narrow #hudBrand .sub,body.mobile-narrow #hudMeta span:nth-child(2){display:none}
-body.mobile-narrow #capWrap{bottom:calc(var(--tap-size,80px) + 66px)}
 body.mobile-narrow.scene-s13 #s13{padding-top:72px}
 body.mobile-narrow.scene-s13 #vmsFrame{margin-top:12px;height:520px}
 body.mobile-narrow.scene-s13 #s13 .vmsfoot{display:none}
-body.mobile-narrow.scene-s13 #capWrap{bottom:calc(var(--tap-size,80px) + 44px);width:1760px;max-width:94%}
-body.mobile-narrow.scene-s13 #caption{font-size:30px;line-height:1.35;padding:16px 28px;border-radius:20px}
-body.mobile-narrow.scene-s20 #capWrap{bottom:calc(var(--tap-size,80px) + 44px);width:1760px;max-width:94%}
-body.mobile-narrow.scene-s20 #caption{font-size:28px;line-height:1.35;padding:16px 28px;border-radius:20px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -2258,7 +2226,6 @@ body.mobile-narrow.scene-s20 #caption{font-size:28px;line-height:1.35;padding:16
 const $=(q,el=document)=>el.querySelector(q), $$=(q,el=document)=>[...el.querySelectorAll(q)];
 const stage=$("#stage"), scenes=$$(".scene");
 const hudKick=$("#hudKick"), hudIdx=$("#hudIdx"), progressBar=$("#progress");
-const capText=$("#capText"), capBadge=$("#capBadge"), caption=$("#caption");
 
 /* ---------- fixed 1920x1080 stage + mobile-safe viewport ---------- */
 ["hud","ovl","start"].forEach(id=>stage.appendChild(document.getElementById(id))); /* HUD가 무대와 함께 스케일 */
@@ -2278,10 +2245,8 @@ function fit(){const vv=window.visualViewport,vw=vv?.width||innerWidth,vh=vv?.he
   document.body.classList.toggle("small",stScale<0.55);
   const tap=Math.min(150,Math.max(80,Math.ceil(48/Math.max(stScale,.01))));
   const controlFont=Math.min(62,Math.max(27,Math.ceil(20/Math.max(stScale,.01))));
-  const captionFont=Math.min(48,Math.max(35,Math.ceil(15.5/Math.max(stScale,.01))));
   stage.style.setProperty("--tap-size",tap+"px");
   stage.style.setProperty("--control-font",controlFont+"px");
-  stage.style.setProperty("--caption-font",captionFont+"px");
   document.getElementById("app").style.setProperty("--side-gutter",Math.max(0,(vw-1920*stScale)/2)+"px");
   /* 픽셀 이동값을 스케일에 맞춰 계산해 Safari의 transform-origin 해석 차이를 제거한다. */
   stage.style.transformOrigin="0 0";
@@ -2367,7 +2332,9 @@ function sceneVoice(sceneId){return recordedVoice==="mix"?(MIXED_M1_SCENES[scene
 let recordedVoice=DEFAULT_RECORDED_VOICE;
 try{const saved=localStorage.getItem("ziewise-narrator-v2");
   if(RECORDED_VOICES.some(v=>v.id===saved))recordedVoice=saved}catch(e){}
-let voices=[],chosen=null,rate=0.95,voiceOn=true,autoplay=false,speakToken=0,cur=-1,started=false;
+let voices=[],chosen=null,rate=0.95,voiceOn=true,autoplay=false,playbackPaused=false,speakToken=0,cur=-1,started=false;
+let recordedActive=false,autoAdvanceTimer=0,pendingAdvance=false;
+let fallbackTimer=0,fallbackDeadline=0,fallbackRemaining=0,fallbackFinish=null,speechResume=null;
 let roster=[];
 function dispName(v){const n=v.name;
   if(/sunhi|선히/i.test(n))return"선히 · 차분함";if(/jimin|지민/i.test(n))return"지민 · 밝음";
@@ -2390,17 +2357,15 @@ function loadVoices(){if(!synth)return;const all=synth.getVoices();if(!all.lengt
 function renderVoices(){const g=$("#voiceGrid");if(!g)return;
   if(recordedAudioAvailable){
     g.innerHTML=RECORDED_VOICES.map(v=>`<button class="vopt${v.id===recordedVoice?" on":""}" data-voice="${v.id}" aria-pressed="${v.id===recordedVoice}"><span class="vi">${v.ico}</span><span class="vtxt"><span>${v.label}</span><small>${v.desc}</small></span>${v.isDefault?'<span class="vdefault">기본</span>':''}</button>`).join("");
-    const active=RECORDED_VOICES.find(v=>v.id===recordedVoice);
-    const badge=$("#capBadge span:last-child");if(badge&&active)badge.textContent=`NARRATION · ${active.label}`;
     return
   }
   g.innerHTML=roster.length?roster.map((r,i)=>`<button class="vopt${r.v===chosen?" on":""}" data-i="${i}"><span class="vi">${r.ico}</span>${r.label}</button>`).join(""):
-  `<div class="novoice">이 브라우저에는 검증된 한국어 음성이 없어 자막으로 진행됩니다.</div>`}
+  `<div class="novoice">나레이션 음성을 불러오지 못했습니다. 장면은 설정된 시간에 맞춰 자동 진행됩니다.</div>`}
 let renarrOnce=false;
 if(synth){loadVoices();
   synth.onvoiceschanged=()=>{loadVoices();
     if(!recordedAudioAvailable&&!renarrOnce&&started&&voiceOn&&chosen&&!synth.speaking){renarrOnce=true;narrate(cur)}};
-  setInterval(()=>{if(synth.speaking&&!synth.paused)synth.resume()},4000)}
+  setInterval(()=>{if(synth.speaking&&!playbackPaused)synth.resume()},4000)}
 renderVoices();
 /* 정규식 lookbehind를 피해서 구형 Safari에서도 문장 분리가 동작한다. */
 function splitSents(t){const out=[];let start=0;
@@ -2410,58 +2375,56 @@ function splitSents(t){const out=[];let start=0;
     }}
   const tail=t.slice(start).trim();if(tail)out.push(tail);return out}
 const estimate=t=>Math.max(6500,t.length*105);
-function renderCaption(text){caption.classList.remove("hide");capText.innerHTML=splitSents(text).map(s=>`<span class="sent">${s}</span>`).join(" ")}
-function hl(k){$$("#capText .sent").forEach((el,i)=>el.classList.toggle("on",i===k))}
-function stopSpeak(){speakToken++;
+function clearAutoAdvance(){if(autoAdvanceTimer){clearTimeout(autoAdvanceTimer);autoAdvanceTimer=0}}
+function queueAutoAdvance(delay=1000){pendingAdvance=autoplay;clearAutoAdvance();
+  if(!autoplay||playbackPaused)return;
+  autoAdvanceTimer=setTimeout(()=>{autoAdvanceTimer=0;if(!autoplay||playbackPaused)return;
+    pendingAdvance=false;go(cur+1)},delay)}
+function clearFallbackTimer(){if(fallbackTimer){clearTimeout(fallbackTimer);fallbackTimer=0}fallbackDeadline=0}
+function startFallbackTimer(ms,finish,token){clearFallbackTimer();fallbackRemaining=Math.max(0,ms);fallbackFinish=finish;
+  if(playbackPaused)return;
+  fallbackDeadline=performance.now()+fallbackRemaining;
+  fallbackTimer=setTimeout(()=>{fallbackTimer=0;fallbackDeadline=0;fallbackRemaining=0;
+    if(token!==speakToken||playbackPaused)return;const done=fallbackFinish;fallbackFinish=null;if(done)done()},fallbackRemaining)}
+function stopSpeak(preservePause=false){speakToken++;clearAutoAdvance();clearFallbackTimer();
+  recordedActive=false;pendingAdvance=false;fallbackRemaining=0;fallbackFinish=null;speechResume=null;
   recordedNarration.pause();recordedNarration.onended=null;recordedNarration.onerror=null;
   recordedNarration.ontimeupdate=null;recordedNarration.onloadedmetadata=null;
   try{recordedNarration.currentTime=0}catch(e){}
-  if(synth)synth.cancel();capBadge.classList.add("idle")}
-function captionByTime(sents,current,duration){if(!duration||!isFinite(duration)){hl(0);return}
-  const weights=sents.map(s=>Math.max(1,s.replace(/\s/g,"").length)),total=weights.reduce((a,b)=>a+b,0);
-  let acc=0,k=0;for(let i=0;i<weights.length;i++){acc+=weights[i]/total;if(current/duration<=acc){k=i;break}}
-  hl(k)}
+  if(synth)synth.cancel();if(!preservePause)playbackPaused=false}
 function fallbackNarrate(text,sents,finish,token){
-  /* 모바일 내장 음성은 제조사/OS마다 편차가 크다. 녹음 파일이 없으면 기계음 대신 자막으로 진행한다. */
-  if(!document.body.classList.contains("mobile-device")&&voiceOn&&synth&&chosen){
+  /* 녹음 파일을 불러오지 못한 경우 브라우저 TTS를 사용하고, 그것도 없으면 장면 시간만 유지한다. */
+  if(voiceOn&&synth&&chosen){
     let k=0;const one=()=>{if(token!==speakToken)return;
-      if(k>=sents.length){finish();return}hl(k);
+      if(playbackPaused){speechResume=one;return}
+      speechResume=null;if(k>=sents.length){finish();return}
       const u=new SpeechSynthesisUtterance(sents[k]);u.voice=chosen;u.lang=chosen.lang||"ko-KR";u.rate=rate;u.pitch=1.02;u.volume=narrationVolume;
       u.onend=()=>{if(token!==speakToken)return;k++;setTimeout(one,140)};
       u.onerror=()=>{if(token!==speakToken)return;k++;setTimeout(one,80)};synth.speak(u)};
     synth.cancel();setTimeout(one,80);return
   }
-  let k=0;hl(0);const per=estimate(text)/sents.length;
-  T.every(()=>{if(token!==speakToken)return;k++;if(k<sents.length)hl(k)},per);
-  T.after(()=>{if(token===speakToken)finish()},estimate(text))
+  startFallbackTimer(estimate(text),finish,token)
 }
 function playRecorded(i,text,sents,finish,token){let failed=false;
-  if(recordedVoice==="mix"){
-    const badge=$("#capBadge span:last-child"),speaker=sceneVoice(scenes[i].id).toUpperCase();
-    if(badge)badge.textContent=`NARRATION · 혼합 ${speaker}`
-  }
-  const fail=()=>{if(failed||token!==speakToken)return;failed=true;recordedAudioAvailable=false;renderVoices();fallbackNarrate(text,sents,finish,token)};
+  recordedActive=true;
+  const fail=()=>{if(failed||token!==speakToken)return;failed=true;recordedActive=false;
+    recordedAudioAvailable=false;renderVoices();fallbackNarrate(text,sents,finish,token)};
   recordedNarration.onerror=fail;
-  recordedNarration.onloadedmetadata=()=>captionByTime(sents,0,recordedNarration.duration);
-  recordedNarration.ontimeupdate=()=>{if(token===speakToken)captionByTime(sents,recordedNarration.currentTime,recordedNarration.duration)};
-  recordedNarration.onended=()=>{if(!failed&&token===speakToken)finish()};
+  recordedNarration.onended=()=>{recordedActive=false;if(!failed&&token===speakToken)finish()};
   recordedNarration.playbackRate=rate;
   if("preservesPitch" in recordedNarration)recordedNarration.preservesPitch=true;
   recordedNarration.src=new URL(`audio/${sceneVoice(scenes[i].id)}/${scenes[i].id}.mp3`,document.baseURI).href;
   recordedNarration.load();const playPromise=recordedNarration.play();
-  if(playPromise&&typeof playPromise.catch==="function")playPromise.catch(fail)
+  if(playPromise&&typeof playPromise.then==="function")playPromise.then(()=>{if(playbackPaused)recordedNarration.pause()}).catch(fail)
 }
-function narrate(i){if(i<0||!scenes[i])return;stopSpeak();const text=NARR[NARRIDX[scenes[i].id]]||"";if(!text){capText.innerHTML="";return}
-  renderCaption(text);const sents=splitSents(text);
-  const finish=()=>{capBadge.classList.add("idle");if(autoplay)T.after(()=>go(cur+1),1000)};
+function narrate(i){if(i<0||!scenes[i])return;stopSpeak(true);const text=NARR[NARRIDX[scenes[i].id]]||"";
+  if(!text||playbackPaused||(!voiceOn&&!autoplay))return;const sents=splitSents(text);
+  const finish=()=>{recordedActive=false;speechResume=null;fallbackFinish=null;fallbackRemaining=0;
+    if(autoplay)queueAutoAdvance(1000)};
+  const token=++speakToken;
   if(voiceOn){
-    capBadge.classList.remove("idle");const token=++speakToken;
     if(recordedAudioAvailable)playRecorded(i,text,sents,finish,token);else fallbackNarrate(text,sents,finish,token)
-  }else{
-    let k=0;hl(0);const per=estimate(text)/sents.length;
-    T.every(function tick(){k++;if(k<sents.length)hl(k)},per);
-    T.after(finish,estimate(text));
-  }}
+  }else startFallbackTimer(estimate(text),finish,token)}
 
 /* ---------- scene navigation ---------- */
 const FX={}; // per-scene enter/leave, filled below
@@ -2487,9 +2450,27 @@ function countUp(el,to,dur=1400,dec=0){const t0=performance.now();
 /* ---------- controls ---------- */
 $("#btnNext").onclick=next;$("#btnPrev").onclick=prev;
 const btnAuto=$("#btnAuto");
-function setAuto(v){autoplay=v;btnAuto.classList.toggle("on",v);btnAuto.innerHTML=v?"⏸ 자동재생 중":"▶ 자동재생";
-  if(v&&started&&cur>=0)narrate(cur)}
-btnAuto.onclick=()=>setAuto(!autoplay);
+function updateAutoButton(){btnAuto.classList.toggle("on",autoplay);btnAuto.classList.toggle("paused",autoplay&&playbackPaused);
+  btnAuto.innerHTML=!autoplay?"▶ 자동재생":playbackPaused?"▶ 계속 재생":"⏸ 일시정지";
+  btnAuto.title=!autoplay?"자동 재생 시작 (A)":playbackPaused?"계속 재생 (A)":"일시정지 (A)"}
+function pausePlayback(){if(!autoplay||playbackPaused)return;playbackPaused=true;clearAutoAdvance();
+  if(recordedActive&&!recordedNarration.paused)recordedNarration.pause();
+  if(synth&&synth.speaking&&!synth.paused)synth.pause();
+  if(fallbackTimer){fallbackRemaining=Math.max(0,fallbackDeadline-performance.now());clearFallbackTimer()}
+  updateAutoButton()}
+function resumePlayback(){if(!autoplay||!playbackPaused)return;playbackPaused=false;updateAutoButton();
+  if(recordedActive&&!recordedNarration.ended){const p=recordedNarration.play();
+    if(p&&typeof p.catch==="function")p.catch(()=>{const fail=recordedNarration.onerror;if(typeof fail==="function")fail()});return}
+  if(synth&&synth.paused){synth.resume();return}
+  if(speechResume){const resume=speechResume;speechResume=null;resume();return}
+  if(fallbackFinish){startFallbackTimer(fallbackRemaining||250,fallbackFinish,speakToken);return}
+  if(pendingAdvance){queueAutoAdvance(300);return}
+  if(started&&cur>=0)narrate(cur)}
+function setAuto(v){autoplay=!!v;
+  if(!autoplay){stopSpeak();pendingAdvance=false}else{playbackPaused=false;if(started&&cur>=0)narrate(cur)}
+  updateAutoButton()}
+btnAuto.onclick=()=>{if(!autoplay)setAuto(true);else if(playbackPaused)resumePlayback();else pausePlayback()};
+updateAutoButton();
 const btnVoice=$("#btnVoice");
 btnVoice.onclick=()=>{voiceOn=!voiceOn;btnVoice.textContent=voiceOn?"🔊":"🔇";btnVoice.classList.toggle("on",false);
   if(started)narrate(cur);else if(!voiceOn)stopSpeak()};
@@ -2544,7 +2525,7 @@ addEventListener("keydown",e=>{if(e.target.tagName==="SELECT"||e.target.tagName=
   if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){if(!started)return;e.preventDefault();next()}
   else if(e.key==="ArrowLeft"||e.key==="PageUp"){if(!started)return;e.preventDefault();prev()}
   else if(e.key==="Home"){go(0)}else if(e.key==="End"){go(scenes.length-1)}
-  else if(e.key==="a"||e.key==="A"||e.key==="ㅁ"){setAuto(!autoplay)}
+  else if(e.key==="a"||e.key==="A"||e.key==="ㅁ"){btnAuto.onclick()}
   else if(e.key==="m"||e.key==="M"||e.key==="ㅡ"){btnVoice.onclick()}
   else if(e.key==="f"||e.key==="F"||e.key==="ㄹ"){$("#btnFull").onclick()}
   else if(e.key==="g"||e.key==="G"||e.key==="ㅎ"){ovl.classList.toggle("open")}
@@ -3056,7 +3037,7 @@ document.getElementById("bgMark").src=LOGO_MARK;
   s.innerHTML=h})();
 
 /* ---------- boot ---------- */
-progressBar.style.width="0%";caption.classList.add("hide");
+progressBar.style.width="0%";
 </script>
 <!-- @JS -->
 </body>
