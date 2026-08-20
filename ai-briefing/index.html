@@ -2327,6 +2327,7 @@ const RECORDED_VOICES=[
   {id:"m3",ico:"👨",label:"남성 M3",desc:"젊고 현대적인 기술 프레젠터"}
 ];
 const DEFAULT_RECORDED_VOICE="mix";
+const RECORDED_AUDIO_VERSION="20260820-iso27001";
 const MIXED_M1_SCENES={s06:1,s07:1,s09:1,s10:1,s11:1,s12:1,s13:1,s14:1,s15:1,s16:1,sAI:1};
 function sceneVoice(sceneId){return recordedVoice==="mix"?(MIXED_M1_SCENES[sceneId]?"m1":"f2"):recordedVoice}
 let recordedVoice=DEFAULT_RECORDED_VOICE;
@@ -2375,6 +2376,7 @@ function splitSents(t){const out=[];let start=0;
     }}
   const tail=t.slice(start).trim();if(tail)out.push(tail);return out}
 const estimate=t=>Math.max(6500,t.length*105);
+const speechText=t=>t.replace(/ISO\s*27001/g,"아이에스오 이만칠천일");
 function clearAutoAdvance(){if(autoAdvanceTimer){clearTimeout(autoAdvanceTimer);autoAdvanceTimer=0}}
 function queueAutoAdvance(delay=1000){pendingAdvance=autoplay;clearAutoAdvance();
   if(!autoplay||playbackPaused)return;
@@ -2413,18 +2415,18 @@ function playRecorded(i,text,sents,finish,token){let failed=false;
   recordedNarration.onended=()=>{recordedActive=false;if(!failed&&token===speakToken)finish()};
   recordedNarration.playbackRate=rate;
   if("preservesPitch" in recordedNarration)recordedNarration.preservesPitch=true;
-  recordedNarration.src=new URL(`audio/${sceneVoice(scenes[i].id)}/${scenes[i].id}.mp3`,document.baseURI).href;
+  recordedNarration.src=new URL(`audio/${sceneVoice(scenes[i].id)}/${scenes[i].id}.mp3?v=${RECORDED_AUDIO_VERSION}`,document.baseURI).href;
   recordedNarration.load();const playPromise=recordedNarration.play();
   if(playPromise&&typeof playPromise.then==="function")playPromise.then(()=>{if(playbackPaused)recordedNarration.pause()}).catch(fail)
 }
 function narrate(i){if(i<0||!scenes[i])return;stopSpeak(true);const text=NARR[NARRIDX[scenes[i].id]]||"";
-  if(!text||playbackPaused||(!voiceOn&&!autoplay))return;const sents=splitSents(text);
+  if(!text||playbackPaused||(!voiceOn&&!autoplay))return;const spoken=speechText(text),sents=splitSents(spoken);
   const finish=()=>{recordedActive=false;speechResume=null;fallbackFinish=null;fallbackRemaining=0;
     if(autoplay)queueAutoAdvance(1000)};
   const token=++speakToken;
   if(voiceOn){
-    if(recordedAudioAvailable)playRecorded(i,text,sents,finish,token);else fallbackNarrate(text,sents,finish,token)
-  }else startFallbackTimer(estimate(text),finish,token)}
+    if(recordedAudioAvailable)playRecorded(i,spoken,sents,finish,token);else fallbackNarrate(spoken,sents,finish,token)
+  }else startFallbackTimer(estimate(spoken),finish,token)}
 
 /* ---------- scene navigation ---------- */
 const FX={}; // per-scene enter/leave, filled below
