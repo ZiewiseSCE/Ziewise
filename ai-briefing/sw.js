@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260821-docx-v3";
+const BUILD_VERSION="20260827-nda-cases-v1";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
