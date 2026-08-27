@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260827-references-v4";
+const BUILD_VERSION="20260827-live-products-v5";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
