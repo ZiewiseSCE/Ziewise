@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260827-ziewcreative-v6";
+const BUILD_VERSION="20260827-product-family-v7";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
