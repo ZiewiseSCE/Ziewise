@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260827-ktrace-academy-v8";
+const BUILD_VERSION="20260827-start-buttons-v9";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
