@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260827-product-family-v7";
+const BUILD_VERSION="20260827-ktrace-academy-v8";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
