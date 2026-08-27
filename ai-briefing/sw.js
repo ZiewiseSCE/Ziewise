@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260827-nda-cases-v1";
+const BUILD_VERSION="20260827-nda-cases-v3";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
