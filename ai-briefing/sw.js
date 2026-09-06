@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260906-process-3d-v12";
+const BUILD_VERSION="20260907-narrated-demos-v1";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
