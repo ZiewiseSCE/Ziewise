@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260827-start-buttons-v9";
+const BUILD_VERSION="20260906-case-stories-v10";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
