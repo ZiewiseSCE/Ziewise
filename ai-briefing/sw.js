@@ -1,4 +1,4 @@
-const BUILD_VERSION="20260906-case-stories-v10";
+const BUILD_VERSION="20260906-silent-presentation-v11";
 
 self.addEventListener("install",()=>self.skipWaiting());
 
