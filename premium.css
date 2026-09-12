@@ -124,3 +124,19 @@ body{background:#e4e7ea}
   #sim-root .sim-layout .sim-body{padding-top:20px}
   #sim-root .sim-footer{padding:12px 18px}
 }
+
+/* Photographic main view; the optional rotating model is explicitly a schematic. */
+.hero-visual[data-view=diagram] .photographic-surface,.hero-visual[data-view=diagram] .photographic-fallback{display:none}
+.hero-visual-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#hero-view-toggle{border:1px solid #60718180;color:#dbe7f0;background:#2d3b4899;border-radius:4px;padding:6px 10px;font-size:11px;line-height:1.7;white-space:nowrap}
+#hero-view-toggle:hover{background:#425668;border-color:#9ab0c3}
+#hero-view-toggle[aria-pressed=true]{background:#425668;border-color:#9ab0c3}
+.hero-visual .visual-caption{gap:10px}
+.hero-view-hint{font-size:10px;letter-spacing:.015em;line-height:1.6}
+.hero-visual[data-view=photographic] .visual-topline{color:#e0e8ef;text-shadow:0 1px 8px #000}
+@media(max-width:760px){
+ .hero-visual .visual-caption{display:grid;grid-template-columns:1fr auto;gap:8px}
+ .hero-view-hint{font-size:9px;max-width:105px}
+ #hero-view-toggle{font-size:10px;padding:6px 8px}
+ .hero-visual-actions{gap:6px}
+}

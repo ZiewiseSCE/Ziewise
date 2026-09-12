@@ -1,0 +1,13 @@
+/* The image is an uninterrupted photographic scene, with no artificial floor. */
+.photographic-surface{position:absolute;inset:0;overflow:hidden;isolation:isolate;background:#10171c;opacity:0;transition:opacity .65s ease;pointer-events:none}
+.photographic-surface.is-ready{opacity:1}
+.photographic-image{position:absolute;inset:-10px;width:calc(100% + 20px);height:calc(100% + 20px);max-width:none;display:block;object-fit:cover;object-position:52% 46%;transform:scale(1.025);transform-origin:center;user-select:none;-webkit-user-drag:none}
+.photographic-surface.is-moving .photographic-image{will-change:transform}
+.photographic-surface::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(8,14,19,.28),transparent 24%,transparent 79%,rgba(8,14,19,.28))}
+.has-photographic-surface{overflow:hidden;cursor:default;touch-action:pan-y}
+.hero-visual .has-photographic-surface{background:#10171c}
+.hero-visual .photographic-surface::after{background:linear-gradient(180deg,rgba(8,14,19,.5),transparent 25%,transparent 77%,rgba(8,14,19,.4))}
+.technology-architecture .photographic-image{object-position:50% 42%}
+.technology-architecture .photographic-surface::after{background:linear-gradient(180deg,rgba(8,14,19,.2),transparent 32%,rgba(8,14,19,.3))}
+.photographic-fallback{display:grid;place-content:center;height:100%;padding:48px;box-sizing:border-box;text-align:center;font:inherit;line-height:1.65;color:#b8c6d1;background:#10171c}
+@media(prefers-reduced-motion:reduce){.photographic-surface{transition:none}.photographic-surface:not(.has-motion-override) .photographic-image{transform:none!important;will-change:auto!important}}
