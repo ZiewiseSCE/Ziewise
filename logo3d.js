@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.js';
-import { createLogoSphereGeometry } from './logo-sphere-geometry.js';
+import { createLogoPatternGeometry } from './logo-pattern-geometry.js?v=20260912-pattern3';
 
-/** An actual spherical ribbon mark; the original image remains its accessible fallback. */
+/** Rounded original contours, with the source logo supplying the surface colors. */
 export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) {
   const noop = { setPaused() {}, dispose() {} };
   if (!host || host.tagName === 'IMG') return noop;
@@ -55,13 +55,16 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
 
   const group = new THREE.Group();
   const sculpture = new THREE.Group();
-  sculpture.rotation.set(.20, -.24, -.62);
+  sculpture.rotation.set(0, 0, 0);
   group.add(sculpture); scene.add(group);
-  const bands = createLogoSphereGeometry();
-  const bandMaterials = bands.map(band => new THREE.MeshPhysicalMaterial({ color: band.color, metalness: .77, roughness: .27, clearcoat: .6, clearcoatRoughness: .2, side: THREE.DoubleSide }));
-  bands.forEach((band, i) => sculpture.add(new THREE.Mesh(band.geometry, bandMaterials[i])));
+  const strokes = createLogoPatternGeometry();
+  const faceMaterial = new THREE.MeshPhysicalMaterial({ color: '#ffffff', side: THREE.DoubleSide, metalness: .35, roughness: .36, clearcoat: .3, envMapIntensity: .5 });
+  const sideMaterials = strokes.map(stroke => new THREE.MeshPhysicalMaterial({ color: stroke.color, metalness: .5, roughness: .35, clearcoat: .25, clearcoatRoughness: .3, side: THREE.DoubleSide }));
+  strokes.forEach((stroke, i) => sculpture.add(new THREE.Mesh(stroke.geometry, [faceMaterial, sideMaterials[i]])));
 
   let disposed = false;
+  let loaded = false;
+  let texture;
   let ready = false;
   let contextAvailable = true;
   let paused = false;
@@ -77,17 +80,17 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
   const duration = 28;
 
   function reveal() {
-    if (disposed || !contextAvailable) return;
+    if (disposed || !loaded || !contextAvailable) return;
     canvas.style.opacity = '1';
     fallbackImages.forEach(img => { img.style.opacity = '0'; });
-    if (!ready) { ready = true; onReady?.({ webgl: true, spherical: true }); }
+    if (!ready) { ready = true; onReady?.({ webgl: true, sourceContours: true }); }
   }
   function restoreFallback() {
     canvas.style.opacity = '0';
     fallbackImages.forEach((img, i) => { img.style.opacity = originalImageOpacity[i]; });
   }
   function draw() {
-    if (disposed || !contextAvailable) return;
+    if (disposed || !loaded || !contextAvailable) return;
     renderer.render(scene, camera); reveal();
   }
   const active = () => !disposed && ready && contextAvailable && !paused && (!reducedMotion || manualMotionOverride) && visible && intersecting;
@@ -129,6 +132,15 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
   const intersectionObserver = new IntersectionObserver(entries => { intersecting = entries[0]?.isIntersecting ?? true; sync(); }, { rootMargin: '40px' });
   intersectionObserver.observe(host);
   resize(); sync();
+  new THREE.TextureLoader().load(imageUrl, map => {
+    if (disposed) { map.dispose(); return; }
+    texture = map; texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+    faceMaterial.map = texture; faceMaterial.needsUpdate = true;
+    loaded = true; draw(); sync();
+  }, undefined, () => {
+    if (!disposed) { restoreFallback(); onReady?.({ webgl: false }); }
+  });
 
   return {
     setPaused(value, { manual = false } = {}) { paused = Boolean(value); if (manual && !paused) manualMotionOverride = true; sync(); },
@@ -139,7 +151,8 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
       resizeObserver.disconnect(); intersectionObserver.disconnect();
       document.removeEventListener('visibilitychange', visibilityChange); motion.removeEventListener('change', motionChange);
       canvas.removeEventListener('webglcontextlost', contextLost); canvas.removeEventListener('webglcontextrestored', contextRestored);
-      bands.forEach(band => band.geometry.dispose()); bandMaterials.forEach(material => material.dispose());
+      strokes.forEach(stroke => stroke.geometry.dispose()); sideMaterials.forEach(material => material.dispose());
+      faceMaterial.dispose(); texture?.dispose();
       studioObjects.forEach(object => { object.geometry.dispose(); object.material.dispose(); }); environment?.dispose();
       renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
       if (positionedHost) host.style.position = previousPosition;

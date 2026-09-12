@@ -1,5 +1,5 @@
 import { mountScene } from './scene3d.js?v=20260912-orbit2';
-import { mountLogo } from './logo3d.js?v=20260912-orbit2';
+import { mountLogo } from './logo3d.js?v=20260912-pattern3';
 import { mountPhotographic } from './photographic.js?v=20260912-photo1';
 import { mountPhotoreal } from './photoreal3d.js?v=20260912-orbit2';
 
