@@ -1,7 +1,7 @@
 import { mountScene } from './scene3d.js?v=20260912-orbit2';
-import { mountLogo } from './logo3d.js?v=20260912-pattern3';
+import { mountLogo } from './logo3d.js?v=20260912-connected1';
 import { mountPhotographic } from './photographic.js?v=20260912-photo1';
-import { mountPhotoreal } from './photoreal3d.js?v=20260912-orbit2';
+import { mountPhotoreal } from './photoreal3d.js?v=20260912-capabilities1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches;
@@ -65,6 +65,7 @@ function startHero(){
  diagramReady=false;diagramFailed=false;
  refreshHeroView();
   heroDiagram=mountPhotoreal(heroEl,{
+   capabilities:true,
    onReady:()=>{
     if(heroDisposed||request!==diagramRequest)return;diagramReady=true;heroEl.querySelector('.scene-loading')?.remove();refreshHeroView();
    },

@@ -14,6 +14,11 @@ export function createLogoPatternGeometry() {
   });
 }
 
+/** A recessed, continuous spherical body joins the original relief strokes. */
+export function createLogoBodyGeometry() {
+  return new THREE.SphereGeometry(1.019, 96, 64);
+}
+
 const point = (x, y) => [(x + .5) / LOGO_OUTLINE.width * 2 - 1, 1 - (y + .5) / LOGO_OUTLINE.height * 2];
 // Remove the source raster's one-pixel stair steps without replacing its curves.
 function smoothContour(contour) {

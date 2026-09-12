@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three.module.js';
+import { createRackModules } from './rack-modules3d.js?v=20260912-capabilities1';
 
 /** Exact perspective fit for bounds expressed relative to the camera's orbit target. */
 export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov = 39) {
@@ -17,8 +18,8 @@ export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov
   return distance + .04;
 }
 
-/** A full-volume, photo-textured data-centre installation. No camera-facing image planes. */
-export function mountPhotoreal(element, { onReady, onError, onContextLost, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
+/** Full-volume, photo-textured racks with optional capability plaques and data paths. */
+export function mountPhotoreal(element, { onReady, onError, onContextLost, capabilities = false, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
   if (!element) return { setPaused() {}, setScrollProgress() {}, setLabel() {}, resetView() {}, dispose() {} };
   let renderer;
   try {
@@ -71,6 +72,8 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   let lastInteraction = -Infinity;
   let lastX = 0;
   let lastY = 0;
+  let sceneTime = 0;
+  let viewWidth = 1, viewHeight = 1;
 
   const geometry = value => { geometries.add(value); return value; };
   const material = value => { materials.add(value); return value; };
@@ -259,12 +262,16 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
+  const moduleDisplay = capabilities ? createRackModules(scene) : null;
+  if (capabilities) canvas.setAttribute('aria-describedby', 'core-capabilities');
 
   function cameraUpdate(snap = false) {
     const ease = snap ? 1 : .115;
     orbit.azimuth += (desired.azimuth - orbit.azimuth) * ease;
     orbit.elevation += (desired.elevation - orbit.elevation) * ease;
-    const fit = fitRackDistance(framingCorners, orbit.azimuth, orbit.elevation, aspect, camera.fov);
+    const space = moduleDisplay?.fit(viewWidth, viewHeight) || { x: 1, y: 1 };
+    const fitFov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * space.y));
+    const fit = fitRackDistance(framingCorners, orbit.azimuth, orbit.elevation, aspect * space.x / space.y, fitFov);
     // Ease inward when space allows; pull outward immediately to avoid cropping.
     orbit.distance = Math.max(fit, orbit.distance + (fit - orbit.distance) * ease);
     camera.position.set(
@@ -279,6 +286,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   function render(snap = false) {
     if (disposed || graphicsLost) return;
     cameraUpdate(snap);
+    moduleDisplay?.update(camera, sceneTime, viewWidth, viewHeight, orbit.distance);
     if (dirtyShadows) { renderer.shadowMap.needsUpdate = true; dirtyShadows = false; }
     renderer.render(scene, camera);
   }
@@ -289,6 +297,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
     if (previous && now - previous < 32) { frame = requestAnimationFrame(tick); return; }
     const delta = previous ? Math.min(now - previous, 60) / 1000 : 0;
     previous = now;
+    sceneTime += delta;
     if (!pointerActive && now - lastInteraction >= 3000) desired.azimuth += delta * Math.PI * 2 / 60;
     render();
     frame = requestAnimationFrame(tick);
@@ -302,6 +311,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   function resize() {
     if (disposed) return;
     const width = Math.max(1, element.clientWidth), height = Math.max(1, element.clientHeight);
+    viewWidth = width; viewHeight = height;
     aspect = width / height;
     camera.aspect = aspect;
     camera.updateProjectionMatrix();
@@ -429,6 +439,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
       canvas.removeEventListener('webglcontextlost', contextLost);
       canvas.removeEventListener('webglcontextrestored', contextRestored);
       geometries.forEach(item => item.dispose()); materials.forEach(item => item.dispose()); textures.forEach(item => item.dispose());
+      moduleDisplay?.dispose();
       environment?.dispose();
       renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
     },

@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.js';
-import { createLogoPatternGeometry } from './logo-pattern-geometry.js?v=20260912-pattern3';
+import { createLogoPatternGeometry, createLogoBodyGeometry } from './logo-pattern-geometry.js?v=20260912-connected1';
 
 /** Rounded original contours, with the source logo supplying the surface colors. */
 export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) {
@@ -61,6 +61,9 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
   const faceMaterial = new THREE.MeshPhysicalMaterial({ color: '#ffffff', side: THREE.DoubleSide, metalness: .35, roughness: .36, clearcoat: .3, envMapIntensity: .5 });
   const sideMaterials = strokes.map(stroke => new THREE.MeshPhysicalMaterial({ color: stroke.color, metalness: .5, roughness: .35, clearcoat: .25, clearcoatRoughness: .3, side: THREE.DoubleSide }));
   strokes.forEach((stroke, i) => sculpture.add(new THREE.Mesh(stroke.geometry, [faceMaterial, sideMaterials[i]])));
+  const bodyGeometry = createLogoBodyGeometry();
+  const bodyMaterial = new THREE.MeshPhysicalMaterial({ color: '#26343c', metalness: .72, roughness: .38, clearcoat: .4, clearcoatRoughness: .3 });
+  sculpture.add(new THREE.Mesh(bodyGeometry, bodyMaterial));
 
   let disposed = false;
   let loaded = false;
@@ -152,6 +155,7 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
       document.removeEventListener('visibilitychange', visibilityChange); motion.removeEventListener('change', motionChange);
       canvas.removeEventListener('webglcontextlost', contextLost); canvas.removeEventListener('webglcontextrestored', contextRestored);
       strokes.forEach(stroke => stroke.geometry.dispose()); sideMaterials.forEach(material => material.dispose());
+      bodyGeometry.dispose(); bodyMaterial.dispose();
       faceMaterial.dispose(); texture?.dispose();
       studioObjects.forEach(object => { object.geometry.dispose(); object.material.dispose(); }); environment?.dispose();
       renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
