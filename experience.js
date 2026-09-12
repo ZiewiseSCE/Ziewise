@@ -1,5 +1,6 @@
-import { mountScene } from './scene3d.js?v=20260912-orbit2';
-import { mountLogo } from './logo3d.js?v=20260912-connected1';
+import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stories1';
+import { mountScene } from './scene3d.js?v=20260913-stories1';
+import { mountLogo } from './logo3d.js?v=20260913-ribbons1';
 import { mountPhotographic } from './photographic.js?v=20260912-photo1';
 import { mountPhotoreal } from './photoreal3d.js?v=20260912-capabilities1';
 
@@ -89,23 +90,6 @@ let solution=null;
 let technology=null;
 let selected='vision';
 const solutionEl=document.querySelector('#solution-webgl');
-function mountTechnology(el){
- let photo=null,scene=null,disposed=false,failed=false;
- const ready=value=>{el.dataset.sceneReady=String(value);el.setAttribute('aria-busy',String(!value&&!failed));};
- const showPhoto=()=>{photo??=mountPhoto(el);photo.setPaused(true);};
- ready(false);
- scene=mountPhotoreal(el,{
-  label:infrastructureLabel(),
-  onReady:()=>{if(disposed)return;ready(true);el.setAttribute('aria-label',infrastructureLabel());el.querySelector('.scene-loading')?.remove();},
-  onContextLost:()=>{if(disposed)return;ready(false);showPhoto();},
-  onError:()=>queueMicrotask(()=>{if(disposed)return;failed=true;scene?.dispose();scene=null;ready(false);showPhoto();})
- });
- return {
-  setPaused(value,options){scene?.setPaused(value,options);photo?.setPaused(true);},
-  setLabel(value){scene?.setLabel(value);if(!failed)el.setAttribute('aria-label',value);},
-  dispose(){disposed=true;scene?.dispose();photo?.dispose();}
- };
-}
 const lazy=new IntersectionObserver(entries=>{
  for(const e of entries){if(!e.isIntersecting)continue;
   if(e.target===solutionEl){solution=mount(solutionEl,selected);solution.setPaused(paused||dialogOpen,{manual:motionChosen});mounted.push(solution);cameraSurfaces.push({element:e.target,scene:solution});}

@@ -5,8 +5,8 @@ import * as THREE from './vendor/three.module.js';
  * No remote textures, models, telemetry, or live-data assumptions.
  * mountScene(host, { kind, onReady }) -> { setKind, setPaused, dispose }
  */
-export function mountScene(element, { kind = 'core', onReady } = {}) {
-  if (!element) return { setKind() {}, setPaused() {}, dispose() {} };
+export function mountScene(element, { kind = 'core', onReady, modelFactory = null, onPhase } = {}) {
+  if (!element) return { setKind() {}, setProcess() {}, setPhase() {}, playSteps() {}, setPaused() {}, dispose() {} };
   const sceneBackground = getComputedStyle(element).getPropertyValue('--scene-background').trim() || '#131a21';
 
   const labels = {
@@ -19,6 +19,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     observer: 'Network observability: connected infrastructure and moving signal paths',
   };
   let currentKind = labels[kind] ? kind : 'core';
+  let processFactory = modelFactory, processModel = null, fixedPhase = null, phaseStart = 0, lastPhase = -1;
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
@@ -39,6 +40,9 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     onReady?.({ webgl: false, kind: currentKind });
     return {
       setKind(next) { currentKind = labels[next] ? next : 'core'; detail.textContent = labels[currentKind]; },
+      setProcess() { onPhase?.(0); },
+      setPhase(phase) { onPhase?.(Math.max(0, Math.min(3, Number(phase) || 0))); },
+      playSteps() { onPhase?.(0); },
       setPaused() {},
       dispose() { fallback.remove(); },
     };
@@ -839,10 +843,10 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     const delta = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0;
     previousTime = now;
     elapsed += delta;
-    if (currentKind !== 'core' && !dragging && now >= orbitResumeAt) desiredOrbit.azimuth += orbitSpeed * delta;
+    if ((currentKind !== 'core' || processModel) && !dragging && now >= orbitResumeAt) desiredOrbit.azimuth += orbitSpeed * delta;
     animations.forEach(animate => animate(elapsed));
     updateCamera(dragging);
-    if (currentKind !== 'core' && currentKind !== 'observer') renderer.shadowMap.needsUpdate = true;
+    if (processModel || (currentKind !== 'core' && currentKind !== 'observer')) renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     frame = requestAnimationFrame(tick);
   }
@@ -852,10 +856,10 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     previousTime = 0;
     if (active()) frame = requestAnimationFrame(tick);
   }
-  function setKind(next) {
+  function setKind(next, force = false) {
     if (disposed) return;
     next = labels[next] ? next : 'core';
-    if (root && next === currentKind) return;
+    if (root && next === currentKind && !force) return;
     currentKind = next;
     releaseGroup(root);
     animations = [];
@@ -863,14 +867,32 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     scene.add(root);
     elapsed = 0;
     mats.beam.opacity = 0.075;
-    builders[currentKind](root);
-    optimiseStatic(root);
+    processModel = processFactory?.(THREE) || null;
+    fixedPhase = null; phaseStart = 0; lastPhase = -1;
+    if (processModel) {
+      root.add(processModel.root);
+      animations.push(time => {
+        const phase = fixedPhase ?? Math.floor(time / 6) % 4;
+        processModel.update({ phase, time: fixedPhase === null ? time % 6 : time - phaseStart, reducedMotion: motionReduced() });
+        if (phase !== lastPhase) { lastPhase = phase; onPhase?.(phase); }
+      });
+      scene.fog.near = 35; scene.fog.far = 65;
+    } else {
+      builders[currentKind](root);
+      optimiseStatic(root);
+    }
     // Start with complete, legible geometry even when animation is disabled.
     animations.forEach(animate => animate(0));
     target.set(0, currentKind === 'energy' ? 1.3 : currentKind === 'observer' ? 1.18 : 1.0, 0);
     desiredOrbit.azimuth = currentKind === 'core' ? 0.55 : 0.51;
     desiredOrbit.elevation = currentKind === 'core' ? 0.28 : 0.32;
     desiredOrbit.distance = currentKind === 'core' ? 10.0 : currentKind === 'energy' ? 11.7 : currentKind === 'observer' ? 12.4 : currentKind === 'commerce' ? 9.3 : 10.9;
+    if (processModel?.camera) {
+      target.set(...processModel.camera.target);
+      desiredOrbit.azimuth = processModel.camera.yaw;
+      desiredOrbit.elevation = processModel.camera.pitch;
+      desiredOrbit.distance = processModel.camera.distance;
+    }
     dragging = false;
     dragPointer = null;
     orbitResumeAt = 0;
@@ -965,6 +987,13 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
 
   return {
     setKind,
+    setProcess(factory) { processFactory = factory; setKind('core', true); },
+    setPhase(phase) {
+      fixedPhase = Math.max(0, Math.min(3, Number(phase) || 0)); phaseStart = elapsed;
+      processModel?.update({ phase: fixedPhase, time: active() ? 0 : 3.4, reducedMotion: !active() });
+      lastPhase = fixedPhase; onPhase?.(fixedPhase); renderOnce();
+    },
+    playSteps() { fixedPhase = null; elapsed = 0; lastPhase = -1; animations.forEach(fn => fn(0)); renderOnce(); },
     setScrollProgress(value) {
       if(disposed || userPaused || motionReduced())return;
       scrollProgress=THREE.MathUtils.clamp(Number(value)||0,-1,1);

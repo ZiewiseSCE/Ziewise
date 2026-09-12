@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.js';
-import { createLogoPatternGeometry, createLogoBodyGeometry } from './logo-pattern-geometry.js?v=20260912-connected1';
+import { createLogoRibbons, colorLogoRibbons } from './logo-ribbons.js?v=20260913-ribbons1';
 
 /** Rounded original contours, with the source logo supplying the surface colors. */
 export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) {
@@ -57,12 +57,11 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
   const sculpture = new THREE.Group();
   sculpture.rotation.set(0, 0, 0);
   group.add(sculpture); scene.add(group);
-  const strokes = createLogoPatternGeometry();
-  const faceMaterial = new THREE.MeshPhysicalMaterial({ color: '#ffffff', side: THREE.DoubleSide, metalness: .35, roughness: .36, clearcoat: .3, envMapIntensity: .5 });
-  const sideMaterials = strokes.map(stroke => new THREE.MeshPhysicalMaterial({ color: stroke.color, metalness: .5, roughness: .35, clearcoat: .25, clearcoatRoughness: .3, side: THREE.DoubleSide }));
-  strokes.forEach((stroke, i) => sculpture.add(new THREE.Mesh(stroke.geometry, [faceMaterial, sideMaterials[i]])));
-  const bodyGeometry = createLogoBodyGeometry();
-  const bodyMaterial = new THREE.MeshPhysicalMaterial({ color: '#26343c', metalness: .72, roughness: .38, clearcoat: .4, clearcoatRoughness: .3 });
+  const strokes = createLogoRibbons();
+  const faceMaterial = new THREE.MeshPhysicalMaterial({ color: '#ffffff', vertexColors: true, metalness: .62, roughness: .3, clearcoat: .32, clearcoatRoughness: .3, envMapIntensity: .8 });
+  strokes.forEach(stroke => sculpture.add(new THREE.Mesh(stroke.geometry, faceMaterial)));
+  const bodyGeometry = new THREE.SphereGeometry(.97, 96, 64);
+  const bodyMaterial = new THREE.MeshPhysicalMaterial({ color: '#15242c', metalness: .45, roughness: .5 });
   sculpture.add(new THREE.Mesh(bodyGeometry, bodyMaterial));
 
   let disposed = false;
@@ -139,7 +138,7 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
     if (disposed) { map.dispose(); return; }
     texture = map; texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-    faceMaterial.map = texture; faceMaterial.needsUpdate = true;
+    colorLogoRibbons(strokes, map.image); faceMaterial.needsUpdate = true;
     loaded = true; draw(); sync();
   }, undefined, () => {
     if (!disposed) { restoreFallback(); onReady?.({ webgl: false }); }
@@ -154,7 +153,7 @@ export function mountLogo(host, { imageUrl = 'logo-symbol.png', onReady } = {}) 
       resizeObserver.disconnect(); intersectionObserver.disconnect();
       document.removeEventListener('visibilitychange', visibilityChange); motion.removeEventListener('change', motionChange);
       canvas.removeEventListener('webglcontextlost', contextLost); canvas.removeEventListener('webglcontextrestored', contextRestored);
-      strokes.forEach(stroke => stroke.geometry.dispose()); sideMaterials.forEach(material => material.dispose());
+      strokes.forEach(stroke => stroke.geometry.dispose());
       bodyGeometry.dispose(); bodyMaterial.dispose();
       faceMaterial.dispose(); texture?.dispose();
       studioObjects.forEach(object => { object.geometry.dispose(); object.material.dispose(); }); environment?.dispose();
