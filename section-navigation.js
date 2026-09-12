@@ -297,9 +297,16 @@ function initializeSectionPages() {
   }
   addEventListener('ziewise:language', translateControls);
   const navbar = document.querySelector('.navbar');
-  const updateHeight = () => document.documentElement.style.setProperty('--page-nav-height', `${navbar.getBoundingClientRect().height}px`);
-  new ResizeObserver(updateHeight).observe(navbar);
-  updateHeight();
+  const updateLayout = () => {
+    const root = document.documentElement;
+    const panel = main.querySelector('.section-page:not([hidden]) .page-pane:not([hidden])');
+    root.style.setProperty('--page-nav-height', `${navbar.getBoundingClientRect().height}px`);
+    // Align the header's right edge with the readable pane, including native scrollbar space.
+    root.style.setProperty('--page-scrollbar-width', `${panel ? panel.offsetWidth - panel.clientWidth : 0}px`);
+  };
+  new ResizeObserver(updateLayout).observe(navbar);
+  addEventListener('resize', updateLayout, { passive: true });
+  updateLayout();
   document.documentElement.classList.add('section-pages');
   main.tabIndex = -1;
   main.querySelectorAll('.enter-pending').forEach(element => element.classList.remove('enter-pending'));
