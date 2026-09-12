@@ -171,6 +171,7 @@
     let digitalTwin = null;
     let twinSession = 0;
     let twinPaused = false;
+    let removeTwinMotionListener = null;
     function syncTwin() {
         digitalTwin?.update({industry:state.industry,systems:state.systems,phase:state.step});
         const label=root.querySelector('.sim-twin-context');
@@ -180,17 +181,21 @@
     }
     function startTwin(host) {
         const session=++twinSession;
-        twinPaused=document.documentElement.classList.contains('motion-paused')||matchMedia('(prefers-reduced-motion: reduce)').matches;
-        import('./simulator3d.js?v=20260912-bg1').then(({mountSimulation})=>{
+        const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+        twinPaused=document.documentElement.classList.contains('motion-paused')||motionPreference.matches;
+        import('./simulator3d.js?v=20260912-studio1').then(({mountSimulation})=>{
             if(!isOpen||session!==twinSession||!host.isConnected)return;
             digitalTwin=mountSimulation(host,{industry:state.industry,systems:state.systems,phase:state.step,reducedMotion:twinPaused});
-            digitalTwin.setPaused(twinPaused);syncTwin();
+            digitalTwin.setPaused(twinPaused,{manual:false});syncTwin();
         }).catch(()=>{
             if(host.isConnected)host.textContent=getLang()==='ko'?'시스템을 선택하면 연결 구성을 확인할 수 있습니다.':'Select systems to explore their connections.';
         });
         const button=root.querySelector('.sim-twin-pause');
         const updateButton=()=>{button.setAttribute('aria-pressed',String(twinPaused));button.textContent=getLang()==='ko'?(twinPaused?'모션 재생':'모션 일시정지'):(twinPaused?'Play motion':'Pause motion');};
         button.addEventListener('click',()=>{twinPaused=!twinPaused;digitalTwin?.setPaused(twinPaused);updateButton();});
+        const motionChanged=event=>{twinPaused=event.matches;digitalTwin?.setPaused(twinPaused,{manual:false});updateButton();};
+        motionPreference.addEventListener('change',motionChanged);
+        removeTwinMotionListener=()=>motionPreference.removeEventListener('change',motionChanged);
         updateButton();
     }
     function stopTraining() {
@@ -214,6 +219,7 @@
     }
     function open() {
         stopTraining();
+        removeTwinMotionListener?.();removeTwinMotionListener=null;
         digitalTwin?.dispose();digitalTwin=null;twinSession++;
         if (!isOpen) {
             returnFocus = document.activeElement;
@@ -277,6 +283,7 @@
     function close() {
         if (!isOpen) return;
         stopTraining();
+        removeTwinMotionListener?.();removeTwinMotionListener=null;
         digitalTwin?.dispose();digitalTwin=null;twinSession++;
         isOpen = false;
         root.setAttribute('aria-hidden', 'true');

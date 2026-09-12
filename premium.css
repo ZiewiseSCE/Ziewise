@@ -1,0 +1,126 @@
+/* Product photography framing for the interactive hardware scenes. */
+:root{--scene-background:#131a21;--surface:#e1e5e9;--line:#c5cdd5;--muted:#596674;background:#e4e7ea}
+body{background:#e4e7ea}
+.navbar{background:rgba(18,24,31,.97);border-bottom-color:#343d47}
+.nav-links #nav-try{background:#242e38;border-color:#495561}
+.nav-links a:hover,.nav-links a.active-nav{color:#c2d3e1}
+.hero-section{--scene-background:#131a21;--scene-plinth:#232b33;--muted:#aab6c3;--line:#35414d;background:radial-gradient(ellipse at 82% 35%,#242d37 0,transparent 62%),#111820}
+.hero-section .eyebrow,.hero-section .section-number{color:#b3c3d3}
+.hero-section .eyebrow-line{background:#a5bacd}
+.hero-content h1 span{color:#c4d5e5}
+.hero-product span,.hero-footnote p,.hero-section .architecture-copy .muted{color:#a2b0be}
+.hero-section .button.primary{background:#3d6385;box-shadow:inset 0 1px 0 #ffffff18,0 5px 20px #0000001a;border-color:#60809c}
+.hero-section .button.primary:hover{background:#4b7396}
+.hero-visual{background:#131a21;border-radius:6px;border-color:#8593a221;box-shadow:0 24px 70px #00000026}
+.hero-visual .webgl{position:absolute;inset:0 0 113px;height:auto}
+.hero-visual .visual-topline{top:23px;color:#aebbc9;font-size:9px;letter-spacing:.12em}
+.core-labels{inset:auto 24px 60px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding-top:15px;border-top:1px solid #7e8c9c2b;align-content:initial}
+.hero-visual .core-labels>span,.hero-visual .core-labels>span:nth-child(even){text-align:left;color:#c9d3dd;font-size:9px;letter-spacing:.065em}
+.hero-visual .core-labels small{font-size:9px;color:#8e9eae;letter-spacing:0;font-weight:400;margin-top:4px}
+.hero-visual .visual-caption{bottom:17px;color:#9baaba;font-size:11px}
+.hero-visual .motion-toggle,.solution-visual .motion-toggle,.technology-architecture .motion-toggle{background:#252e3899;border-color:#60718170;color:#c6d2dc;box-shadow:inset 0 1px 0 #ffffff06}
+.hero-visual .motion-toggle:hover,.solution-visual .motion-toggle:hover,.technology-architecture .motion-toggle:hover{background:#34414e;border-color:#8497aa;color:#fff}
+.about-section{background:#dee3e8}
+.simulator-section{background:linear-gradient(150deg,#e6e9ec,#dce2e8)}
+.solutions-section{background:#d8dfe5}
+.tech-section{background:#e1e6ea}
+.solution-card,.tech-card{background:#e9edf1;border-color:#bec9d3;box-shadow:0 4px 16px #17222d03}
+.solution-card:hover{border-color:#8197aa;box-shadow:0 12px 30px #23323f0c}
+.sim-tab.active{background:#aebfcf22;color:#315d7c;border-bottom-color:#426d8e}
+.sim-tab:hover{background:#b9c8d833}
+.sim-stage{--ink:#e4eaf0;--navy:#e4eaf0;--muted:#acb9c7;--line:#3b4856;--scene-background:#131a21;background:#131a21;color:#e4eaf0;border-color:#4a56625c;border-radius:6px;box-shadow:0 20px 48px #16212b18}
+.sim-scene{background:transparent}
+.sim-stage .scene-tag{color:#a8c1d5;font-size:10px;letter-spacing:.1em}
+.sim-stage .scene-info>p{color:#acb9c7}
+.sim-stage .scene-stats{border-color:#394653}
+.sim-stage .ss-lbl{color:#a0b0bf}
+.sim-stage .operation-notes{color:#a8b8c8}
+.sim-stage .operation-labels>span{color:#c9d8e6;background:#283544}
+.solution-visual .visual-topline,.solution-visual .visual-caption{color:#a6b5c4}
+.solution-visual .scene-loading{color:#a6b5c4}
+.experience-cta{background:#dfe6ed;border-color:#b4c3d0;box-shadow:0 10px 30px #20344305}
+.technology-architecture{--scene-background:#131a21;background:#131a21;border-color:#4a56625c;border-radius:6px}
+.tech-visual-copy .eyebrow{color:#a8bfd1}
+.tech-visual-copy p{color:#dce5ee}
+.footer{background:#17212b}
+.contact-form input,.contact-form select,.contact-form textarea{background:#222e3a;border-color:#43515f}
+.reading-progress{background:#abc4d9}
+.logo-text,.footer-logo-text{background-image:linear-gradient(110deg,#d4dfe8 0%,#fff 18%,#99b6cb 37%,#e5eef5 49%,#bac8d2 65%,#fff 80%,#d4dfe8 100%)}
+@media(min-width:761px){
+  .hero-main{grid-template-columns:.94fr 1.06fr;gap:34px;min-height:690px}
+  .hero-visual{height:584px}
+  .solution-visual{min-height:510px}
+}
+@media(min-width:1450px){.hero-main{gap:54px;min-height:740px}.hero-visual{height:620px}}
+@media(min-width:761px) and (max-width:1000px){.hero-main{gap:22px}.hero-visual{height:534px}.hero-visual .core-labels{gap:8px;left:17px;right:17px;grid-template-columns:repeat(2,1fr);bottom:58px}.hero-visual .core-labels small{display:inline;margin-left:6px}.hero-visual .webgl{bottom:130px}}
+@media(max-width:1000px){.navbar .nav-links{background:#1b252f;border-bottom-color:#495664}.navbar .nav-links #nav-try{background:#2a3846;color:#edf3fb}}
+@media(max-width:760px){
+  .hero-visual{height:416px;border-radius:5px}
+  .hero-visual .webgl{bottom:105px}
+  .core-labels{left:18px;right:18px;bottom:53px;gap:7px;padding-top:12px}
+  .hero-visual .core-labels>span{font-size:9px}
+  .hero-visual .core-labels small{font-size:8.5px}
+  .hero-visual .visual-topline{left:18px;right:18px;top:16px;font-size:8px}
+  .hero-visual .visual-caption{left:18px;right:18px;bottom:13px;font-size:10px}
+  .hero-visual .motion-toggle{font-size:10px}
+  .technology-architecture{height:510px}
+  .tech-visual-copy .motion-toggle{position:static;margin-top:16px}
+}
+
+/* A graphite frame and neutral selection surfaces keep the workflow legible. */
+#sim-root{font-family:Inter,'Noto Sans KR',sans-serif}
+#sim-root .sim-overlay{background:rgba(8,13,19,.79);backdrop-filter:blur(12px)}
+#sim-root .sim-modal{--sim-navy:#253341;--sim-muted:#53616e;--sim-blue:#3c6788;--sim-line:#bec9d2;border:1px solid #75859366;border-radius:8px;box-shadow:0 35px 100px #0007}
+#sim-root .sim-header{background:#202b35;border-color:#4d5b69;padding-top:26px;padding-bottom:22px}
+#sim-root .sim-eyebrow{color:#b8cddd}
+#sim-root .sim-title{color:#eff3f7}
+#sim-root .sim-sub{color:#b0bdca}
+#sim-root .sim-close{background:#34414d;color:#e5edf4;border:1px solid #66758177;border-radius:4px}
+#sim-root .sim-close:hover{background:#445563}
+#sim-root .sim-stepper{background:#2c3844;border-color:#4e5d6b}
+#sim-root .sim-step-pill{color:#a9b7c4}
+#sim-root .sim-step-pill.active{color:#ecf2f7;border-color:#9ab9ce}
+#sim-root .sim-step-pill.done{color:#c4d8e6}
+#sim-root .sim-step-dot{border-color:#879eae;color:#d7e4ed;background:#354755}
+#sim-root .sim-step-pill.active .sim-step-dot,#sim-root .sim-step-pill.done .sim-step-dot{background:#6d8ba1;border-color:#a0b8c9;color:#fff}
+#sim-root .sim-layout .sim-body{background:#dce2e7}
+#sim-root .sim-3d-panel{background:#15191d;border-color:#46515c}
+#sim-root .sim-twin-heading>span{color:#9cadbc;font-size:9px;letter-spacing:.12em}
+#sim-root .sim-twin-heading>strong{color:#dce5ec;font-size:17px}
+#sim-root .sim-twin-note{color:#a0adba}
+#sim-root .sim-twin-bottom{color:#b9c8d4}
+#sim-root .sim-twin-pause{border-color:#74849280;background:#28323b;color:#d5e0e8;border-radius:3px}
+#sim-root .sim-industry-card,#sim-root .sim-system-card{background:#e6ebef;border-color:#b7c3ce;border-radius:5px;box-shadow:0 2px 3px #15233003}
+#sim-root .sim-industry-card:hover,#sim-root .sim-system-card:hover{background:#eef2f5;border-color:#7b94a8}
+#sim-root .sim-industry-card.active,#sim-root .sim-system-card.active{background:#cddbe6;border-color:#507997;box-shadow:inset 0 0 0 1px #507997}
+#sim-root .sim-ind-icon,#sim-root .sim-sys-icon{color:#526c80}
+#sim-root .sim-footer{background:#25313c;border-color:#4d5d6b}
+#sim-root .sim-footer-hint{color:#c1ceda}
+#sim-root .sim-footer .sim-next{background:#496f8b;color:#fff;border-color:#7b9ab0}
+#sim-root .sim-footer .sim-next:hover:not(:disabled){background:#517790;border-color:#91abbc}
+#sim-root .sim-footer .sim-next:disabled{background:#344553;color:#8ea3b3;border-color:#4d6272;opacity:1}
+#sim-root .sim-footer .sim-prev{color:#d1dee8;border-color:#687e90;background:#354553}
+#sim-root .sim-footer .sim-prev:hover{background:#43586a}
+#sim-root .sim-progress-bar{background:#c0ccd6}
+#sim-root .sim-progress-fill{background:#547c9a}
+#sim-root .sim-arena,#sim-root .sim-roi-hero{background:#e4eaf0;border-color:#aebfcd}
+#sim-root .sim-metric-card.enhanced,#sim-root .sim-sys-result{background:#e8edf1;border-color:#bdc9d3}
+#sim-root .sim-syn-pill{background:#d5e1ea;border-color:#b1c4d3}
+@media(max-width:760px){
+  #sim-root .sim-header{padding:16px 57px 15px 20px}
+  #sim-root .sim-title{font-size:20px;margin-top:5px}
+  #sim-root .sim-sub{font-size:12px;line-height:1.65;margin-top:6px}
+  #sim-root .sim-close{top:16px;right:16px;width:32px;height:32px}
+  #sim-root .sim-stepper{padding:0 12px}
+  #sim-root .sim-step-pill{padding:11px 2px;font-size:11px}
+  #sim-root .sim-3d-panel{height:auto;min-height:290px}
+  #sim-root .sim-twin-heading{inset:11px 18px auto;gap:3px}
+  #sim-root .sim-twin-heading>strong{font-size:13px}
+  #sim-root .sim-twin-heading>span{font-size:8px}
+  #sim-root .sim-digital-twin{height:246px;padding-top:36px}
+  #sim-root .sim-twin-note{font-size:9px;padding-bottom:6px;line-height:1.5}
+  #sim-root .sim-twin-bottom{font-size:10px;padding-bottom:5px}
+  #sim-root .sim-twin-pause{font-size:10px;padding:4px 8px}
+  #sim-root .sim-layout .sim-body{padding-top:20px}
+  #sim-root .sim-footer{padding:12px 18px}
+}

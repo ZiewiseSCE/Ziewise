@@ -1,4 +1,4 @@
-import { mountScene } from './scene3d.js?v=20260912-bg1';
+import { mountScene } from './scene3d.js?v=20260912-studio1';
 import { mountLogo } from './logo3d.js?v=20260912-bg1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');

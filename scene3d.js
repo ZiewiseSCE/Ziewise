@@ -7,14 +7,14 @@ import * as THREE from './vendor/three.module.js';
  */
 export function mountScene(element, { kind = 'core', onReady } = {}) {
   if (!element) return { setKind() {}, setPaused() {}, dispose() {} };
-  const sceneBackground = getComputedStyle(element).getPropertyValue('--scene-background').trim() || '#d3deea';
+  const sceneBackground = getComputedStyle(element).getPropertyValue('--scene-background').trim() || '#131a21';
 
   const labels = {
-    core: 'Connected intelligence: a layered computing core linked to specialist modules',
+    core: 'Connected intelligence: precision rack servers, edge computing hardware and physical network connections',
     vision: 'Machine vision: products passing through a camera inspection station',
     energy: 'Renewable energy: wind and solar generation connected to storage',
-    commerce: 'Immersive commerce: a product displayed inside a spatial shopping interface',
-    office: 'Document intelligence: pages moving through a verification pipeline',
+    commerce: 'Immersive commerce: studio product capture with a precision headphone turntable and commerce display',
+    office: 'Document intelligence: a professional document scanner and a verification workstation',
     print: 'Secure printing: a protected printer releasing verified documents',
     observer: 'Network observability: connected infrastructure and moving signal paths',
   };
@@ -53,9 +53,10 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.18;
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.VSMShadowMap;
+  renderer.shadowMap.autoUpdate = false;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(sceneBackground);
@@ -80,31 +81,40 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   const media = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reducedMotion = media.matches;
 
-  // A tiny procedural studio gives metal genuine reflected light, without downloads.
+  // An HDR-style softbox environment is generated locally, so polished metal
+  // reflects a real studio arrangement without downloading environment assets.
   const studio = new THREE.Scene();
-  studio.background = new THREE.Color('#bbc5d5');
+  studio.background = new THREE.Color('#39444d');
   const studioObjects = [];
   function reflector(w, h, position, intensity) {
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: intensity, side: THREE.DoubleSide }));
+    const panel = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(intensity).multiplyScalar(2.2), side: THREE.DoubleSide }));
     panel.position.set(...position);
     panel.lookAt(0, 0, 0);
     studio.add(panel);
     studioObjects.push(panel);
   }
-  reflector(10, 8, [0, 7, 0], '#ffffff');
-  reflector(5, 7, [-6, 2, 2], '#ffffff');
-  reflector(3, 8, [6, 1, -3], '#5773a5');
-  reflector(5, 3, [0, 1, -7], '#eef6ff');
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(studio, 0.025);
-  scene.environment = environment.texture;
-  pmrem.dispose();
-  studioObjects.forEach(object => { object.geometry.dispose(); object.material.dispose(); });
+  reflector(7, 9, [-4, 6, 3], '#ffffff');
+  reflector(1.4, 8, [5, 3, 2], '#d2e0e9');
+  reflector(8, 1.8, [1, 4, -6], '#b9cbd7');
+  reflector(4, 2, [-1, 1, 7], '#545e66');
+  let environment;
+  function rebuildEnvironment() {
+    // Render-target textures do not survive WebGL context restoration. Keep the
+    // tiny source studio until disposal and rebuild its PMREM when needed.
+    const generator = new THREE.PMREMGenerator(renderer);
+    const nextEnvironment = generator.fromScene(studio, 0.035);
+    generator.dispose();
+    environment?.dispose();
+    environment = nextEnvironment;
+    scene.environment = environment.texture;
+  }
+  rebuildEnvironment();
+  scene.environmentIntensity = 1.2;
 
-  const hemisphere = new THREE.HemisphereLight('#e9f3ff', '#acb9ce', 1.5);
+  const hemisphere = new THREE.HemisphereLight('#dce6ed', '#13171b', 0.95);
   scene.add(hemisphere);
-  const key = new THREE.DirectionalLight('#ffffff', 3.2);
-  key.position.set(-3.5, 8, 5);
+  const key = new THREE.DirectionalLight('#fffaf1', 4.4);
+  key.position.set(-3.5, 7, 5);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
   key.shadow.camera.left = -5;
@@ -113,38 +123,78 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   key.shadow.camera.bottom = -5;
   key.shadow.camera.near = 0.5;
   key.shadow.camera.far = 20;
-  key.shadow.normalBias = 0.035;
+  key.shadow.normalBias = 0.02;
   key.shadow.bias = -0.0003;
-  key.shadow.radius = 4;
+  key.shadow.radius = 5;
+  key.shadow.blurSamples = 8;
   scene.add(key);
-  const rim = new THREE.DirectionalLight('#97b9ff', 1.4);
-  rim.position.set(5, 4, -5);
+  const rim = new THREE.DirectionalLight('#bbd9eb', 3.2);
+  rim.position.set(5, 5, -4);
   scene.add(rim);
-  const fill = new THREE.DirectionalLight('#ffffff', 0.7);
-  fill.position.set(-5, 2, -3);
+  const fill = new THREE.DirectionalLight('#e8edf0', 1.1);
+  fill.position.set(1, 2, 6);
   scene.add(fill);
+  const sideFill = new THREE.DirectionalLight('#d9e1e5', 2.2);
+  sideFill.position.set(5, 3, 4);
+  scene.add(sideFill);
 
+  const sharedTextures = new Set();
+  function surfaceTexture(kind) {
+    const surface = document.createElement('canvas');
+    surface.width = surface.height = 512;
+    const ctx = surface.getContext('2d');
+    ctx.fillStyle = kind === 'mesh' ? '#68717a' : kind === 'rubber' ? '#999999' : '#c7c7c7';
+    ctx.fillRect(0, 0, 512, 512);
+    if (kind === 'mesh') {
+      for (let y = 7; y < 512; y += 14) for (let x = 7; x < 512; x += 14) {
+        ctx.beginPath(); ctx.arc(x + (y % 28 ? 0 : 7), y, 4.8, 0, Math.PI * 2);
+        ctx.fillStyle = '#080b0e'; ctx.fill();
+      }
+    } else {
+      const pixels = ctx.getImageData(0, 0, 512, 512);
+      for (let y = 0; y < 512; y++) for (let x = 0; x < 512; x++) {
+        const offset = (y * 512 + x) * 4;
+        const grain = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+        const n = ((grain - Math.floor(grain)) - 0.5) * (kind === 'rubber' ? 20 : 7);
+        const line = kind === 'rubber' ? 0 : Math.sin(y * 2.3) * 7;
+        for (let c = 0; c < 3; c++) pixels.data[offset + c] += n + line;
+      }
+      ctx.putImageData(pixels, 0, 0);
+    }
+    const texture = new THREE.CanvasTexture(surface);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+    sharedTextures.add(texture);
+    return texture;
+  }
+  const brushed = surfaceTexture('metal');
+  const perforated = surfaceTexture('mesh');
+  const rubber = surfaceTexture('rubber');
   const mats = {
-    platform: new THREE.MeshStandardMaterial({color:getComputedStyle(element).getPropertyValue('--scene-plinth').trim()||'#e4ebf3',roughness:0.35,metalness:0.2}),
-    white: new THREE.MeshStandardMaterial({ color: '#f3f6fa', roughness: 0.26, metalness: 0.13 }),
-    porcelain: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.19, metalness: 0.16 }),
-    navy: new THREE.MeshStandardMaterial({ color: '#10213a', roughness: 0.26, metalness: 0.52 }),
-    ink: new THREE.MeshStandardMaterial({ color: '#081626', roughness: 0.32, metalness: 0.3 }),
-    slate: new THREE.MeshStandardMaterial({ color: '#a8b7cb', roughness: 0.36, metalness: 0.5 }),
-    chrome: new THREE.MeshStandardMaterial({ color: '#d4e0ee', roughness: 0.15, metalness: 0.92 }),
-    blue: new THREE.MeshStandardMaterial({ color: '#2763df', roughness: 0.27, metalness: 0.34 }),
-    electric: new THREE.MeshStandardMaterial({ color: '#4887ff', emissive: '#2763df', emissiveIntensity: 0.8, roughness: 0.3, metalness: 0.12 }),
-    line: new THREE.MeshStandardMaterial({ color: '#8fa8cd', roughness: 0.45, metalness: 0.4 }),
-    green: new THREE.MeshStandardMaterial({ color: '#4cafa2', roughness: 0.33, metalness: 0.25 }),
-    paper: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.64, metalness: 0 }),
-    glass: new THREE.MeshPhysicalMaterial({ color: '#adcaff', roughness: 0.15, metalness: 0.1, transparent: true, opacity: 0.17, depthWrite: false, side: THREE.DoubleSide }),
-    beam: new THREE.MeshBasicMaterial({ color: '#3a79f4', transparent: true, opacity: 0.075, depthWrite: false, side: THREE.DoubleSide }),
+    platform: new THREE.MeshStandardMaterial({ color: '#20282f', roughness: 0.5, metalness: 0.45 }),
+    white: new THREE.MeshStandardMaterial({ color: '#aeb8be', roughness: 0.4, metalness: 0.65, map: brushed }),
+    porcelain: new THREE.MeshStandardMaterial({ color: '#a5acac', roughness: 0.42, metalness: 0.12 }),
+    navy: new THREE.MeshStandardMaterial({ color: '#39444c', roughness: 0.35, metalness: 0.68, map: brushed }),
+    ink: new THREE.MeshStandardMaterial({ color: '#101417', roughness: 0.58, metalness: 0.12, map: rubber }),
+    slate: new THREE.MeshStandardMaterial({ color: '#737f87', roughness: 0.4, metalness: 0.8, map: brushed }),
+    chrome: new THREE.MeshStandardMaterial({ color: '#b9c3c9', roughness: 0.22, metalness: 0.97, map: brushed }),
+    blue: new THREE.MeshStandardMaterial({ color: '#224455', roughness: 0.28, metalness: 0.6 }),
+    electric: new THREE.MeshStandardMaterial({ color: '#c5f4f4', emissive: '#7dc4c8', emissiveIntensity: 0.5, roughness: 0.32, metalness: 0.1 }),
+    line: new THREE.MeshStandardMaterial({ color: '#354148', roughness: 0.55, metalness: 0.2 }),
+    green: new THREE.MeshStandardMaterial({ color: '#7ba99a', emissive: '#548377', emissiveIntensity: 0.3, roughness: 0.33, metalness: 0.25 }),
+    paper: new THREE.MeshStandardMaterial({ color: '#d5d5cd', roughness: 0.8, metalness: 0 }),
+    glass: new THREE.MeshPhysicalMaterial({ color: '#17272e', roughness: 0.12, metalness: 0.35, clearcoat: 1, clearcoatRoughness: 0.09, transparent: true, opacity: 0.77, depthWrite: false, side: THREE.DoubleSide }),
+    beam: new THREE.MeshBasicMaterial({ color: '#8bd8d9', transparent: true, opacity: 0.032, depthWrite: false, side: THREE.DoubleSide }),
+    mesh: new THREE.MeshStandardMaterial({ color: '#7d8990', map: perforated, roughness: 0.5, metalness: 0.75 }),
+    leather: new THREE.MeshStandardMaterial({ color: '#14191b', map: rubber, roughness: 0.8, metalness: 0 }),
+    photovoltaic: new THREE.MeshPhysicalMaterial({ color: '#14222e', metalness: 0.65, roughness: 0.21, clearcoat: 0.9 }),
   };
   const sharedMaterials = new Set(Object.values(mats));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: sceneBackground, roughness: 0.85, metalness: 0 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: '#090d12', roughness: 0.84, metalness: 0.05 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.075;
-  floor.receiveShadow = true;
+  floor.receiveShadow = false;
   scene.add(floor);
 
   function roundedGeometry(w, h, d, radius = 0.07) {
@@ -168,7 +218,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     return geometry;
   }
 
-  function box(parent, w, h, d, position, material = mats.white, radius = 0.05) {
+  function box(parent, w, h, d, position, material = mats.white, radius = 0.012) {
     const object = new THREE.Mesh(radius > 0 ? roundedGeometry(w, h, d, radius) : new THREE.BoxGeometry(w, h, d), material);
     object.position.set(...position);
     object.castShadow = material !== mats.glass && material !== mats.beam;
@@ -224,8 +274,21 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   }
 
   function platform(parent, w = 6.5, d = 4.5) {
-    box(parent, w, 0.19, d, [0, 0.05, 0], mats.platform, 0.17);
-    box(parent, w - 0.2, 0.085, d - 0.2, [0, -0.012, 0], mats.slate, 0.08);
+    // Objects stand directly on the studio floor. A subtle contact shadow anchors
+    // the equipment, without a miniature display-board or decorative platform.
+    const surface = document.createElement('canvas');
+    surface.width = surface.height = 128;
+    const ctx = surface.getContext('2d');
+    const gradient = ctx.createRadialGradient(64, 64, 5, 64, 64, 62);
+    gradient.addColorStop(0, 'rgba(0,0,0,.55)');
+    gradient.addColorStop(0.55, 'rgba(0,0,0,.25)');
+    gradient.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gradient; ctx.fillRect(0, 0, 128, 128);
+    const texture = new THREE.CanvasTexture(surface);
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.1, d * 1.2), new THREE.MeshBasicMaterial({map: texture, transparent: true, depthWrite: false}));
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.position.y = -0.07;
+    parent.add(shadow);
   }
 
   function led(parent, position, w = 0.13, material = mats.electric) {
@@ -262,377 +325,430 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     return group;
   }
 
-  function coreScene(parent) {
-    platform(parent, 6.55, 4.55);
-    const core = new THREE.Group();
-    core.position.y = 0.25;
-    parent.add(core);
-    // A machined frame, white ceramic lid, and four suspended compute layers.
-    box(core, 2.25, 0.18, 2.25, [0, 0.13, 0], mats.navy, 0.12);
-    box(core, 2.31, 0.09, 2.31, [0, 0.23, 0], mats.chrome, 0.09);
-    const layers = [];
-    for (let i = 0; i < 4; i++) {
-      const layer = new THREE.Group();
-      const y = 0.52 + i * 0.43;
-      layer.position.y = y;
-      core.add(layer);
-      box(layer, 1.98, 0.27, 1.98, [0, 0, 0], i % 2 ? mats.navy : mats.ink, 0.1);
-      box(layer, 2.02, 0.042, 2.02, [0, 0.145, 0], mats.chrome, 0.035);
-      for (let j = 0; j < 6; j++) led(layer, [-0.7 + j * 0.125, -0.02, 1.009], j === 0 ? 0.09 : 0.045, j < 2 ? mats.electric : mats.slate);
-      for (let j = 0; j < 5; j++) box(layer, 0.024, 0.1, 0.42, [1.005, 0.015, -0.55 + j * 0.24], mats.slate, 0.006);
-      layers.push(layer);
-    }
-    box(core, 2.32, 0.18, 2.32, [0, 2.1, 0], mats.porcelain, 0.12);
-    box(core, 1.53, 0.035, 1.53, [0, 2.207, 0], mats.navy, 0.07);
-    chip(core, [0, 2.29, 0], 0.8);
-    // Slender corner standoffs preserve the open, dimensional silhouette.
-    for (const x of [-1.06, 1.06]) for (const z of [-1.06, 1.06]) {
-      cylinder(core, 0.045, 1.85, [x, 1.15, z], mats.chrome);
-      cylinder(core, 0.09, 0.07, [x, 2.219, z], mats.chrome);
-    }
-    // Three distinct peripheral nodes with cable routes and moving data packets.
-    const nodes = [[-2.34, 0.38, 0.78], [2.32, 0.38, 0.7], [0.15, 0.35, -1.79]];
-    nodes.forEach((p, i) => {
-      const node = new THREE.Group();
-      node.position.set(...p);
-      parent.add(node);
-      box(node, 0.95, 0.34, 0.91, [0, 0, 0], mats.white, 0.095);
-      box(node, 0.78, 0.07, 0.74, [0, 0.21, 0], mats.navy, 0.05);
-      if (i === 0) {
-        const lens = cylinder(node, 0.2, 0.13, [0, 0.32, 0], mats.chrome);
-        cylinder(node, 0.135, 0.14, [0, 0.35, 0], mats.blue);
-        ring(node, 0.23, 0.012, [0, 0.37, 0], mats.electric);
-      } else if (i === 1) {
-        for (let j = 0; j < 3; j++) box(node, 0.14, 0.09 + j * 0.08, 0.38, [-0.22 + j * 0.22, 0.3 + j * 0.04, 0], j === 2 ? mats.blue : mats.chrome, 0.025);
-      } else chip(node, [0, 0.31, 0], 0.4);
-      led(node, [0.23, 0, 0.464], 0.13);
-      const near = i === 0 ? [-1.08, 0.34, 0.78] : i === 1 ? [1.08, 0.34, 0.7] : [0.15, 0.34, -1.08];
-      path(parent, [near, [(near[0] + p[0]) / 2, 0.24, (near[2] + p[2]) / 2], [p[0], 0.28, p[2]]], { radius: 0.027, speed: 0.17, phase: i / 3 });
-    });
-    // Topographic circuit traces remain below the object, with no decorative swarm.
-    path(parent, [[-2.35, 0.161, -1.62], [-1.55, 0.161, -1.62], [-1.42, 0.161, -0.72]], { pulse: false, radius: 0.012 });
-    path(parent, [[2.35, 0.161, -1.42], [1.62, 0.161, -1.42], [1.42, 0.161, -0.55]], { pulse: false, radius: 0.012 });
-    for (const x of [-2.35, 2.35]) ring(parent, 0.067, 0.012, [x, 0.166, -1.52], mats.blue);
-    animations.push(t => {
-      core.position.y = 0.25 + Math.sin(t * 0.55) * 0.028;
-      layers.forEach((layer, i) => { layer.position.y = 0.52 + i * 0.43 + Math.sin(t * 0.8 - i * 0.7) * 0.014; });
-    });
+  function label(parent, text, position, w = 0.8, h = 0.12, color = '#b7c7cd', background = null) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 768; canvas.height = Math.max(48, Math.round(768 * h / w));
+    const ctx = canvas.getContext('2d');
+    if (background) { ctx.fillStyle = background; ctx.fillRect(0, 0, canvas.width, canvas.height); }
+    ctx.fillStyle = color; ctx.font = `500 ${canvas.height * 0.57}px Arial, sans-serif`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(text, 12, canvas.height / 2, canvas.width - 24);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({map: texture, transparent: true, depthWrite: false, toneMapped: false}));
+    mesh.position.set(...position);
+    parent.add(mesh);
+    return mesh;
   }
 
-  function cameraUnit(parent, position, angle = 0) {
-    const group = new THREE.Group();
-    group.position.set(...position);
-    group.rotation.y = angle;
-    parent.add(group);
-    box(group, 0.56, 0.4, 0.74, [0, 0, 0], mats.white, 0.065);
-    box(group, 0.48, 0.31, 0.11, [0, 0, 0.37], mats.navy, 0.055);
-    const barrel = cylinder(group, 0.145, 0.16, [0, 0, 0.5], mats.chrome);
-    barrel.rotation.x = Math.PI / 2;
-    const lens = cylinder(group, 0.107, 0.018, [0, 0, 0.59], mats.ink);
-    lens.rotation.x = Math.PI / 2;
-    const inner = cylinder(group, 0.064, 0.02, [0, 0, 0.603], mats.blue);
-    inner.rotation.x = Math.PI / 2;
-    led(group, [0.17, 0.12, 0.434], 0.055);
+  function screw(parent, position, size = 0.025) {
+    const object = new THREE.Mesh(new THREE.CylinderGeometry(size, size, 0.012, 10), mats.chrome);
+    object.rotation.x = Math.PI / 2;
+    object.position.set(...position);
+    parent.add(object);
+    box(parent, size * 0.95, size * 0.17, 0.013, [position[0], position[1], position[2] + 0.006], mats.ink, 0);
+    return object;
+  }
+
+  function grille(parent, w, h, position) {
+    box(parent, w + 0.035, h + 0.035, 0.022, position, mats.ink, 0.007);
+    return box(parent, w, h, 0.009, [position[0], position[1], position[2] + 0.016], mats.mesh, 0.001);
+  }
+
+  function socket(parent, position, size = 0.12) {
+    box(parent, size * 1.3, size, 0.018, position, mats.chrome, 0.006);
+    box(parent, size * 1.04, size * 0.72, 0.022, [position[0], position[1], position[2] + 0.012], mats.ink, 0.003);
+    led(parent, [position[0] - size * 0.37, position[1] + size * 0.32, position[2] + 0.026], 0.018, mats.green);
+  }
+
+  function rackUnit(parent, y, w = 3.45, d = 2.2, index = 0, h = 0.42) {
+    const group = new THREE.Group(); group.position.y = y; parent.add(group);
+    box(group, w, h, d, [0, 0, 0], mats.navy, 0.012);
+    box(group, w - 0.02, h - 0.025, 0.04, [0, 0, d / 2 + 0.018], mats.slate, 0.008);
+    grille(group, w * 0.39, h * 0.62, [-w * 0.13, 0, d / 2 + 0.045]);
+    for (let j = 0; j < 2; j++) {
+      const x = w * 0.25 + j * w * 0.135;
+      box(group, w * 0.11, h * 0.61, 0.025, [x, 0, d / 2 + 0.052], mats.ink, 0.005);
+      box(group, w * 0.1, h * 0.13, 0.024, [x, -h * 0.19, d / 2 + 0.068], mats.slate, 0.003);
+      led(group, [x - w * 0.029, h * 0.17, d / 2 + 0.069], 0.032, j ? mats.green : mats.electric);
+    }
+    for (const x of [-w / 2 + 0.10, w / 2 - 0.10]) {
+      rod(group, [x, -h * 0.29, d / 2 + 0.14], [x, h * 0.29, d / 2 + 0.14], 0.025, mats.chrome);
+      for (const yy of [-h * 0.29, h * 0.29]) rod(group, [x, yy, d / 2 + 0.04], [x, yy, d / 2 + 0.14], 0.025, mats.chrome);
+    }
+    label(group, `ZIEWISE  /  ${String(index + 1).padStart(2, '0')}`, [-w * 0.30, h * 0.29, d / 2 + 0.074], 0.54, 0.044);
+    screw(group, [-w / 2 + 0.03, 0, d / 2 + 0.073], 0.018);
+    screw(group, [w / 2 - 0.03, 0, d / 2 + 0.073], 0.018);
     return group;
   }
 
+  function screen(parent, position, w = 2.2, h = 1.35, title = 'SYSTEM OVERVIEW', chart = true) {
+    const group = new THREE.Group(); group.position.set(...position); parent.add(group);
+    box(group, w + 0.10, h + 0.1, 0.065, [0, 0, 0], mats.navy, 0.028);
+    const surface = document.createElement('canvas'); surface.width = 1024; surface.height = 640;
+    const ctx = surface.getContext('2d');
+    ctx.fillStyle = '#0d161c'; ctx.fillRect(0, 0, 1024, 640);
+    ctx.fillStyle = '#d3dfe5'; ctx.font = '500 27px Arial'; ctx.fillText(title, 40, 63);
+    ctx.fillStyle = '#8ab4b7'; ctx.font = '16px monospace'; ctx.fillText('ZIEWISE   /   CONNECTED INTELLIGENCE', 40, 99);
+    ctx.strokeStyle = '#25343d'; ctx.lineWidth = 2;
+    for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.moveTo(40, 165 + i * 73); ctx.lineTo(984, 165 + i * 73); ctx.stroke(); }
+    if (chart) {
+      ctx.strokeStyle = '#9ed9dc'; ctx.lineWidth = 4; ctx.beginPath();
+      for (let i = 0; i < 60; i++) { const x = 40 + i * 16; const y = 350 - Math.sin(i * 0.21) * 57 - Math.sin(i * 1.3) * 20 - i * 1.1; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+      ctx.font = '500 47px Arial'; ctx.fillStyle = '#d3dfe5'; ctx.fillText('99.9%', 45, 550); ctx.fillText('ACTIVE', 408, 550); ctx.fillText('45 ms', 763, 550);
+      ctx.fillStyle = '#8da1ad'; ctx.font = '19px Arial'; ctx.fillText('AVAILABILITY', 46, 588); ctx.fillText('SYSTEM STATUS', 409, 588); ctx.fillText('EDGE RESPONSE', 764, 588);
+    } else if (title.includes('COMMERCE')) {
+      ctx.fillStyle = '#192930'; ctx.fillRect(40, 143, 431, 443);
+      ctx.strokeStyle = '#a8b7bf'; ctx.lineWidth = 23; ctx.beginPath(); ctx.arc(253, 325, 118, Math.PI, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#66818f'; ctx.fillRect(113, 313, 54, 145); ctx.fillRect(340, 313, 54, 145);
+      ctx.fillStyle = '#d3dfe5'; ctx.font = '36px Arial'; ctx.fillText('STUDIO HEADPHONES', 521, 218);
+      ctx.fillStyle = '#8da6b2'; ctx.font = '22px Arial'; ctx.fillText('Graphite / precision audio', 522, 266);
+      ctx.fillText('Interactive 360° product view', 522, 316);
+      for (const [index, color] of ['#70828b', '#b6b9b6', '#334a57'].entries()) { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(545 + index * 78, 389, 24, 0, Math.PI * 2); ctx.fill(); }
+      ctx.fillStyle = '#314d5a'; ctx.fillRect(522, 466, 425, 65);
+      ctx.fillStyle = '#cbdde1'; ctx.font = '24px Arial'; ctx.fillText('EXPLORE PRODUCT', 597, 508);
+    } else {
+      ctx.fillStyle = '#263a45'; ctx.fillRect(56, 146, 283, 394);
+      ctx.fillStyle = '#b5c2c5'; ctx.fillRect(86, 168, 217, 345);
+      ctx.fillStyle = '#586970'; for (let i = 0; i < 9; i++) ctx.fillRect(104, 200 + i * 27, i % 3 === 0 ? 153 : 173, 5);
+      ctx.fillStyle = '#cbdce0'; ctx.font = '36px Arial'; ctx.fillText('DOCUMENT VERIFIED', 398, 218);
+      ctx.fillStyle = '#9cbbb7'; ctx.font = '22px Arial'; ctx.fillText('Identity · integrity · access', 400, 261);
+      ctx.fillStyle = '#536a76'; for (let i = 0; i < 5; i++) ctx.fillRect(400, 309 + i * 42, 500 - (i % 2) * 120, 9);
+      ctx.fillStyle = '#74a69b'; ctx.fillRect(400, 552, 156, 5);
+    }
+    const texture = new THREE.CanvasTexture(surface); texture.colorSpace = THREE.SRGBColorSpace;
+    const display = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({map: texture, toneMapped: false}));
+    display.position.z = 0.036; group.add(display);
+    return group;
+  }
+
+  function coreScene(parent) {
+    platform(parent, 6, 4.2);
+    const cabinet = new THREE.Group(); cabinet.position.set(-0.23, 0, -0.15); parent.add(cabinet);
+    // Four commercial rack servers with continuous chassis, rack ears and latches.
+    // Nothing floats: load-bearing sidewalls, rails and feet explain the assembly.
+    for (const x of [-1.93, 1.93]) {
+      box(cabinet, 0.095, 2.60, 2.65, [x, 1.3, -0.1], mats.navy, 0.016);
+      box(cabinet, 0.12, 2.41, 0.08, [x - Math.sign(x) * 0.11, 1.30, 1.25], mats.chrome, 0.006);
+      for (const y of [0.20, 2.39]) screw(cabinet, [x, y, 1.24], 0.035);
+      for (const z of [-1.09, 1.04]) cylinder(cabinet, 0.105, 0.12, [x * 0.94, 0.015, z], mats.ink);
+    }
+    box(cabinet, 3.95, 0.09, 2.64, [0, 2.58, -0.10], mats.navy, 0.016);
+    box(cabinet, 3.95, 0.10, 2.64, [0, 0.10, -0.10], mats.ink, 0.008);
+    const side = new THREE.Group(); side.position.set(1.988, 1.36, -0.13); side.rotation.y = Math.PI / 2; cabinet.add(side);
+    box(side, 2.16, 1.95, 0.012, [0, 0, 0], mats.navy, 0.005);
+    grille(side, 1.61, 0.65, [0, -0.25, 0.012]);
+    for (const x of [-1.0, 1.0]) for (const y of [-0.88, 0.88]) screw(side, [x, y, 0.025], 0.022);
+    label(side, 'PRECISION COMPUTE  /  ZIEWISE', [0, 0.65, 0.026], 1.43, 0.061, '#8b9ca7');
+    for (let i = 0; i < 4; i++) rackUnit(cabinet, 0.46 + i * 0.50, 3.56, 2.27, i, 0.43);
+    // A genuine network appliance occupies the top half-rack unit.
+    box(cabinet, 3.56, 0.34, 2.27, [0, 2.29, 0], mats.slate, 0.009);
+    for (let i = 0; i < 10; i++) socket(cabinet, [-1.2 + i * 0.21, 2.29, 1.145], 0.105);
+    label(cabinet, 'EDGE  /  10 GbE', [1.06, 2.29, 1.18], 0.66, 0.07);
+    const topVent = grille(cabinet, 2.55, 1.47, [0, 0, 0]);
+    topVent.rotation.x = -Math.PI / 2; topVent.position.set(0, 2.631, -0.15);
+    // Remove the grille backing from its helper's default location by keeping
+    // the top surface itself at the correct height; the chassis stays opaque.
+    label(cabinet, 'ZIEWISE', [-0.90, 2.50, 1.255], 1.14, 0.075, '#d2dbdf');
+    // Fanless edge gateway, milled cooling fins, antenna sockets and patch leads.
+    const edge = new THREE.Group(); edge.position.set(2.08, 0.20, 0.83); edge.rotation.y = -0.16; parent.add(edge);
+    box(edge, 1.01, 0.38, 1.00, [0, 0, 0], mats.slate, 0.02);
+    for (let i = 0; i < 12; i++) box(edge, 0.024, 0.14, 0.9, [-0.43 + i * 0.078, 0.25, 0], mats.chrome, 0.003);
+    box(edge, 0.96, 0.32, 0.025, [0, 0, 0.51], mats.navy, 0.007);
+    for (let i = 0; i < 3; i++) socket(edge, [-0.24 + i * 0.22, -0.015, 0.53], 0.13);
+    label(edge, 'EDGE COMPUTE', [0, 0.12, 0.546], 0.64, 0.053);
+    for (const x of [-0.44, 0.44]) screw(edge, [x, 0, 0.548], 0.025);
+    path(parent, [[1.6, 2.24, -1.2], [2.25, 1.55, -1.62], [2.58, 0.17, -1.05], [2.44, 0.10, 0.11], [2.10, 0.17, 0.45]], {radius: 0.045, pulse: false, color: mats.ink});
+    path(parent, [[-0.57, 2.29, 1.02], [-0.67, 2.15, 1.64], [0.72, 2.03, 1.70], [0.94, 2.29, 1.04]], {radius: 0.021, pulse: false, color: mats.slate});
+    animations.push(t => { mats.electric.emissiveIntensity = 0.46 + Math.sin(t * 1.5) * 0.055; });
+  }
+
+  function cameraUnit(parent, position, angle = 0) {
+    const group = new THREE.Group(); group.position.set(...position); group.rotation.y = angle; parent.add(group);
+    box(group, 0.37, 0.37, 0.51, [0, 0, 0], mats.slate, 0.012);
+    for (let i = 0; i < 7; i++) box(group, 0.41, 0.012, 0.035, [0, 0.19, -0.21 + i * 0.065], mats.chrome, 0.002);
+    box(group, 0.38, 0.38, 0.036, [0, 0, 0.26], mats.navy, 0.007);
+    for (const [radius, length, z, material] of [[0.145, 0.20, 0.37, mats.ink], [0.16, 0.036, 0.45, mats.chrome], [0.125, 0.028, 0.478, mats.ink], [0.105, 0.017, 0.495, mats.glass]]) {
+      const component = cylinder(group, radius, length, [0, 0, z], material); component.rotation.x = Math.PI / 2;
+    }
+    for (const x of [-0.15, 0.15]) for (const y of [-0.15, 0.15]) screw(group, [x, y, 0.285], 0.014);
+    label(group, 'VISION / 01', [0, 0.105, 0.29], 0.23, 0.04);
+    return group;
+  }
+
+  function extrusion(parent, h, position, width = 0.105) {
+    box(parent, width, h, width, position, mats.chrome, 0.006);
+    box(parent, width * 0.24, h - 0.025, 0.007, [position[0], position[1], position[2] + width / 2 + 0.003], mats.ink, 0.001);
+  }
+
   function visionScene(parent) {
-    platform(parent, 6.7, 4.4);
-    box(parent, 5.65, 0.35, 1.65, [0, 0.63, 0], mats.chrome, 0.14);
-    box(parent, 5.5, 0.07, 1.4, [0, 0.843, 0], mats.ink, 0.06);
-    for (const x of [-2.2, 2.2]) for (const z of [-0.64, 0.64]) box(parent, 0.14, 0.45, 0.14, [x, 0.36, z], mats.slate, 0.03);
-    for (let i = 0; i < 21; i++) box(parent, 0.023, 0.014, 1.32, [-2.5 + i * 0.25, 0.89, 0], mats.slate, 0.004);
-    for (const z of [-0.83, 0.83]) box(parent, 5.55, 0.075, 0.06, [0, 0.94, z], mats.white, 0.025);
-    const portal = new THREE.Group();
-    portal.position.x = 0.3;
-    parent.add(portal);
-    for (const z of [-1.02, 1.02]) {
-      box(portal, 0.3, 1.82, 0.28, [0, 1.12, z], mats.white, 0.06);
-      box(portal, 0.105, 1.43, 0.025, [0, 1.18, z + (z > 0 ? -0.15 : 0.15)], mats.electric, 0.02);
+    platform(parent, 6.7, 4.1);
+    // A machine-vision conveyor with steel sideframes, bearings and rubber belt.
+    box(parent, 5.35, 0.29, 1.27, [0, 0.84, 0], mats.navy, 0.04);
+    box(parent, 5.18, 0.025, 1.14, [0, 1.004, 0], mats.ink, 0.008);
+    for (const z of [-0.68, 0.68]) {
+      box(parent, 5.45, 0.16, 0.065, [0, 0.97, z], mats.chrome, 0.008);
+      for (const x of [-2.30, 2.30]) {
+        extrusion(parent, 0.83, [x, 0.41, z]);
+        box(parent, 0.23, 0.055, 0.23, [x, 0.01, z], mats.ink, 0.01);
+        screw(parent, [x, 0.94, z + 0.05], 0.036);
+      }
     }
-    box(portal, 0.45, 0.26, 2.37, [0, 2.1, 0], mats.white, 0.06);
-    box(portal, 0.47, 0.12, 0.7, [0, 2.31, 0], mats.navy, 0.04);
-    const beam = box(portal, 0.014, 1.2, 1.78, [0, 1.46, 0], mats.beam, 0);
-    const scanning = box(portal, 0.021, 0.018, 1.7, [0, 1.5, 0], mats.electric, 0);
-    cylinder(parent, 0.07, 1.64, [-1.24, 1, -1.39], mats.chrome);
-    cameraUnit(parent, [-1.24, 1.96, -1.39], 0.26).rotation.x = 0.3;
-    const parcels = [];
+    for (const x of [-2.55, 2.55]) {
+      const roller = cylinder(parent, 0.13, 1.35, [x, 0.855, 0], mats.chrome); roller.rotation.x = Math.PI / 2;
+    }
+    for (let i = 0; i < 24; i++) box(parent, 0.009, 0.006, 1.13, [-2.45 + i * 0.215, 1.023, 0], mats.line, 0);
+    for (const z of [-0.91, 0.91]) {
+      extrusion(parent, 2.29, [0.35, 1.13, z], 0.15);
+      box(parent, 0.42, 0.075, 0.37, [0.35, 0.006, z], mats.navy, 0.01);
+      screw(parent, [0.35, 1.95, z + 0.086], 0.032);
+    }
+    box(parent, 0.16, 0.15, 2.01, [0.35, 2.30, 0], mats.chrome, 0.006);
+    const overhead = cameraUnit(parent, [0.35, 2.06, 0]); overhead.rotation.x = Math.PI / 2;
+    for (const z of [-0.55, 0.55]) {
+      box(parent, 0.60, 0.085, 0.16, [0.35, 1.98, z], mats.ink, 0.008);
+      box(parent, 0.51, 0.013, 0.10, [0.35, 1.932, z], mats.electric, 0.003);
+    }
+    path(parent, [[0.35, 2.07, -0.23], [0.35, 2.38, -0.47], [0.35, 2.39, -0.92], [0.36, 0.21, -0.98], [1.94, 0.07, -1.3]], {radius: 0.021, pulse: false, color: mats.ink});
+    // Machined enclosures move beneath the inspection lens at conveyor speed.
+    const parts = [];
     for (let i = 0; i < 3; i++) {
-      const parcel = new THREE.Group();
-      parent.add(parcel);
-      const height = i === 1 ? 0.68 : 0.49;
-      box(parcel, 0.68, height, 0.66, [0, height / 2, 0], i === 1 ? mats.navy : mats.white, 0.055);
-      box(parcel, 0.1, height + 0.01, 0.67, [0.11, height / 2 + 0.004, 0], mats.blue, 0.018);
-      box(parcel, 0.26, 0.15, 0.015, [-0.13, height * 0.58, 0.338], mats.paper, 0.008);
-      for (let j = 0; j < 5; j++) box(parcel, 0.009 + (j % 2) * 0.005, 0.08, 0.008, [-0.21 + j * 0.035, height * 0.58, 0.35], mats.navy, 0);
-      parcel.position.set(-2.3 + i * 1.78, 0.91, 0);
-      parcels.push(parcel);
+      const part = new THREE.Group(); part.position.set(-2.15 + i * 1.68, 1.075, 0); part.userData.moving = true; parent.add(part);
+      box(part, 0.58, 0.23, 0.68, [0, 0.115, 0], mats.slate, 0.025);
+      box(part, 0.55, 0.031, 0.65, [0, 0.245, 0], mats.chrome, 0.012);
+      for (let j = 0; j < 5; j++) box(part, 0.018, 0.018, 0.46, [-0.18 + j * 0.09, 0.27, 0], mats.navy, 0.002);
+      label(part, `QC / ${String(i + 1).padStart(4, '0')}`, [0, 0.13, 0.349], 0.43, 0.07, '#b9c9ce');
+      parts.push(part);
     }
-    box(parent, 0.09, 0.74, 0.09, [2.28, 0.63, -1.45], mats.chrome, 0.02);
-    const screen = new THREE.Group();
-    screen.position.set(2.28, 1.24, -1.4);
-    screen.rotation.y = -0.28;
-    parent.add(screen);
-    box(screen, 1, 0.64, 0.1, [0, 0, 0], mats.navy, 0.055);
-    checkmark(screen, [-0.21, 0.035, 0.069], 0.65, mats.green);
-    for (let i = 0; i < 3; i++) box(screen, 0.32 - i * 0.035, 0.025, 0.013, [0.2, 0.12 - i * 0.1, 0.067], mats.slate, 0.005);
-    animations.push(t => {
-      parcels.forEach((parcel, i) => { parcel.position.x = ((t * 0.42 + i * 1.78) % 5.34) - 2.67; });
-      scanning.position.y = 0.98 + (Math.sin(t * 1.5) * 0.5 + 0.5) * 0.95;
-      beam.material.opacity = 0.055 + Math.sin(t * 1.5) * 0.018;
-    });
+    extrusion(parent, 1.19, [2.23, 0.59, -1.25], 0.10);
+    box(parent, 0.64, 0.06, 0.53, [2.23, 0, -1.25], mats.navy, 0.02);
+    const monitor = screen(parent, [2.20, 1.61, -1.24], 1.07, 0.67, 'VISION INSPECTION'); monitor.rotation.y = -0.22;
+    label(parent, 'MACHINE VISION  /  EDGE INSPECTION', [-0.7, 0.96, 0.717], 2.13, 0.058);
+    animations.push(t => { parts.forEach((part, i) => { part.position.x = ((t * 0.28 + i * 1.68) % 5.04) - 2.52; }); });
   }
 
   function energyScene(parent) {
-    platform(parent, 6.6, 4.5);
-    const turbineRotors = [];
-    function turbine(x, z, scale) {
-      const group = new THREE.Group();
-      group.position.set(x, 0.2, z);
-      group.scale.setScalar(scale);
-      parent.add(group);
-      cylinder(group, 0.32, 0.12, [0, 0.04, 0], mats.white);
-      cylinder(group, 0.085, 1.82, [0, 1, 0], mats.white, 0.052);
-      box(group, 0.22, 0.21, 0.49, [0, 1.96, -0.03], mats.white, 0.07);
-      const rotor = new THREE.Group();
-      rotor.position.set(0, 1.98, 0.27);
-      group.add(rotor);
-      sphere(rotor, 0.095, [0, 0, 0], mats.chrome);
-      for (let i = 0; i < 3; i++) {
-        const bladeGroup = new THREE.Group();
-        bladeGroup.rotation.z = i * Math.PI * 2 / 3;
-        rotor.add(bladeGroup);
-        const shape = new THREE.Shape();
-        shape.moveTo(-0.025, 0.08); shape.lineTo(-0.09, 0.25); shape.lineTo(-0.075, 0.68); shape.lineTo(0.025, 1.02); shape.lineTo(0.06, 0.95); shape.lineTo(0.075, 0.3); shape.closePath();
-        const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: 0.032, bevelEnabled: true, bevelSize: 0.012, bevelThickness: 0.009, bevelSegments: 1, steps: 1 }), mats.white);
-        blade.castShadow = true;
-        bladeGroup.add(blade);
+    platform(parent, 6.7, 5.0);
+    // Small-site hybrid generation, represented by actual equipment housings.
+    const turbine = new THREE.Group(); turbine.position.set(-1.85, 0, -1.09); parent.add(turbine);
+    cylinder(turbine, 0.24, 0.07, [0, 0, 0], mats.slate);
+    cylinder(turbine, 0.078, 2.58, [0, 1.31, 0], mats.porcelain, 0.045);
+    box(turbine, 0.24, 0.23, 0.58, [0, 2.65, -0.11], mats.porcelain, 0.06);
+    const rotor = new THREE.Group(); rotor.position.set(0, 2.64, 0.24); rotor.userData.moving = true; turbine.add(rotor);
+    const hub = cylinder(rotor, 0.105, 0.22, [0, 0, 0.035], mats.chrome, 0.06); hub.rotation.x = Math.PI / 2;
+    for (let i = 0; i < 3; i++) {
+      const arm = new THREE.Group(); arm.rotation.z = i * Math.PI * 2 / 3; rotor.add(arm);
+      const shape = new THREE.Shape(); shape.moveTo(-0.022, 0.05); shape.bezierCurveTo(-0.07, 0.21, -0.035, 0.76, 0.065, 1.04); shape.lineTo(0.095, 1.08); shape.bezierCurveTo(0.11, 0.81, 0.12, 0.36, 0.055, 0.15); shape.closePath();
+      const blade = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {depth: 0.017, bevelEnabled: true, bevelSize: 0.008, bevelThickness: 0.005, bevelSegments: 2, steps: 1, curveSegments: 8}), mats.porcelain); arm.add(blade);
+    }
+    for (let j = 0; j < 3; j++) {
+      const module = new THREE.Group(); module.position.set(-1.84 + j * 1.05, 0.53, 0.79); module.rotation.x = 0.37; parent.add(module);
+      box(module, 1.0, 0.057, 1.60, [0, 0, 0], mats.chrome, 0.009);
+      box(module, 0.943, 0.020, 1.544, [0, 0.042, 0], mats.ink, 0.003);
+      for (let x = 0; x < 4; x++) for (let z = 0; z < 6; z++) {
+        box(module, 0.218, 0.007, 0.238, [-0.348 + x * 0.232, 0.057, -0.638 + z * 0.255], mats.photovoltaic, 0.011);
       }
-      turbineRotors.push(rotor);
+      for (let x = 0; x < 8; x++) box(module, 0.003, 0.007, 1.49, [-0.405 + x * 0.115, 0.065, 0], mats.slate, 0);
+      for (const x of [-0.36, 0.36]) {
+        extrusion(parent, 0.74, [-1.84 + j * 1.05 + x, 0.34, 0.36], 0.055);
+        extrusion(parent, 0.45, [-1.84 + j * 1.05 + x, 0.2, 1.30], 0.055);
+        rod(parent, [-1.84 + j * 1.05 + x, 0.72, 0.35], [-1.84 + j * 1.05 + x, 0.06, 1.3], 0.018, mats.chrome);
+      }
     }
-    turbine(-1.95, -0.67, 1);
-    turbine(-0.54, -1.04, 0.8);
-    // Solar array, racked and individually divided into photovoltaic cells.
-    for (let row = 0; row < 2; row++) for (let col = 0; col < 2; col++) {
-      const panel = new THREE.Group();
-      panel.position.set(-1.87 + col * 1.02, 0.52, 0.76 + row * 0.71);
-      panel.rotation.x = -0.32;
-      parent.add(panel);
-      box(panel, 0.91, 0.055, 0.62, [0, 0, 0], mats.chrome, 0.025);
-      box(panel, 0.84, 0.015, 0.55, [0, 0.037, 0], mats.navy, 0.009);
-      for (let i = 0; i < 3; i++) box(panel, 0.011, 0.011, 0.55, [-0.21 + i * 0.21, 0.052, 0], mats.blue, 0);
-      for (const z of [-0.09, 0.09]) box(panel, 0.83, 0.011, 0.008, [0, 0.052, z], mats.slate, 0);
-      rod(parent, [panel.position.x - 0.28, 0.19, panel.position.z], [panel.position.x - 0.28, 0.48, panel.position.z], 0.025);
-      rod(parent, [panel.position.x + 0.28, 0.19, panel.position.z], [panel.position.x + 0.28, 0.48, panel.position.z], 0.025);
+    const cabinet = new THREE.Group(); cabinet.position.set(1.82, 0, -0.49); parent.add(cabinet);
+    box(cabinet, 1.20, 2.13, 1.0, [0, 1.05, 0], mats.slate, 0.03);
+    box(cabinet, 1.14, 2.02, 0.035, [0, 1.07, 0.515], mats.navy, 0.016);
+    box(cabinet, 1.20, 0.095, 1.01, [0, 0.01, 0], mats.ink, 0.014);
+    for (let i = 0; i < 5; i++) {
+      box(cabinet, 0.86, 0.215, 0.04, [0, 0.43 + i * 0.263, 0.55], mats.slate, 0.01);
+      led(cabinet, [-0.32, 0.43 + i * 0.263, 0.58], 0.04, mats.green);
+      label(cabinet, `BATTERY MODULE  0${i + 1}`, [0.03, 0.43 + i * 0.263, 0.578], 0.55, 0.042);
     }
-    const battery = new THREE.Group();
-    battery.position.set(1.72, 0.22, 0.28);
-    parent.add(battery);
-    box(battery, 1.32, 1.78, 0.95, [0, 0.89, 0], mats.white, 0.095);
-    box(battery, 1.09, 1.4, 0.055, [0, 0.96, 0.488], mats.navy, 0.065);
-    box(battery, 0.61, 0.93, 0.033, [0, 1.02, 0.53], mats.slate, 0.04);
-    box(battery, 0.49, 0.81, 0.026, [0, 1.02, 0.556], mats.ink, 0.025);
-    box(battery, 0.2, 0.065, 0.03, [0, 1.51, 0.537], mats.chrome, 0.014);
-    const charge = [];
-    for (let i = 0; i < 4; i++) charge.push(box(battery, 0.37, 0.135, 0.02, [0, 0.735 + i * 0.19, 0.58], i === 3 ? mats.blue : mats.green, 0.016));
-    led(battery, [0.36, 0.33, 0.53], 0.2, mats.green);
-    vent(battery, [-0.25, 0.28, 0.512], 5, 0.09, 0.12);
-    path(parent, [[-1.95, 0.22, -0.67], [-1.22, 0.2, -1.62], [1.72, 0.2, -1.62], [1.72, 0.3, -0.2]], { speed: 0.13, color: mats.line });
-    path(parent, [[-0.9, 0.22, 1.5], [0, 0.22, 1.5], [0.66, 0.22, 0.66], [1.1, 0.27, 0.66]], { speed: 0.16, phase: 0.4 });
-    animations.push(t => { turbineRotors.forEach((rotor, i) => { rotor.rotation.z = -t * (0.35 + i * 0.08); }); charge[3].scale.x = 0.9 + Math.sin(t * 1.25) * 0.1; });
+    label(cabinet, 'ENERGY STORAGE', [0, 1.95, 0.54], 0.79, 0.079);
+    const display = screen(cabinet, [0, 1.77, 0.541], 0.61, 0.18, 'ENERGY');
+    grille(cabinet, 0.81, 0.12, [0, 0.18, 0.556]);
+    for (const x of [-0.52, 0.52]) screw(cabinet, [x, 1.03, 0.55], 0.027);
+    path(parent, [[-1.85, 0.09, -1.1], [-1.2, 0.04, -1.63], [1.85, 0.04, -1.52], [1.85, 0.21, -0.96]], {radius: 0.026, pulse: false, color: mats.ink});
+    animations.push(t => { rotor.rotation.z = -t * 0.21; });
   }
 
   function commerceScene(parent) {
-    platform(parent, 6.5, 4.5);
-    const pedestal = new THREE.Group();
-    parent.add(pedestal);
-    cylinder(pedestal, 1.3, 0.24, [0, 0.33, 0], mats.navy);
-    cylinder(pedestal, 1.22, 0.12, [0, 0.52, 0], mats.white);
-    ring(pedestal, 1.27, 0.019, [0, 0.48, 0], mats.electric);
-    // A real dimensional headphone product, suspended over a turntable.
-    const product = new THREE.Group();
-    product.position.y = 1.63;
-    parent.add(product);
-    const band = new THREE.Mesh(new THREE.TorusGeometry(0.74, 0.092, 12, 48, Math.PI), mats.navy);
-    product.add(band);
-    const bandHighlight = new THREE.Mesh(new THREE.TorusGeometry(0.75, 0.024, 8, 48, Math.PI), mats.chrome);
-    bandHighlight.position.z = 0.087;
-    product.add(bandHighlight);
-    for (const x of [-0.73, 0.73]) {
-      box(product, 0.11, 0.45, 0.12, [x, -0.12, 0], mats.chrome, 0.03);
-      const cup = box(product, 0.34, 0.72, 0.51, [x, -0.48, 0.01], mats.white, 0.14);
-      cup.rotation.z = x > 0 ? -0.12 : 0.12;
-      box(product, 0.105, 0.55, 0.42, [x + (x > 0 ? -0.17 : 0.17), -0.48, 0.01], mats.ink, 0.1);
-      led(product, [x + (x > 0 ? 0.04 : -0.04), -0.61, 0.274], 0.11);
+    platform(parent, 6, 4.5);
+    const stand = new THREE.Group(); stand.position.set(-0.60, 0, 0.2); stand.userData.moving = true; parent.add(stand);
+    cylinder(stand, 1.09, 0.09, [0, 0.015, 0], mats.ink);
+    cylinder(stand, 1.07, 0.095, [0, 0.11, 0], mats.slate);
+    cylinder(stand, 1.04, 0.025, [0, 0.174, 0], mats.navy);
+    cylinder(stand, 0.048, 2.13, [0, 1.25, -0.20], mats.chrome);
+    box(stand, 0.46, 0.08, 0.38, [0, 2.32, -0.20], mats.ink, 0.032);
+    const product = new THREE.Group(); product.position.set(0, 1.65, 0); stand.add(product);
+    const band = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.075, 12, 64, Math.PI), mats.leather); band.scale.z = 1.9; product.add(band);
+    const trim = new THREE.Mesh(new THREE.TorusGeometry(0.738, 0.012, 8, 64, Math.PI), mats.chrome); trim.position.z = 0.14; product.add(trim);
+    for (const x of [-0.715, 0.715]) {
+      box(product, 0.065, 0.48, 0.057, [x, -0.12, 0], mats.chrome, 0.008);
+      const cup = new THREE.Group(); cup.position.set(x, -0.53, 0); cup.rotation.z = Math.sign(x) * -0.10; product.add(cup);
+      box(cup, 0.22, 0.73, 0.58, [Math.sign(x) * 0.09, 0, 0], mats.navy, 0.105);
+      box(cup, 0.09, 0.68, 0.535, [Math.sign(x) * 0.222, 0, 0], mats.slate, 0.095);
+      box(cup, 0.14, 0.63, 0.47, [-Math.sign(x) * 0.09, 0, 0], mats.leather, 0.105);
+      box(cup, 0.06, 0.41, 0.28, [-Math.sign(x) * 0.164, 0, 0], mats.ink, 0.07);
+      led(cup, [Math.sign(x) * 0.09, -0.21, 0.283], 0.032, mats.green);
+      for (let j = 0; j < 3; j++) box(cup, 0.028, 0.004, 0.042, [Math.sign(x) * 0.23, -0.17 + j * 0.059, 0.258], mats.ink, 0.002);
     }
-    // Open spatial crop corners outline the product volume.
-    for (const x of [-1.12, 1.12]) for (const y of [0.66, 2.73]) {
-      const signX = x > 0 ? -1 : 1;
-      const signY = y > 1 ? -1 : 1;
-      rod(parent, [x, y, 0.78], [x + signX * 0.24, y, 0.78], 0.016, mats.electric);
-      rod(parent, [x, y, 0.78], [x, y + signY * 0.24, 0.78], 0.016, mats.electric);
-    }
-    const cards = [];
-    for (let i = 0; i < 2; i++) {
-      const card = new THREE.Group();
-      card.position.set(i ? 2.01 : -2.05, i ? 1.45 : 1.61, i ? -0.12 : 0.13);
-      card.rotation.y = i ? -0.38 : 0.38;
-      parent.add(card);
-      box(card, 1.23, i ? 1.54 : 1.08, 0.085, [0, 0, 0], mats.white, 0.085);
-      box(card, 1.09, 0.055, 0.018, [0, i ? 0.59 : 0.37, 0.059], mats.navy, 0.013);
-      if (i) {
-        for (let j = 0; j < 3; j++) {
-          sphere(card, 0.07, [-0.39, 0.31 - j * 0.28, 0.08], j === 2 ? mats.chrome : j ? mats.blue : mats.navy);
-          box(card, 0.58 - j * 0.08, 0.033, 0.02, [0.11, 0.31 - j * 0.28, 0.06], mats.slate, 0.012);
-        }
-        box(card, 0.93, 0.2, 0.035, [0, -0.52, 0.068], mats.blue, 0.035);
-        checkmark(card, [0, -0.52, 0.097], 0.4, mats.white);
-      } else {
-        box(card, 0.58, 0.07, 0.02, [-0.17, 0.09, 0.06], mats.navy, 0.02);
-        box(card, 0.82, 0.033, 0.02, [-0.04, -0.07, 0.06], mats.slate, 0.01);
-        for (let j = 0; j < 4; j++) sphere(card, 0.045, [-0.39 + j * 0.16, -0.28, 0.08], mats.blue);
-      }
-      cards.push(card);
-    }
-    ring(parent, 1.66, 0.012, [0, 0.19, 0], mats.line);
-    animations.push(t => { product.rotation.y = Math.sin(t * 0.4) * 0.45; product.position.y = 1.63 + Math.sin(t * 0.7) * 0.045; cards.forEach((card, i) => { card.position.y = (i ? 1.45 : 1.61) + Math.sin(t * 0.6 + i) * 0.025; }); });
+    label(stand, 'STUDIO CAPTURE  /  360°', [0, 0.096, 1.088], 1.21, 0.058);
+    // Physical portrait commerce terminal replaces hovering interface cards.
+    const terminal = new THREE.Group(); terminal.position.set(1.78, 0.0, -0.14); terminal.rotation.y = -0.26; parent.add(terminal);
+    box(terminal, 0.78, 0.055, 0.79, [0, 0.005, 0], mats.navy, 0.027);
+    box(terminal, 0.095, 0.83, 0.07, [0, 0.435, -0.19], mats.chrome, 0.008);
+    screen(terminal, [0, 1.39, 0], 1.65, 1.07, 'SPATIAL COMMERCE', false);
+    cameraUnit(parent, [-2.26, 1.13, -0.30], 1.15);
+    cylinder(parent, 0.032, 0.98, [-2.26, 0.54, -0.30], mats.chrome);
+    for (let i = 0; i < 3; i++) rod(parent, [-2.26, 0.49, -0.3], [-2.26 + Math.sin(i * 2.094) * 0.36, 0, -0.30 + Math.cos(i * 2.094) * 0.36], 0.018, mats.navy);
+    animations.push(t => { stand.rotation.y = Math.sin(t * 0.20) * 0.15; });
   }
 
   function documentPage(parent, position, scale = 1) {
-    const page = new THREE.Group();
-    page.position.set(...position);
-    page.scale.setScalar(scale);
-    parent.add(page);
-    box(page, 0.92, 1.23, 0.037, [0, 0, 0], mats.paper, 0.032);
-    box(page, 0.18, 0.18, 0.012, [-0.24, 0.36, 0.027], mats.blue, 0.025);
-    box(page, 0.37, 0.047, 0.012, [0.11, 0.4, 0.027], mats.navy, 0.012);
-    box(page, 0.28, 0.029, 0.012, [0.065, 0.3, 0.027], mats.slate, 0.009);
-    for (let i = 0; i < 5; i++) box(page, i === 4 ? 0.43 : 0.63, 0.026, 0.01, [i === 4 ? -0.1 : 0, 0.05 - i * 0.116, 0.028], mats.slate, 0.007);
+    const page = new THREE.Group(); page.position.set(...position); page.scale.setScalar(scale); parent.add(page);
+    box(page, 0.92, 1.23, 0.007, [0, 0, 0], mats.paper, 0.001);
+    label(page, 'ZIEWISE', [-0.09, 0.43, 0.007], 0.52, 0.067, '#28363c');
+    for (let i = 0; i < 10; i++) box(page, i % 4 === 0 ? 0.43 : 0.68, 0.009, 0.003, [i % 4 === 0 ? -0.125 : 0, 0.22 - i * 0.064, 0.007], mats.slate, 0);
     return page;
   }
 
   function officeScene(parent) {
-    platform(parent, 6.6, 4.35);
-    box(parent, 5.47, 0.15, 1.67, [0, 0.27, 0], mats.navy, 0.09);
-    for (const x of [-2.3, 0, 2.3]) {
-      cylinder(parent, 0.71, 0.14, [x, 0.42, 0], mats.white);
-      ring(parent, 0.64, 0.016, [x, 0.5, 0], x === 2.3 ? mats.green : mats.blue);
-    }
-    // Input files retain different depths so the stack is legible in perspective.
-    for (let i = 0; i < 3; i++) {
-      const page = documentPage(parent, [-2.14 + i * 0.07, 1.18 + i * 0.025, -0.12 - i * 0.13], 0.84);
-      page.rotation.y = 0.2;
-      page.rotation.z = (i - 1) * -0.065;
-    }
-    for (const x of [-0.63, 0.63]) box(parent, 0.16, 1.72, 0.63, [x, 1.16, 0], mats.white, 0.045);
-    box(parent, 1.45, 0.2, 0.69, [0, 2.07, 0], mats.white, 0.06);
-    box(parent, 1.05, 0.06, 0.31, [0, 2.2, 0], mats.navy, 0.03);
-    for (const x of [-0.52, 0.52]) box(parent, 0.025, 1.29, 0.03, [x, 1.22, 0.36], mats.electric, 0.006);
-    const processed = documentPage(parent, [0, 1.22, 0.04], 0.88);
-    const scanner = box(parent, 0.99, 0.036, 0.075, [0, 1.25, 0.15], mats.electric, 0.012);
-    const verified = documentPage(parent, [2.11, 1.3, 0.03], 0.95);
-    verified.rotation.y = -0.23;
-    const badge = cylinder(verified, 0.21, 0.055, [0.31, -0.39, 0.09], mats.blue);
-    badge.rotation.x = Math.PI / 2;
-    checkmark(verified, [0.31, -0.39, 0.126], 0.73, mats.white);
-    path(parent, [[-1.75, 0.6, 0.83], [-1.18, 0.63, 0.83], [-0.74, 0.6, 0.83]], { speed: 0.27, radius: 0.021 });
-    path(parent, [[0.76, 0.6, 0.83], [1.23, 0.63, 0.83], [1.7, 0.6, 0.83]], { speed: 0.27, radius: 0.021, phase: 0.5 });
-    // A small output tray ties the floating documents back to a physical workflow.
-    box(parent, 1.38, 0.12, 0.83, [2.11, 0.55, 0.05], mats.chrome, 0.045);
-    animations.push(t => { scanner.position.y = 0.76 + (Math.sin(t * 1.15) * 0.5 + 0.5) * 0.95; processed.position.y = 1.22 + Math.sin(t * 0.6) * 0.025; verified.position.y = 1.3 + Math.sin(t * 0.6 + 1) * 0.045; });
+    platform(parent, 6.5, 4.3);
+    // A real document digitisation workstation: glass scanner, paper and monitor.
+    box(parent, 5.35, 0.075, 2.62, [0, 0.79, 0], mats.navy, 0.025);
+    for (const x of [-2.27, 2.27]) for (const z of [-0.95, 0.95]) box(parent, 0.065, 0.84, 0.065, [x, 0.33, z], mats.chrome, 0.008);
+    const scanner = new THREE.Group(); scanner.position.set(-1.15, 0.94, 0.24); scanner.rotation.y = 0.05; parent.add(scanner);
+    box(scanner, 1.70, 0.22, 1.99, [0, 0, 0], mats.slate, 0.035);
+    box(scanner, 1.53, 0.027, 1.75, [0, 0.125, 0], mats.ink, 0.007);
+    box(scanner, 1.31, 0.017, 1.57, [0, 0.147, 0], mats.glass, 0.004);
+    const sheet = documentPage(scanner, [-0.06, 0.169, 0.07], 1.03); sheet.rotation.x = -Math.PI / 2;
+    const lid = new THREE.Group(); lid.position.set(0, 0.13, -0.94); lid.rotation.x = -1.12; scanner.add(lid);
+    box(lid, 1.70, 0.09, 1.96, [0, 0, 0.97], mats.navy, 0.025);
+    box(lid, 1.50, 0.03, 1.70, [0, -0.061, 0.97], mats.porcelain, 0.01);
+    for (const x of [-0.56, 0.56]) box(scanner, 0.14, 0.10, 0.17, [x, 0.16, -0.88], mats.chrome, 0.016);
+    label(scanner, 'DOCUMENT INTELLIGENCE', [-0.13, 0.015, 1.01], 1.15, 0.065);
+    led(scanner, [0.66, 0.013, 1.012], 0.049, mats.green);
+    box(parent, 0.58, 0.047, 0.49, [1.45, 0.859, -0.61], mats.slate, 0.014);
+    box(parent, 0.08, 0.48, 0.07, [1.45, 1.1, -0.76], mats.chrome, 0.008);
+    const monitor = screen(parent, [1.45, 1.88, -0.73], 2.0, 1.26, 'DOCUMENT INTELLIGENCE', false); monitor.rotation.y = -0.12;
+    box(parent, 1.39, 0.035, 0.47, [1.38, 0.852, 0.58], mats.ink, 0.009);
+    for (let row = 0; row < 4; row++) for (let col = 0; col < 12; col++) box(parent, 0.088, 0.019, 0.069, [0.78 + col * 0.103, 0.875, 0.43 + row * 0.087], mats.navy, 0.004);
+    box(parent, 0.19, 0.078, 0.32, [2.34, 0.88, 0.60], mats.slate, 0.043);
+    path(parent, [[1.45, 1.1, -0.81], [1.6, 0.94, -1.1], [0.2, 0.84, -1.05], [-0.55, 0.87, -0.54]], {radius: 0.022, pulse: false, color: mats.ink});
+    const light = box(scanner, 1.22, 0.008, 0.027, [0, 0.158, 0], mats.electric, 0.003);
+    light.userData.moving = true;
+    animations.push(t => { light.position.z = Math.sin(t * 0.48) * 0.72; });
   }
 
   function printScene(parent) {
-    platform(parent, 6.3, 4.35);
-    const printer = new THREE.Group();
-    printer.position.set(-0.3, 0.22, 0.02);
-    parent.add(printer);
-    box(printer, 2.75, 1.43, 1.91, [0, 0.79, 0], mats.white, 0.15);
-    box(printer, 2.73, 0.36, 1.92, [0, 0.22, 0], mats.navy, 0.1);
-    box(printer, 2.41, 0.16, 1.64, [0, 1.57, -0.09], mats.chrome, 0.06);
-    box(printer, 2.22, 0.105, 1.47, [0, 1.69, -0.1], mats.navy, 0.06);
-    box(printer, 1.9, 0.035, 1.15, [0, 1.757, -0.1], mats.glass, 0.025);
-    box(printer, 1.86, 0.26, 0.07, [0, 1.04, 0.97], mats.ink, 0.045);
-    box(printer, 1.94, 0.07, 0.76, [0, 0.84, 1.28], mats.slate, 0.045);
-    box(printer, 1.81, 0.045, 0.71, [0, 0.895, 1.3], mats.navy, 0.03);
-    const paper = new THREE.Group();
-    paper.position.set(0, 0.956, 1.12);
-    printer.add(paper);
-    const sheet = documentPage(paper, [0, 0, 0], 1.12);
-    sheet.rotation.x = -Math.PI / 2;
-    sheet.rotation.z = Math.PI;
-    const control = new THREE.Group();
-    control.position.set(0.71, 1.44, 0.87);
-    control.rotation.x = -0.26;
-    printer.add(control);
-    box(control, 0.81, 0.38, 0.12, [0, 0, 0], mats.navy, 0.04);
-    box(control, 0.43, 0.24, 0.017, [-0.1, 0, 0.073], mats.blue, 0.025);
-    checkmark(control, [-0.1, 0, 0.091], 0.47, mats.white);
-    sphere(control, 0.043, [0.28, 0, 0.079], mats.electric);
-    vent(printer, [-0.73, 0.51, 0.97], 7, 0.11, 0.24);
-    led(printer, [0.97, 0.52, 0.98], 0.14, mats.green);
-    // Secure-release token with a physically modeled lock.
-    const token = new THREE.Group();
-    token.position.set(2.02, 1.49, 0.09);
-    token.rotation.y = -0.32;
-    parent.add(token);
-    box(token, 0.98, 1.22, 0.16, [0, 0, 0], mats.blue, 0.12);
-    box(token, 0.52, 0.43, 0.14, [0, -0.1, 0.13], mats.white, 0.07);
-    const shackle = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.041, 10, 28, Math.PI), mats.chrome);
-    shackle.position.set(0, 0.2, 0.17);
-    token.add(shackle);
-    for (const x of [-0.17, 0.17]) rod(token, [x, 0.1, 0.17], [x, 0.22, 0.17], 0.041, mats.chrome);
-    sphere(token, 0.045, [0, -0.065, 0.217], mats.navy);
-    box(token, 0.027, 0.1, 0.02, [0, -0.123, 0.225], mats.navy, 0.006);
-    path(parent, [[1.18, 0.45, 0.13], [1.8, 0.45, 0.13], [2.02, 0.68, 0.13]], { speed: 0.18, radius: 0.025 });
-    animations.push(t => { paper.position.z = 1.15 + (Math.sin(t * 0.56) * 0.5 + 0.5) * 0.28; token.position.y = 1.49 + Math.sin(t * 0.62) * 0.05; });
+    platform(parent, 5.8, 4.1);
+    const printer = new THREE.Group(); printer.position.set(-0.32, 0, 0); parent.add(printer);
+    box(printer, 2.75, 1.57, 2.17, [0, 0.83, 0], mats.porcelain, 0.055);
+    box(printer, 2.77, 0.18, 2.19, [0, 0.13, 0], mats.navy, 0.032);
+    box(printer, 2.77, 0.17, 2.19, [0, 1.54, 0], mats.slate, 0.032);
+    // An automatic document feeder, glass platen and separate paper drawer.
+    box(printer, 2.68, 0.14, 2.07, [0, 1.72, -0.025], mats.navy, 0.036);
+    box(printer, 2.40, 0.19, 1.57, [0.08, 1.89, -0.16], mats.porcelain, 0.055);
+    box(printer, 1.34, 0.09, 1.12, [-0.22, 2.04, -0.12], mats.ink, 0.024);
+    box(printer, 1.29, 0.045, 0.89, [-0.22, 2.065, 0.02], mats.slate, 0.01);
+    for (let i = 0; i < 5; i++) box(printer, 1.10, 0.005, 0.67, [-0.22, 2.096 + i * 0.006, 0.05], mats.paper, 0.001);
+    box(printer, 2.43, 0.39, 0.025, [0, 0.49, 1.101], mats.slate, 0.021);
+    box(printer, 0.72, 0.087, 0.039, [0, 0.59, 1.12], mats.ink, 0.017);
+    box(printer, 2.42, 0.013, 0.012, [0, 0.29, 1.12], mats.ink, 0.001);
+    box(printer, 1.68, 0.28, 0.095, [-0.15, 1.16, 1.06], mats.ink, 0.018);
+    box(printer, 1.76, 0.06, 0.73, [-0.15, 0.996, 1.29], mats.navy, 0.02);
+    const output = new THREE.Group(); output.position.set(-0.15, 1.035, 1.20); output.userData.moving = true; printer.add(output);
+    const page = documentPage(output, [0, 0, 0], 1.03); page.rotation.x = -Math.PI / 2; page.rotation.z = Math.PI;
+    const control = screen(printer, [0.87, 1.50, 1.15], 0.69, 0.34, 'SECURE RELEASE', false); control.rotation.x = -0.3;
+    label(printer, 'ZIEWISE', [-0.89, 1.52, 1.101], 0.52, 0.09, '#33444c');
+    label(printer, 'SECURE PRINT SYSTEM', [-0.16, 0.83, 1.10], 1.11, 0.060, '#3d4c55');
+    led(printer, [1.11, 0.82, 1.102], 0.066, mats.green);
+    for (let i = 0; i < 12; i++) box(printer, 0.010, 0.28, 0.026, [-1.14 + i * 0.051, 0.83, 1.10], mats.ink, 0.002);
+    // NFC release reader on a real desk pedestal, with a thin access card.
+    const reader = new THREE.Group(); reader.position.set(1.84, 0.96, 0.40); reader.rotation.y = -0.22; parent.add(reader);
+    box(reader, 0.08, 0.94, 0.08, [0, -0.49, -0.08], mats.chrome, 0.008);
+    box(reader, 0.67, 0.055, 0.64, [0, -0.96, -0.04], mats.navy, 0.026);
+    box(reader, 0.56, 0.76, 0.12, [0, 0, 0], mats.ink, 0.037);
+    box(reader, 0.44, 0.28, 0.012, [0, 0.13, 0.067], mats.glass, 0.012);
+    label(reader, 'NFC', [0, -0.16, 0.069], 0.21, 0.086, '#b7cfd1');
+    led(reader, [0, -0.29, 0.071], 0.115, mats.green);
+    path(parent, [[1.0, 0.19, -0.55], [1.65, 0.025, -0.7], [1.95, 0.08, 0.07], [1.86, 0.83, 0.32]], {radius: 0.022, pulse: false, color: mats.ink});
+    animations.push(t => { output.position.z = 1.07 + (Math.sin(t * 0.4) * 0.5 + 0.5) * 0.35; });
   }
 
   function observerScene(parent) {
-    platform(parent, 6.6, 4.65);
-    const hub = new THREE.Group();
-    hub.position.set(0, 0.24, 0);
-    parent.add(hub);
-    cylinder(hub, 0.86, 0.2, [0, 0.06, 0], mats.chrome);
-    cylinder(hub, 0.79, 0.16, [0, 0.23, 0], mats.navy);
-    sphere(hub, 0.59, [0, 1.03, 0], mats.navy);
-    ring(hub, 0.68, 0.027, [0, 1.03, 0], mats.electric, [0.37, 0.2, 0.2]);
-    const ring2 = ring(hub, 0.77, 0.017, [0, 1.03, 0], mats.chrome, [1.05, 0.4, -0.5]);
-    cylinder(hub, 0.14, 0.45, [0, 0.54, 0], mats.chrome);
-    const locations = [[-2.12, 0.22, -1.13], [1.91, 0.22, -1.23], [2.1, 0.22, 1.1], [-1.98, 0.22, 1.2]];
-    const satellites = [];
-    locations.forEach((p, i) => {
-      const node = new THREE.Group();
-      node.position.set(...p);
-      parent.add(node);
-      box(node, 1.01, 0.13, 0.89, [0, 0.04, 0], mats.white, 0.07);
-      if (i < 2) {
-        box(node, 0.73, 1.07, 0.62, [0, 0.64, 0], mats.navy, 0.06);
-        box(node, 0.69, 0.065, 0.57, [0, 1.21, 0], mats.chrome, 0.025);
-        for (let j = 0; j < 4; j++) {
-          box(node, 0.58, 0.14, 0.037, [0, 0.3 + j * 0.235, 0.334], mats.slate, 0.02);
-          led(node, [-0.17, 0.3 + j * 0.235, 0.365], 0.068, j === 3 ? mats.green : mats.electric);
+    platform(parent, 6.6, 4.6);
+    // Three network cabinets with distinct compute, switching and storage bays.
+    for (let c = 0; c < 3; c++) {
+      const rack = new THREE.Group(); rack.position.set(-1.90 + c * 1.91, 0, c === 1 ? -0.13 : 0.04); parent.add(rack);
+      for (const x of [-0.86, 0.86]) box(rack, 0.06, 2.99, 1.95, [x, 1.51, 0], mats.navy, 0.014);
+      box(rack, 1.76, 0.065, 1.96, [0, 3.01, 0], mats.slate, 0.013);
+      box(rack, 1.76, 0.12, 1.96, [0, 0.06, 0], mats.ink, 0.013);
+      for (const x of [-0.76, 0.76]) box(rack, 0.032, 2.86, 0.045, [x, 1.49, 0.99], mats.chrome, 0.003);
+      for (let r = 0; r < 6; r++) {
+        if (c !== 1) rackUnit(rack, 0.39 + r * 0.41, 1.49, 1.75, r, 0.34);
+        else {
+          box(rack, 1.49, 0.335, 1.75, [0, 0.39 + r * 0.41, 0], mats.slate, 0.006);
+          for (let j = 0; j < 8; j++) socket(rack, [-0.59 + j * 0.169, 0.39 + r * 0.41, 0.89], 0.087);
         }
-      } else if (i === 2) {
-        box(node, 1.03, 0.67, 0.09, [0, 0.86, -0.09], mats.navy, 0.045);
-        box(node, 0.91, 0.53, 0.02, [0, 0.86, -0.028], mats.ink, 0.025);
-        rod(node, [0, 0.17, -0.1], [0, 0.54, -0.1], 0.039);
-        box(node, 0.98, 0.045, 0.5, [0, 0.17, 0.23], mats.chrome, 0.03);
-        path(node, [[-0.35, 0.85, -0.01], [-0.2, 0.85, -0.01], [-0.1, 1.01, -0.01], [0.03, 0.7, -0.01], [0.16, 0.91, -0.01], [0.35, 0.91, -0.01]], { pulse: false, radius: 0.012, color: mats.electric });
-      } else {
-        box(node, 0.81, 0.25, 0.63, [0, 0.3, 0], mats.navy, 0.06);
-        for (const x of [-0.29, 0.29]) rod(node, [x, 0.38, -0.2], [x * 1.15, 0.91, -0.2], 0.025, mats.chrome);
-        for (let j = 0; j < 4; j++) led(node, [-0.25 + j * 0.13, 0.31, 0.335], 0.054, j === 0 ? mats.green : mats.electric);
       }
-      path(parent, [[p[0], 0.29, p[2]], [p[0] * 0.7, 0.49, p[2] * 0.72], [p[0] * 0.3, 0.83, p[2] * 0.3], [0, 1.27, 0]], { radius: 0.018, phase: i * 0.25, speed: 0.115 });
-      satellites.push(node);
-    });
-    path(parent, [[-2.12, 0.175, -1.13], [-2.68, 0.175, 0], [-1.98, 0.175, 1.2]], { pulse: false, radius: 0.014 });
-    path(parent, [[1.91, 0.175, -1.23], [2.68, 0.175, -0.1], [2.1, 0.175, 1.1]], { pulse: false, radius: 0.014 });
-    animations.push(t => { ring2.rotation.z = -0.5 + t * 0.07; hub.children[2].rotation.y = t * 0.1; });
+      label(rack, c === 0 ? 'COMPUTE' : c === 1 ? 'NETWORK' : 'STORAGE', [0, 2.83, 1.004], 1.13, 0.107);
+      if (c !== 1) {
+        box(rack, 1.48, 2.5, 0.013, [0, 1.51, 1.053], mats.glass, 0.008);
+        rod(rack, [0.64, 1.18, 1.10], [0.64, 1.64, 1.10], 0.023, mats.chrome);
+      } else {
+        for (let r = 0; r < 3; r++) path(rack, [[-0.5, 2.44 - r * 0.41, 0.95], [-0.58, 2.20 - r * 0.41, 1.23], [0.46, 2.03 - r * 0.41, 1.25], [0.51, 2.03 - r * 0.41, 0.95]], {radius: 0.014, pulse: false, color: r === 1 ? mats.slate : mats.line});
+      }
+      for (const x of [-0.73, 0.73]) for (const z of [-0.77, 0.77]) cylinder(rack, 0.078, 0.11, [x, 0.0, z], mats.ink);
+    }
+    path(parent, [[-1.95, 0.03, -1], [-1.15, 0.015, -1.50], [1.17, 0.015, -1.50], [1.9, 0.03, -1]], {radius: 0.06, pulse: false, color: mats.ink});
+    animations.push(t => { mats.green.emissiveIntensity = 0.28 + Math.sin(t * 1.2) * 0.045; });
   }
 
   const builders = { core: coreScene, vision: visionScene, energy: energyScene, commerce: commerceScene, office: officeScene, print: printScene, observer: observerScene };
+
+  function optimiseStatic(group) {
+    // Merge the many machined details into one static draw per shared material.
+    // Moving machinery and transparent glass retain their independent objects.
+    group.updateMatrixWorld(true);
+    const buckets = new Map();
+    group.traverse(object => {
+      if (!object.isMesh || !sharedMaterials.has(object.material) || object.material.transparent) return;
+      for (let ancestor = object; ancestor && ancestor !== group; ancestor = ancestor.parent) if (ancestor.userData.moving) return;
+      const key = `${object.material.id}/${object.castShadow}/${object.receiveShadow}`;
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push(object);
+    });
+    const inverse = group.matrixWorld.clone().invert();
+    for (const meshes of buckets.values()) {
+      if (meshes.length < 2) continue;
+      const geometries = meshes.map(object => {
+        const geometry = object.geometry.index ? object.geometry.toNonIndexed() : object.geometry.clone();
+        geometry.applyMatrix4(inverse.clone().multiply(object.matrixWorld));
+        return geometry;
+      });
+      const total = geometries.reduce((sum, geometry) => sum + geometry.attributes.position.count, 0);
+      const merged = new THREE.BufferGeometry();
+      for (const [attribute, size] of [['position', 3], ['normal', 3], ['uv', 2]]) {
+        const values = new Float32Array(total * size);
+        let offset = 0;
+        geometries.forEach(geometry => {
+          const source = geometry.getAttribute(attribute);
+          if (source) values.set(source.array, offset);
+          offset += geometry.attributes.position.count * size;
+        });
+        merged.setAttribute(attribute, new THREE.BufferAttribute(values, size));
+      }
+      merged.computeBoundingSphere();
+      const mesh = new THREE.Mesh(merged, meshes[0].material);
+      mesh.castShadow = meshes[0].castShadow;
+      mesh.receiveShadow = meshes[0].receiveShadow;
+      meshes.forEach(object => { object.parent.remove(object); object.geometry.dispose(); });
+      geometries.forEach(geometry => geometry.dispose());
+      group.add(mesh);
+    }
+  }
 
   function releaseGroup(group) {
     if (!group) return;
@@ -643,7 +759,12 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
       if (object.material) (Array.isArray(object.material) ? object.material : [object.material]).forEach(material => { if (!sharedMaterials.has(material)) materials.add(material); });
     });
     geometries.forEach(geometry => geometry.dispose());
-    materials.forEach(material => material.dispose());
+    materials.forEach(material => {
+      for (const key of ['map', 'bumpMap', 'roughnessMap', 'alphaMap']) {
+        if (material[key] && !sharedTextures.has(material[key])) material[key].dispose();
+      }
+      material.dispose();
+    });
     scene.remove(group);
   }
 
@@ -664,6 +785,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   function renderOnce() {
     if (disposed) return;
     updateCamera(true);
+    renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     if (!readySent) { readySent = true; onReady?.({ webgl: true, kind: currentKind }); }
   }
@@ -672,11 +794,13 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   function tick(now) {
     frame = 0;
     if (!active()) return;
+    if (previousTime && now - previousTime < 32) { frame = requestAnimationFrame(tick); return; }
     const delta = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0;
     previousTime = now;
     elapsed += delta;
     animations.forEach(animate => animate(elapsed));
     updateCamera();
+    if (currentKind !== 'core' && currentKind !== 'observer') renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     frame = requestAnimationFrame(tick);
   }
@@ -698,12 +822,13 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     elapsed = 0;
     mats.beam.opacity = 0.075;
     builders[currentKind](root);
+    optimiseStatic(root);
     // Start with complete, legible geometry even when animation is disabled.
     animations.forEach(animate => animate(0));
-    target.set(0, currentKind === 'energy' ? 0.94 : 0.72, 0);
-    desiredOrbit.azimuth = currentKind === 'core' ? 0.77 : 0.63;
-    desiredOrbit.elevation = currentKind === 'core' ? 0.49 : 0.4;
-    desiredOrbit.distance = currentKind === 'core' ? 11.4 : 11.8;
+    target.set(0, currentKind === 'energy' ? 1.3 : currentKind === 'observer' ? 1.18 : 1.0, 0);
+    desiredOrbit.azimuth = currentKind === 'core' ? 0.55 : 0.51;
+    desiredOrbit.elevation = currentKind === 'core' ? 0.28 : 0.32;
+    desiredOrbit.distance = currentKind === 'core' ? 10.0 : currentKind === 'energy' ? 11.7 : currentKind === 'observer' ? 12.4 : currentKind === 'commerce' ? 9.3 : 10.9;
     canvas.setAttribute('aria-label', `Illustrative 3D scene. ${labels[currentKind]}. Drag with a mouse or use the arrow keys to rotate.`);
     renderOnce();
     syncAnimation();
@@ -751,7 +876,14 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   function visibilityChange() { pageVisible = !document.hidden; syncAnimation(); }
   function motionChange(event) { reducedMotion = event.matches; syncAnimation(); renderOnce(); }
   function contextLost(event) { event.preventDefault(); graphicsLost = true; syncAnimation(); canvas.setAttribute('aria-label', 'The 3D preview is paused because the graphics context was interrupted.'); }
-  function contextRestored() { graphicsLost = false; renderOnce(); syncAnimation(); }
+  function contextRestored() {
+    if (disposed) return;
+    rebuildEnvironment();
+    graphicsLost = false;
+    canvas.setAttribute('aria-label', `Illustrative 3D scene. ${labels[currentKind]}. Drag with a mouse or use the arrow keys to rotate.`);
+    renderOnce();
+    syncAnimation();
+  }
   canvas.style.cursor = 'grab';
   canvas.addEventListener('pointerdown', pointerDown);
   canvas.addEventListener('pointermove', pointerMove);
@@ -799,9 +931,11 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
       canvas.removeEventListener('webglcontextrestored', contextRestored);
       releaseGroup(root);
       Object.values(mats).forEach(material => material.dispose());
+      sharedTextures.forEach(texture => texture.dispose());
       floor.geometry.dispose();
       floor.material.dispose();
       environment.dispose();
+      studioObjects.forEach(object => { object.geometry.dispose(); object.material.dispose(); });
       renderer.dispose();
       renderer.forceContextLoss();
       canvas.remove();
