@@ -1,6 +1,7 @@
 import { mountScene } from './scene3d.js?v=20260912-studio1';
 import { mountLogo } from './logo3d.js?v=20260912-bg1';
 import { mountPhotographic } from './photographic.js?v=20260912-photo1';
+import { mountPhotoreal } from './photoreal3d.js?v=20260912-rack1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches;
@@ -37,23 +38,45 @@ const heroVisual=document.querySelector('.hero-visual');
 const viewButton=document.querySelector('#hero-view-toggle');
 let heroDiagram=null;
 let diagramVisible=false;
+let diagramReady=false;
+let diagramFailed=false;
+let diagramRequest=0;
 function refreshHeroView(){
  heroVisual.dataset.view=diagramVisible?'diagram':'photographic';
+ heroVisual.dataset.sceneReady=String(diagramReady);
+ heroEl.setAttribute('aria-busy',String(diagramVisible&&!diagramReady));
  viewButton.setAttribute('aria-pressed',String(diagramVisible));
  const english=document.documentElement.lang==='en';
- viewButton.textContent=diagramVisible?(english?'Main visual':'메인 비주얼'):(english?'3D schematic':'3D 구조도');
- heroEl.setAttribute('aria-label',diagramVisible?(english?'Interactive schematic of computing infrastructure':'컴퓨팅 인프라의 인터랙티브 3D 구조도'):photographicAlt());
+ viewButton.textContent=diagramVisible?(english?'Main visual':'메인 비주얼'):(english?'Explore in 3D':'3D 둘러보기');
+ const diagramLabel=english?'Interactive 3D server infrastructure. Drag or use arrow keys to rotate. Press Home to reset.':'인터랙티브 3D 서버 인프라. 드래그 또는 방향키로 회전하고 Home 키로 처음 시점으로 돌아갑니다.';
+ heroEl.setAttribute('aria-label',diagramVisible?diagramLabel:photographicAlt());
+ heroDiagram?.setLabel?.(diagramLabel);
  const hint=heroVisual.querySelector('.hero-view-hint');
- hint.textContent=diagramVisible?(english?'Drag to rotate in 3D':'드래그하여 3D 회전'):(english?'AI INFRASTRUCTURE · CONCEPT':'AI 인프라 · 콘셉트 비주얼');
+ hint.textContent=diagramVisible?(diagramReady?(english?'Drag to rotate · 360°':'드래그하여 회전 · 360°'):(english?'Loading 3D…':'3D 준비 중…')):diagramFailed?(english?'3D unavailable · main visual restored':'3D를 불러오지 못해 메인 비주얼을 표시합니다'):(english?'AI INFRASTRUCTURE · CONCEPT':'AI 인프라 · 콘셉트 비주얼');
 }
 const hero={
- setPaused(value,options){heroPhoto.setPaused(value||diagramVisible,options);heroDiagram?.setPaused(value);},
+ setPaused(value,options){heroPhoto.setPaused(value||diagramVisible,options);heroDiagram?.setPaused(value,options);},
  setScrollProgress(value){if(diagramVisible)heroDiagram?.setScrollProgress(value);else heroPhoto.setScrollProgress(value);},
  dispose(){heroPhoto.dispose();heroDiagram?.dispose();}
 };
 viewButton.addEventListener('click',()=>{
+ const request=++diagramRequest;
  diagramVisible=!diagramVisible;
- if(diagramVisible){heroDiagram=mount(heroEl,'core');heroDiagram.setPaused(paused||dialogOpen);}
+ diagramReady=false;diagramFailed=false;
+ if(diagramVisible){
+  heroDiagram=mountPhotoreal(heroEl,{
+   onReady:()=>{
+    if(request!==diagramRequest)return;diagramReady=true;refreshHeroView();
+    if(document.activeElement===viewButton)heroEl.querySelector('canvas')?.focus({preventScroll:true});
+   },
+   onContextLost:()=>{if(request!==diagramRequest)return;diagramReady=false;refreshHeroView();},
+   onError:()=>{queueMicrotask(()=>{
+    if(request!==diagramRequest)return;
+    heroDiagram?.dispose();heroDiagram=null;diagramVisible=false;diagramReady=false;diagramFailed=true;
+    refreshHeroView();hero.setPaused(paused||dialogOpen,{manual:motionChosen});
+   });}
+  });
+ }
  else{heroDiagram?.dispose();heroDiagram=null;}
  refreshHeroView();hero.setPaused(paused||dialogOpen,{manual:motionChosen});
 });

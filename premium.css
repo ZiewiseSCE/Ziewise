@@ -125,8 +125,14 @@ body{background:#e4e7ea}
   #sim-root .sim-footer{padding:12px 18px}
 }
 
-/* Photographic main view; the optional rotating model is explicitly a schematic. */
-.hero-visual[data-view=diagram] .photographic-surface,.hero-visual[data-view=diagram] .photographic-fallback{display:none}
+/* Keep the main photograph visible until the interactive 3D scene is ready. */
+.hero-visual[data-view=diagram][data-scene-ready=true] .photographic-surface,.hero-visual[data-view=diagram][data-scene-ready=true] .photographic-fallback{display:none}
+.hero-visual[data-view=diagram][data-scene-ready=false] canvas{opacity:0}
+.hero-visual[data-view=diagram] canvas{position:relative;z-index:1;cursor:grab;transition:opacity .5s ease}
+.hero-visual[data-view=diagram] canvas:active{cursor:grabbing}
+.hero-visual[data-view=diagram] canvas:focus-visible{outline:2px solid #95c8d1;outline-offset:-4px}
+.hero-visual .visual-topline{z-index:2;text-shadow:0 1px 12px #000}
+@media(prefers-reduced-motion:reduce){.hero-visual[data-view=diagram] canvas{transition:none}}
 .hero-visual-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 #hero-view-toggle{border:1px solid #60718180;color:#dbe7f0;background:#2d3b4899;border-radius:4px;padding:6px 10px;font-size:11px;line-height:1.7;white-space:nowrap}
 #hero-view-toggle:hover{background:#425668;border-color:#9ab0c3}
