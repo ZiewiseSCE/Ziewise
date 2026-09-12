@@ -168,6 +168,31 @@
     let background = [];
     let isOpen = false;
     let trainingRun = 0;
+    let digitalTwin = null;
+    let twinSession = 0;
+    let twinPaused = false;
+    function syncTwin() {
+        digitalTwin?.update({industry:state.industry,systems:state.systems,phase:state.step});
+        const label=root.querySelector('.sim-twin-context');
+        if(label)label.textContent=state.industry?(getLang()==='ko'?state.industry.ko:state.industry.en):(getLang()==='ko'?'업종별 AI 아키텍처':'Industry-aware AI architecture');
+        const count=root.querySelector('.sim-twin-count');
+        if(count)count.textContent=getLang()==='ko'?`${state.systems.length}개 시스템 선택`:`${state.systems.length} systems selected`;
+    }
+    function startTwin(host) {
+        const session=++twinSession;
+        twinPaused=document.documentElement.classList.contains('motion-paused')||matchMedia('(prefers-reduced-motion: reduce)').matches;
+        import('./simulator3d.js?v=20260912-bg1').then(({mountSimulation})=>{
+            if(!isOpen||session!==twinSession||!host.isConnected)return;
+            digitalTwin=mountSimulation(host,{industry:state.industry,systems:state.systems,phase:state.step,reducedMotion:twinPaused});
+            digitalTwin.setPaused(twinPaused);syncTwin();
+        }).catch(()=>{
+            if(host.isConnected)host.textContent=getLang()==='ko'?'시스템을 선택하면 연결 구성을 확인할 수 있습니다.':'Select systems to explore their connections.';
+        });
+        const button=root.querySelector('.sim-twin-pause');
+        const updateButton=()=>{button.setAttribute('aria-pressed',String(twinPaused));button.textContent=getLang()==='ko'?(twinPaused?'모션 재생':'모션 일시정지'):(twinPaused?'Play motion':'Pause motion');};
+        button.addEventListener('click',()=>{twinPaused=!twinPaused;digitalTwin?.setPaused(twinPaused);updateButton();});
+        updateButton();
+    }
     function stopTraining() {
         trainingRun++;
         cancelAnimationFrame(state.animTimer);
@@ -189,6 +214,7 @@
     }
     function open() {
         stopTraining();
+        digitalTwin?.dispose();digitalTwin=null;twinSession++;
         if (!isOpen) {
             returnFocus = document.activeElement;
             savedOverflow = document.body.style.overflow;
@@ -225,7 +251,13 @@
             stepper.appendChild(pill);
         });
         modal.appendChild(stepper);
-        modal.appendChild(el('div', 'sim-body'));
+        const layout=el('div','sim-layout');
+        const panel=el('div','sim-3d-panel',`
+            <div class="sim-twin-heading"><span>ZIEWCORE / CONNECTED INTELLIGENCE</span><strong class="sim-twin-context"></strong></div>
+            <div class="sim-digital-twin" role="img" aria-label="${getLang()==='ko'?'선택한 시스템과 AI 코어의 3D 연결 구조':'3D connections between selected systems and the AI core'}"></div>
+            <div class="sim-twin-bottom"><span class="sim-twin-count"></span><button type="button" class="sim-twin-pause"></button></div>
+            <p class="sim-twin-note">${getLang()==='ko'?'선택한 시스템과 학습 단계가 3D 구조에 반영됩니다.':'The 3D structure reflects your systems and learning stage.'}</p>`);
+        layout.appendChild(panel);layout.appendChild(el('div','sim-body'));modal.appendChild(layout);
         const footer = el('div', 'sim-footer', `
             <button type="button" class="sim-btn sim-prev">${L.prev}</button>
             <span class="sim-footer-hint" role="status" aria-live="polite"></span>
@@ -237,15 +269,21 @@
         footer.querySelector('.sim-next').addEventListener('click', nextStep);
         document.addEventListener('keydown', onDialogKey);
         document.body.style.overflow = 'hidden';
+        document.documentElement.classList.add('dialog-open');
+        window.dispatchEvent(new CustomEvent('ziewise:dialog',{detail:true}));
         renderStep();
+        startTwin(panel.querySelector('.sim-digital-twin'));
     }
     function close() {
         if (!isOpen) return;
         stopTraining();
+        digitalTwin?.dispose();digitalTwin=null;twinSession++;
         isOpen = false;
         root.setAttribute('aria-hidden', 'true');
         root.innerHTML = '';
         document.body.style.overflow = savedOverflow;
+        document.documentElement.classList.remove('dialog-open');
+        window.dispatchEvent(new CustomEvent('ziewise:dialog',{detail:false}));
         document.removeEventListener('keydown', onDialogKey);
         background.forEach(([element, inert]) => { element.inert = inert; });
         background = [];
@@ -299,6 +337,7 @@
     }
 
     function updateFooter() {
+        syncTwin();
         const prev = root.querySelector('.sim-prev');
         const next = root.querySelector('.sim-next');
         const hint = root.querySelector('.sim-footer-hint');
@@ -339,6 +378,7 @@
         else if (state.step === 3) renderResults(body);
         updateFooter();
         body.scrollTop = 0;
+        const layout=root.querySelector('.sim-layout');if(layout)layout.scrollTop=0;
         const heading = body.querySelector('.sim-step-h');
         if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
     }

@@ -376,9 +376,52 @@ document.addEventListener('DOMContentLoaded', () => {
    window.dispatchEvent(new CustomEvent('ziewise:language',{detail:lang}));
  };
  window.ziewiseTranslate=(key)=>i18n[lang][key]||key;
- for(const l of ['ko','en'])document.getElementById('btn-'+l).addEventListener('click',()=>{try{localStorage.setItem('ziewise_lang',l);}catch{}chooseLanguage(l);});
+ let languageLocked=false;
+ let countryRequest=null;
+ const browserLanguage=(navigator.language||'en').toLowerCase().startsWith('ko')?'ko':'en';
+ for(const l of ['ko','en'])document.getElementById('btn-'+l).addEventListener('click',()=>{
+   languageLocked=true;countryRequest?.abort();
+   try{localStorage.setItem('ziewise_lang',l);}catch{}
+   document.documentElement.dataset.languageSource='manual';chooseLanguage(l);
+ });
  let saved;try{saved=localStorage.getItem('ziewise_lang');}catch{}
- chooseLanguage(saved||((navigator.language||'ko').startsWith('ko')?'ko':'en'));
+ languageLocked=saved==='ko'||saved==='en';
+ chooseLanguage(languageLocked?saved:browserLanguage);
+ document.documentElement.dataset.languageSource=languageLocked?'manual':'browser';
+ async function chooseCountryLanguage(){
+   if(languageLocked)return;
+   const applyCountry=country=>{
+     if(languageLocked)return;
+     // A selection made in another tab is also authoritative.
+     let manual;try{manual=localStorage.getItem('ziewise_lang');}catch{}
+     if(manual==='ko'||manual==='en'){languageLocked=true;chooseLanguage(manual);document.documentElement.dataset.languageSource='manual';return;}
+     chooseLanguage(country==='KR'?'ko':'en');
+     document.documentElement.dataset.languageSource='country';
+   };
+   try{
+     const cached=JSON.parse(sessionStorage.getItem('ziewise_country')||'null');
+     if(cached && /^[A-Z]{2}$/.test(cached.country) && Date.now()-cached.at>=0 && Date.now()-cached.at<1800000){applyCountry(cached.country);return;}
+   }catch{}
+   const providers=[
+     {url:'https://api.country.is/',read:async response=>(await response.json()).country},
+     {url:'https://ipapi.co/country/',read:response=>response.text()}
+   ];
+   for(const provider of providers){
+     if(languageLocked)return;
+     countryRequest=new AbortController();
+     const timer=setTimeout(()=>countryRequest?.abort(),1800);
+     try{
+       const response=await fetch(provider.url,{signal:countryRequest.signal,credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});
+       if(!response.ok)continue;
+       const country=String(await provider.read(response)).trim().toUpperCase();
+       if(!/^[A-Z]{2}$/.test(country))continue;
+       try{sessionStorage.setItem('ziewise_country',JSON.stringify({country,at:Date.now()}));}catch{}
+       applyCountry(country);return;
+     }catch{/* Keep the usable browser-language page if lookup is unavailable. */}
+     finally{clearTimeout(timer);countryRequest=null;}
+   }
+ }
+ void chooseCountryLanguage();
  const nav=document.querySelector('#primaryNav'),toggle=document.querySelector('#mobileToggle');
  const closeNav=()=>{document.body.classList.remove('nav-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label',lang==='ko'?'메뉴 열기':'Open menu');};
  toggle.addEventListener('click',()=>{const opened=document.body.classList.toggle('nav-open');toggle.setAttribute('aria-expanded',String(opened));toggle.setAttribute('aria-label',opened?(lang==='ko'?'메뉴 닫기':'Close menu'):(lang==='ko'?'메뉴 열기':'Open menu'));});

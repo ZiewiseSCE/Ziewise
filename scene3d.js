@@ -7,6 +7,7 @@ import * as THREE from './vendor/three.module.js';
  */
 export function mountScene(element, { kind = 'core', onReady } = {}) {
   if (!element) return { setKind() {}, setPaused() {}, dispose() {} };
+  const sceneBackground = getComputedStyle(element).getPropertyValue('--scene-background').trim() || '#d3deea';
 
   const labels = {
     core: 'Connected intelligence: a layered computing core linked to specialist modules',
@@ -25,10 +26,10 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     const fallback = document.createElement('div');
     fallback.className = 'webgl-fallback';
     fallback.setAttribute('role', 'img');
-    fallback.style.cssText = 'display:grid;place-content:center;text-align:center;gap:12px;width:100%;height:100%;min-height:220px;padding:32px;box-sizing:border-box;color:#30415c;background:#f2f5fa;font:14px/1.6 system-ui,sans-serif;';
+    fallback.style.cssText = `display:grid;place-content:center;text-align:center;gap:12px;width:100%;height:100%;min-height:220px;padding:32px;box-sizing:border-box;color:inherit;background:${sceneBackground};font:14px/1.6 system-ui,sans-serif;`;
     const title = document.createElement('strong');
     title.textContent = 'ZIEWISE · CONNECTED INTELLIGENCE';
-    title.style.cssText = 'font-size:11px;letter-spacing:.14em;color:#2763df';
+    title.style.cssText = 'font-size:11px;letter-spacing:.14em;color:inherit';
     const detail = document.createElement('span');
     detail.textContent = labels[currentKind];
     const note = document.createElement('small');
@@ -57,12 +58,13 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#f2f5fa');
-  scene.fog = new THREE.Fog('#f2f5fa', 17, 29);
+  scene.background = new THREE.Color(sceneBackground);
+  scene.fog = new THREE.Fog(sceneBackground, 17, 29);
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 60);
   const target = new THREE.Vector3(0, 1.05, 0);
   const orbit = { azimuth: 0.77, elevation: 0.44, distance: 11.4 };
   const desiredOrbit = { ...orbit };
+  let scrollProgress = 0;
   let aspect = 1;
   let root;
   let animations = [];
@@ -123,6 +125,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   scene.add(fill);
 
   const mats = {
+    platform: new THREE.MeshStandardMaterial({color:getComputedStyle(element).getPropertyValue('--scene-plinth').trim()||'#e4ebf3',roughness:0.35,metalness:0.2}),
     white: new THREE.MeshStandardMaterial({ color: '#f3f6fa', roughness: 0.26, metalness: 0.13 }),
     porcelain: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.19, metalness: 0.16 }),
     navy: new THREE.MeshStandardMaterial({ color: '#10213a', roughness: 0.26, metalness: 0.52 }),
@@ -138,7 +141,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     beam: new THREE.MeshBasicMaterial({ color: '#3a79f4', transparent: true, opacity: 0.075, depthWrite: false, side: THREE.DoubleSide }),
   };
   const sharedMaterials = new Set(Object.values(mats));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: '#f2f5fa', roughness: 0.85, metalness: 0 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: sceneBackground, roughness: 0.85, metalness: 0 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.075;
   floor.receiveShadow = true;
@@ -221,7 +224,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   }
 
   function platform(parent, w = 6.5, d = 4.5) {
-    box(parent, w, 0.19, d, [0, 0.05, 0], mats.porcelain, 0.17);
+    box(parent, w, 0.19, d, [0, 0.05, 0], mats.platform, 0.17);
     box(parent, w - 0.2, 0.085, d - 0.2, [0, -0.012, 0], mats.slate, 0.08);
   }
 
@@ -646,9 +649,9 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
 
   function updateCamera(snap = false) {
     const factor = snap || reducedMotion ? 1 : 0.08;
-    orbit.azimuth += (desiredOrbit.azimuth - orbit.azimuth) * factor;
-    orbit.elevation += (desiredOrbit.elevation - orbit.elevation) * factor;
-    const distance = desiredOrbit.distance * Math.max(1, 1.12 / aspect);
+    orbit.azimuth += (desiredOrbit.azimuth + scrollProgress * 0.48 - orbit.azimuth) * factor;
+    orbit.elevation += (desiredOrbit.elevation + scrollProgress * 0.07 - orbit.elevation) * factor;
+    const distance = (desiredOrbit.distance - scrollProgress * 0.65) * Math.max(1, 1.12 / aspect);
     orbit.distance += (distance - orbit.distance) * factor;
     camera.position.set(
       Math.sin(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
@@ -771,6 +774,11 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
 
   return {
     setKind,
+    setScrollProgress(value) {
+      if(disposed || userPaused || reducedMotion)return;
+      scrollProgress=THREE.MathUtils.clamp(Number(value)||0,-1,1);
+      if(!active())renderOnce();
+    },
     setPaused(value) { userPaused = Boolean(value); if (!userPaused) reducedMotion = false; syncAnimation(); },
     dispose() {
       if (disposed) return;

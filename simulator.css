@@ -153,6 +153,48 @@
  #sim-root .sim-metric-card.enhanced .sim-metric-value { font-size:28px; }
  #sim-root .sim-metric-card.enhanced .sim-metric-label { font-size:13px; }
 }
+#sim-root .sim-modal{background:#eaf0f6;border-color:#bfcddd}
+#sim-root .sim-stepper{background:#dce6f1;border-color:#bfcedf}
+#sim-root .sim-industry-card,#sim-root .sim-system-card,#sim-root .sim-metric-card.enhanced{background:#f0f4f8;border-color:#c3cfdd}
+#sim-root .sim-header,#sim-root .sim-footer{border-color:#c2cfdf}
+#sim-root .sim-roi-card{background:#dce7f6;border-color:#bacde7}
+#sim-root .sim-modal{width:min(1260px,100%)}
+#sim-root .sim-modal,#sim-root .sim-layout .sim-body{background:#dce5ef}
+#sim-root .sim-header{background:#e1e8f1}
+#sim-root .sim-footer{background:#d5e0ed}
+#sim-root .sim-industry-card,#sim-root .sim-system-card{background:#e7edf5;border-color:#b2c3d8}
+#sim-root .sim-industry-card.active,#sim-root .sim-system-card.active{background:#d4e4fa;border-color:#4777bd}
+#sim-root .sim-layout{display:grid;grid-template-columns:36% 64%;flex:1 1 auto;min-height:0;overflow:hidden}
+#sim-root .sim-3d-panel{display:flex;flex-direction:column;position:relative;min-height:0;background:linear-gradient(145deg,#263c56,#192d44);color:#dce8f7;border-right:1px solid #415975}
+#sim-root .sim-twin-heading{padding:26px 24px 0;display:flex;flex-direction:column;gap:10px;flex:none}
+#sim-root .sim-twin-heading>span{font-size:10px;letter-spacing:.1em;color:#a6bfde}
+#sim-root .sim-twin-heading>strong{font-size:19px;line-height:1.5;font-weight:600}
+#sim-root .sim-digital-twin{position:relative;flex:1 1 auto;min-height:280px;overflow:hidden;color:#c8d8eb}
+#sim-root .sim-digital-twin canvas{display:block;width:100%;height:100%}
+#sim-root .sim-twin-bottom{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 24px;color:#bed0e5;font-size:12px;flex:none}
+#sim-root .sim-twin-pause{border:1px solid #7086a2;background:#2b4561;color:#e0ecfc;border-radius:4px;padding:6px 9px;font-size:11px;white-space:nowrap}
+#sim-root .sim-twin-note{font-size:11px;color:#a4bad3;padding:0 24px 22px;line-height:1.8;flex:none}
+#sim-root .sim-layout .sim-body{padding:28px;min-width:0;scrollbar-gutter:stable}
+html.dialog-open .logo-text,html.dialog-open .footer-logo-text{animation-play-state:paused}
+@media(max-width:1050px){
+  #sim-root .sim-layout{grid-template-columns:35% 65%}
+  #sim-root .sim-industry-grid,#sim-root .sim-systems-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #sim-root .sim-twin-heading{padding:20px 18px 0}
+  #sim-root .sim-twin-heading>strong{font-size:16px}
+  #sim-root .sim-twin-bottom{padding:8px 18px;flex-wrap:wrap}
+  #sim-root .sim-twin-note{padding:0 18px 18px}
+}
+@media(max-width:760px){
+  #sim-root .sim-layout{display:block;overflow-y:auto;overscroll-behavior:contain}
+  #sim-root .sim-3d-panel{height:292px;border-right:0;border-bottom:1px solid #4b617d}
+  #sim-root .sim-twin-heading{position:absolute;inset:13px 18px auto;padding:0;z-index:1;pointer-events:none;gap:3px}
+  #sim-root .sim-twin-heading>span{font-size:9px}
+  #sim-root .sim-twin-heading>strong{font-size:14px}
+  #sim-root .sim-digital-twin{min-height:0;height:235px;flex:none;padding-top:36px}
+  #sim-root .sim-twin-bottom{padding:0 18px 6px;font-size:11px}
+  #sim-root .sim-twin-note{padding:0 18px 10px;font-size:10px}
+  #sim-root .sim-layout .sim-body{overflow:visible;padding:24px 18px;max-height:none}
+}
 @media(prefers-reduced-motion:reduce) {
  #sim-root *, #sim-root *::before, #sim-root *::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
 }
