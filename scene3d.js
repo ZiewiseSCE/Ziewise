@@ -80,6 +80,13 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   let readySent = false;
   const media = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reducedMotion = media.matches;
+  let manualMotionOverride = false;
+  let dragging = false;
+  let dragPointer = null;
+  let orbitResumeAt = 0;
+  const orbitSpeed = Math.PI * 2 / 60;
+  const fitBounds = { radius: 0, minY: 0, maxY: 0 };
+  const motionReduced = () => reducedMotion && !manualMotionOverride;
 
   // An HDR-style softbox environment is generated locally, so polished metal
   // reflects a real studio arrangement without downloading environment assets.
@@ -288,6 +295,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.1, d * 1.2), new THREE.MeshBasicMaterial({map: texture, transparent: true, depthWrite: false}));
     shadow.rotation.x = -Math.PI / 2;
     shadow.position.y = -0.07;
+    shadow.userData.excludeFromFit = true;
     parent.add(shadow);
   }
 
@@ -768,11 +776,44 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     scene.remove(group);
   }
 
+  function measureFit() {
+    root.updateMatrixWorld(true);
+    const bounds = new THREE.Box3();
+    const meshBounds = new THREE.Box3();
+    root.traverse(object => {
+      if (!object.isMesh || object.userData.excludeFromFit) return;
+      object.geometry.computeBoundingBox();
+      meshBounds.copy(object.geometry.boundingBox).applyMatrix4(object.matrixWorld);
+      bounds.union(meshBounds);
+    });
+    // Leave room for the conveyor parts and turbine blades as they move.
+    const margin = 0.18;
+    fitBounds.radius = Math.hypot(Math.max(Math.abs(bounds.min.x), Math.abs(bounds.max.x)), Math.max(Math.abs(bounds.min.z), Math.abs(bounds.max.z))) + margin;
+    fitBounds.minY = bounds.min.y - target.y - margin;
+    fitBounds.maxY = bounds.max.y - target.y + margin;
+  }
+
+  function fittedDistance(elevation) {
+    // Fit a cylinder around the equipment for every azimuth, including its rear.
+    // The existing preferred distance remains the minimum visual framing.
+    const vertical = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 0.9;
+    const horizontal = vertical * aspect;
+    const sin = Math.sin(elevation), cos = Math.cos(elevation);
+    const { radius, minY, maxY } = fitBounds;
+    const horizontalFit = radius * Math.hypot(cos, 1 / horizontal) + Math.max(minY * sin, maxY * sin);
+    const top = sin + cos / vertical;
+    const bottom = sin - cos / vertical;
+    const topFit = Math.max(minY * top, maxY * top) + radius * Math.abs(cos - sin / vertical);
+    const bottomFit = Math.max(minY * bottom, maxY * bottom) + radius * Math.abs(cos + sin / vertical);
+    return Math.max(horizontalFit, topFit, bottomFit);
+  }
+
   function updateCamera(snap = false) {
-    const factor = snap || reducedMotion ? 1 : 0.08;
+    const factor = snap || motionReduced() ? 1 : 0.08;
     orbit.azimuth += (desiredOrbit.azimuth + scrollProgress * 0.48 - orbit.azimuth) * factor;
     orbit.elevation += (desiredOrbit.elevation + scrollProgress * 0.07 - orbit.elevation) * factor;
-    const distance = (desiredOrbit.distance - scrollProgress * 0.65) * Math.max(1, 1.12 / aspect);
+    const preferredDistance = (desiredOrbit.distance - scrollProgress * 0.65) * Math.max(1, 1.12 / aspect);
+    const distance = Math.max(preferredDistance, fittedDistance(orbit.elevation));
     orbit.distance += (distance - orbit.distance) * factor;
     camera.position.set(
       Math.sin(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
@@ -783,14 +824,14 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   }
 
   function renderOnce() {
-    if (disposed) return;
+    if (disposed || graphicsLost) return;
     updateCamera(true);
     renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     if (!readySent) { readySent = true; onReady?.({ webgl: true, kind: currentKind }); }
   }
 
-  function active() { return !disposed && !graphicsLost && !userPaused && !reducedMotion && intersecting && pageVisible; }
+  function active() { return !disposed && !graphicsLost && !userPaused && !motionReduced() && intersecting && pageVisible; }
   function tick(now) {
     frame = 0;
     if (!active()) return;
@@ -798,8 +839,9 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     const delta = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0;
     previousTime = now;
     elapsed += delta;
+    if (currentKind !== 'core' && !dragging && now >= orbitResumeAt) desiredOrbit.azimuth += orbitSpeed * delta;
     animations.forEach(animate => animate(elapsed));
-    updateCamera();
+    updateCamera(dragging);
     if (currentKind !== 'core' && currentKind !== 'observer') renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     frame = requestAnimationFrame(tick);
@@ -829,6 +871,11 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     desiredOrbit.azimuth = currentKind === 'core' ? 0.55 : 0.51;
     desiredOrbit.elevation = currentKind === 'core' ? 0.28 : 0.32;
     desiredOrbit.distance = currentKind === 'core' ? 10.0 : currentKind === 'energy' ? 11.7 : currentKind === 'observer' ? 12.4 : currentKind === 'commerce' ? 9.3 : 10.9;
+    dragging = false;
+    dragPointer = null;
+    orbitResumeAt = 0;
+    canvas.style.cursor = 'grab';
+    measureFit();
     canvas.setAttribute('aria-label', `Illustrative 3D scene. ${labels[currentKind]}. Drag with a mouse or use the arrow keys to rotate.`);
     renderOnce();
     syncAnimation();
@@ -844,29 +891,41 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     renderOnce();
   }
 
-  let dragging = false;
   let lastX = 0;
   let lastY = 0;
   function pointerDown(event) {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (dragging) return;
+    desiredOrbit.azimuth = orbit.azimuth - scrollProgress * 0.48;
+    desiredOrbit.elevation = orbit.elevation - scrollProgress * 0.07;
     dragging = true;
+    dragPointer = event.pointerId;
+    orbitResumeAt = performance.now() + 3000;
     lastX = event.clientX;
     lastY = event.clientY;
     canvas.setPointerCapture(event.pointerId);
     canvas.style.cursor = 'grabbing';
   }
   function pointerMove(event) {
-    if (!dragging) return;
+    if (!dragging || event.pointerId !== dragPointer) return;
     desiredOrbit.azimuth -= (event.clientX - lastX) * 0.006;
     desiredOrbit.elevation = THREE.MathUtils.clamp(desiredOrbit.elevation + (event.clientY - lastY) * 0.004, 0.18, 0.83);
     lastX = event.clientX;
     lastY = event.clientY;
+    orbitResumeAt = performance.now() + 3000;
     if (!active()) renderOnce();
   }
-  function pointerUp() { dragging = false; canvas.style.cursor = 'grab'; }
+  function pointerUp(event) {
+    if (!dragging || event.pointerId !== dragPointer) return;
+    dragging = false;
+    dragPointer = null;
+    orbitResumeAt = performance.now() + 3000;
+    canvas.style.cursor = 'grab';
+  }
   function keyDown(event) {
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
     event.preventDefault();
+    orbitResumeAt = performance.now() + 3000;
     if (event.key === 'ArrowLeft') desiredOrbit.azimuth -= 0.12;
     if (event.key === 'ArrowRight') desiredOrbit.azimuth += 0.12;
     if (event.key === 'ArrowUp') desiredOrbit.elevation = Math.min(0.83, desiredOrbit.elevation + 0.08);
@@ -874,7 +933,7 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
     if (!active()) renderOnce();
   }
   function visibilityChange() { pageVisible = !document.hidden; syncAnimation(); }
-  function motionChange(event) { reducedMotion = event.matches; syncAnimation(); renderOnce(); }
+  function motionChange(event) { reducedMotion = event.matches; manualMotionOverride = false; syncAnimation(); renderOnce(); }
   function contextLost(event) { event.preventDefault(); graphicsLost = true; syncAnimation(); canvas.setAttribute('aria-label', 'The 3D preview is paused because the graphics context was interrupted.'); }
   function contextRestored() {
     if (disposed) return;
@@ -907,11 +966,11 @@ export function mountScene(element, { kind = 'core', onReady } = {}) {
   return {
     setKind,
     setScrollProgress(value) {
-      if(disposed || userPaused || reducedMotion)return;
+      if(disposed || userPaused || motionReduced())return;
       scrollProgress=THREE.MathUtils.clamp(Number(value)||0,-1,1);
       if(!active())renderOnce();
     },
-    setPaused(value) { userPaused = Boolean(value); if (!userPaused) reducedMotion = false; syncAnimation(); },
+    setPaused(value, { manual = false } = {}) { userPaused = Boolean(value); if (manual && !userPaused) manualMotionOverride = true; syncAnimation(); },
     dispose() {
       if (disposed) return;
       disposed = true;

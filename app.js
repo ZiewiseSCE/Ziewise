@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
  window.addEventListener('resize',()=>{if(innerWidth>1000)closeNav();},{passive:true});
  document.querySelector('#open-experience').addEventListener('click',()=>window.ZiewSim?.open());
- const observer=new IntersectionObserver(entries=>{for(const e of entries){if(e.isIntersecting){document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active-nav',a.getAttribute('href')==='#'+e.target.id));}}},{rootMargin:'-15% 0px -60% 0px'});
+ const observer=new IntersectionObserver(entries=>{if(document.documentElement.classList.contains('section-pages'))return;for(const e of entries){if(e.isIntersecting){document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active-nav',a.getAttribute('href')==='#'+e.target.id));}}},{rootMargin:'-15% 0px -60% 0px'});
  document.querySelectorAll('main>section,footer').forEach(el=>observer.observe(el));
  document.querySelector('#contact-form').addEventListener('submit',e=>{
    e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;

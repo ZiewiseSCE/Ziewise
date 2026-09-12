@@ -136,7 +136,11 @@ body{background:#e4e7ea}
 .hero-visual-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
 #hero-view-toggle{border:1px solid #60718180;color:#dbe7f0;background:#2d3b4899;border-radius:4px;padding:6px 10px;font-size:11px;line-height:1.7;white-space:nowrap}
 #hero-view-toggle:hover{background:#425668;border-color:#9ab0c3}
-#hero-view-toggle[aria-pressed=true]{background:#425668;border-color:#9ab0c3}
+#hero-view-toggle:disabled{opacity:.5;cursor:wait}
+#hero-webgl,#solution-webgl,#technology-webgl{scroll-margin-top:100px}
+#technology-webgl[data-scene-ready=true] .photographic-surface,#technology-webgl[data-scene-ready=true] .photographic-fallback{display:none}
+#technology-webgl[data-scene-ready=false] canvas{opacity:0}
+#technology-webgl canvas{position:relative;z-index:1}
 .hero-visual .visual-caption{gap:10px}
 .hero-view-hint{font-size:10px;letter-spacing:.015em;line-height:1.6}
 .hero-visual[data-view=photographic] .visual-topline{color:#e0e8ef;text-shadow:0 1px 8px #000}
@@ -146,3 +150,15 @@ body{background:#e4e7ea}
  #hero-view-toggle{font-size:10px;padding:6px 8px}
  .hero-visual-actions{gap:6px}
 }
+.about-intro{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,76px);align-items:center}
+.about-intro .desc{margin:0;max-width:none;width:auto;line-height:1.95}
+.about-intro h3{max-width:100%;margin-bottom:22px}
+.about-brand-visual{position:relative;display:flex;align-items:center;gap:24px;min-height:260px;margin:0;padding:22px 24px 42px;border:1px solid #8593a240;border-radius:8px;background:radial-gradient(ellipse at 38% 40%,#2a3c46,transparent 65%),#141e25;box-shadow:0 20px 50px #182b371a;overflow:hidden}
+.about-brand-visual #about-webgl{display:block;flex:0 0 52%;width:52%;height:230px;position:relative}
+.about-brand-symbol{width:100%;height:100%;object-fit:contain}
+.about-brand-visual figcaption{display:flex;flex-direction:column;gap:16px;min-width:0}
+.about-brand-visual .logo-text{font-size:clamp(26px,3.5vw,48px);line-height:1.05}
+.about-brand-caption{font-size:9px;line-height:1.8;color:#a6bfce;letter-spacing:.12em}
+.about-brand-visual .motion-toggle{position:absolute;right:16px;bottom:13px;color:#c6d2dc;background:#252e38;border-color:#60718170;font-size:10px}
+@media(max-width:1000px){.about-intro{gap:28px}.about-brand-visual{gap:14px;padding:16px 16px 40px}.about-brand-visual #about-webgl{height:190px}.about-brand-visual .logo-text{font-size:30px}}
+@media(max-width:760px){.about-intro{grid-template-columns:1fr;gap:26px}.about-brand-visual{min-height:210px}.about-brand-visual #about-webgl{height:180px}.about-brand-visual .logo-text{font-size:38px}.about-brand-caption{font-size:8px}.about-intro .desc{font-size:14px}}

@@ -1,14 +1,31 @@
 import * as THREE from './vendor/three.module.js';
 
+/** Exact perspective fit for bounds expressed relative to the camera's orbit target. */
+export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov = 39) {
+  const tanY = Math.tan(verticalFov * Math.PI / 360);
+  const tanX = tanY * Math.max(.1, aspect);
+  const sinA = Math.sin(azimuth), cosA = Math.cos(azimuth);
+  const sinE = Math.sin(elevation), cosE = Math.cos(elevation);
+  let distance = .1;
+  for (const point of corners) {
+    const depth = point.x * sinA * cosE + point.y * sinE + point.z * cosA * cosE;
+    const horizontal = point.x * cosA - point.z * sinA;
+    const vertical = -point.x * sinA * sinE + point.y * cosE - point.z * cosA * sinE;
+    // Leave space for the fixed heading and enough air below the rack feet.
+    distance = Math.max(distance, depth + .08, depth + Math.abs(horizontal) / (tanX * .90), depth + Math.abs(vertical) / (tanY * .78));
+  }
+  return distance + .04;
+}
+
 /** A full-volume, photo-textured data-centre installation. No camera-facing image planes. */
 export function mountPhotoreal(element, { onReady, onError, onContextLost, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
-  if (!element) return { setPaused() {}, setScrollProgress() {}, setLabel() {}, dispose() {} };
+  if (!element) return { setPaused() {}, setScrollProgress() {}, setLabel() {}, resetView() {}, dispose() {} };
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
   } catch (error) {
     queueMicrotask(() => onError?.(error));
-    return { setPaused() {}, setScrollProgress() {}, setLabel() {}, dispose() {} };
+    return { setPaused() {}, setScrollProgress() {}, setLabel() {}, resetView() {}, dispose() {} };
   }
 
   const canvas = renderer.domElement;
@@ -29,9 +46,10 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#10171b');
   scene.fog = new THREE.Fog('#10171b', 10, 21);
-  const camera = new THREE.PerspectiveCamera(39, 1, .06, 45);
-  const target = new THREE.Vector3(.28, 2.15, 0);
-  const desired = { azimuth: -.49, elevation: .022, distance: 5.38 };
+  const camera = new THREE.PerspectiveCamera(39, 1, .06, 80);
+  const target = new THREE.Vector3(0, 2.15, 0);
+  const defaultOrbit = { azimuth: -.49, elevation: .09 };
+  const desired = { ...defaultOrbit, distance: 10 };
   const orbit = { ...desired };
   const geometries = new Set();
   const materials = new Set();
@@ -47,12 +65,10 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   let contextTimer = 0;
   let previous = 0;
   let frame = 0;
-  let elapsed = 0;
-  let scrollProgress = 0;
   let aspect = 1;
   let dirtyShadows = true;
   let pointerActive = false;
-  let userOrbit = false;
+  let lastInteraction = -Infinity;
   let lastX = 0;
   let lastY = 0;
 
@@ -226,33 +242,39 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   }
   instances(allScrews, new THREE.CylinderGeometry(.012, .012, .008, 8), aluminium, Math.PI / 2);
 
+  installation.updateMatrixWorld(true);
+  const installationBounds = new THREE.Box3().setFromObject(installation).expandByScalar(.035);
+  installationBounds.getCenter(target);
+  const framingCorners = [];
+  for (const x of [installationBounds.min.x, installationBounds.max.x]) {
+    for (const y of [installationBounds.min.y, installationBounds.max.y]) {
+      for (const z of [installationBounds.min.z, installationBounds.max.z]) {
+        framingCorners.push(new THREE.Vector3(x, y, z).sub(target));
+      }
+    }
+  }
+
   const floorMaterial = material(new THREE.MeshStandardMaterial({ color: '#0b1114', roughness: .96, metalness: .03 }));
-  const floor = new THREE.Mesh(geometry(new THREE.PlaneGeometry(40, 40)), floorMaterial);
+  const floor = new THREE.Mesh(geometry(new THREE.PlaneGeometry(100, 100)), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
-  const roomMaterial = material(new THREE.MeshStandardMaterial({ color: '#21292d', roughness: .9, metalness: .03 }));
-  // Distant structure gives depth without blocking an unrestricted horizontal orbit.
-  for (let i = -2; i <= 2; i++) {
-    box(scene, .065, 4.9, .18, i * 2.4, 2.45, -8.3, steel);
-    box(scene, 2.33, 4.9, .10, i * 2.4 + 1.2, 2.45, -8.4, roomMaterial);
-  }
 
   function cameraUpdate(snap = false) {
     const ease = snap ? 1 : .115;
-    const breathe = userOrbit || reducedMotion && !manualMotionOverride ? 0 : Math.sin(elapsed * .055) * .018;
-    const scroll = reducedMotion && !manualMotionOverride || paused ? 0 : scrollProgress * .035;
-    orbit.azimuth += (desired.azimuth + breathe + scroll - orbit.azimuth) * ease;
+    orbit.azimuth += (desired.azimuth - orbit.azimuth) * ease;
     orbit.elevation += (desired.elevation - orbit.elevation) * ease;
-    // On narrow screens use a longer lens and crop the adjacent racks naturally.
-    const distance = desired.distance * (aspect < .8 ? 1.05 : 1);
-    orbit.distance += (distance - orbit.distance) * ease;
+    const fit = fitRackDistance(framingCorners, orbit.azimuth, orbit.elevation, aspect, camera.fov);
+    // Ease inward when space allows; pull outward immediately to avoid cropping.
+    orbit.distance = Math.max(fit, orbit.distance + (fit - orbit.distance) * ease);
     camera.position.set(
       target.x + Math.sin(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
       target.y + Math.sin(orbit.elevation) * orbit.distance,
       target.z + Math.cos(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
     );
     camera.lookAt(target);
+    scene.fog.near = orbit.distance + 5;
+    scene.fog.far = orbit.distance + 24;
   }
   function render(snap = false) {
     if (disposed || graphicsLost) return;
@@ -267,7 +289,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
     if (previous && now - previous < 32) { frame = requestAnimationFrame(tick); return; }
     const delta = previous ? Math.min(now - previous, 60) / 1000 : 0;
     previous = now;
-    elapsed += delta;
+    if (!pointerActive && now - lastInteraction >= 3000) desired.azimuth += delta * Math.PI * 2 / 60;
     render();
     frame = requestAnimationFrame(tick);
   }
@@ -282,7 +304,6 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
     const width = Math.max(1, element.clientWidth), height = Math.max(1, element.clientHeight);
     aspect = width / height;
     camera.aspect = aspect;
-    camera.fov = aspect < .8 ? 39 : 39;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
     render(true);
@@ -290,6 +311,9 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   function pointerDown(event) {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     pointerActive = true;
+    lastInteraction = performance.now();
+    desired.azimuth = orbit.azimuth;
+    desired.elevation = orbit.elevation;
     lastX = event.clientX; lastY = event.clientY;
     canvas.setPointerCapture(event.pointerId);
     canvas.style.cursor = 'grabbing';
@@ -297,22 +321,28 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
   function pointerMove(event) {
     if (!pointerActive) return;
     const dx = event.clientX - lastX, dy = event.clientY - lastY;
-    if (Math.abs(dx) + Math.abs(dy) > 1) userOrbit = true;
+    lastInteraction = performance.now();
     desired.azimuth -= dx * .007;
-    desired.elevation = THREE.MathUtils.clamp(desired.elevation + dy * .004, -.16, .52);
+    desired.elevation = THREE.MathUtils.clamp(desired.elevation + dy * .004, .02, .52);
     lastX = event.clientX; lastY = event.clientY;
     if (!canMove()) render(true);
   }
-  function pointerUp() { pointerActive = false; canvas.style.cursor = 'grab'; }
+  function pointerUp() { if (pointerActive) lastInteraction = performance.now(); pointerActive = false; canvas.style.cursor = 'grab'; }
+  function resetView() {
+    desired.azimuth = defaultOrbit.azimuth;
+    desired.elevation = defaultOrbit.elevation;
+    lastInteraction = performance.now();
+    render(true);
+  }
   function keyDown(event) {
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home'].includes(event.key)) return;
     event.preventDefault();
-    userOrbit = true;
+    lastInteraction = performance.now();
     if (event.key === 'ArrowLeft') desired.azimuth -= .16;
     if (event.key === 'ArrowRight') desired.azimuth += .16;
     if (event.key === 'ArrowUp') desired.elevation = Math.min(.52, desired.elevation + .06);
-    if (event.key === 'ArrowDown') desired.elevation = Math.max(-.16, desired.elevation - .06);
-    if (event.key === 'Home') { desired.azimuth = -.49; desired.elevation = .022; userOrbit = false; }
+    if (event.key === 'ArrowDown') desired.elevation = Math.max(.02, desired.elevation - .06);
+    if (event.key === 'Home') { resetView(); return; }
     if (!canMove()) render(true);
   }
   function onMotion() { reducedMotion = media.matches; manualMotionOverride = false; sync(); render(true); }
@@ -378,7 +408,9 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, label
 
   return {
     setPaused(value, { manual = false } = {}) { paused = Boolean(value); if (manual && !paused) manualMotionOverride = true; sync(); },
-    setScrollProgress(value) { scrollProgress = THREE.MathUtils.clamp(Number(value) || 0, -1, 1); },
+    // The installation has its own orbit; scrolling does not interrupt its framing.
+    setScrollProgress() {},
+    resetView,
     setLabel(value) { label = value || ''; canvas.setAttribute('aria-label', label); },
     dispose() {
       if (disposed) return;

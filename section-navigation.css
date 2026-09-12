@@ -1,0 +1,197 @@
+/* Fixed menu pages provide an actual end boundary without clipping readable content. */
+html.section-pages, .section-pages body { width:100%; height:100%; overflow:hidden; scroll-behavior:auto; }
+.section-pages { --page-nav-height:88px; --page-bar-height:56px; --page-gutter:max(28px,calc((100vw - 1440px)/2)); }
+.section-pages .navbar { position:fixed; inset:0 0 auto; }
+.section-pages #main { position:fixed; inset:var(--page-nav-height) 0 0; overflow:hidden; outline:none; }
+.section-pages .section-page { position:absolute; inset:0; display:flex; flex-direction:column; min-width:0; min-height:0; background:#dfe5ea; }
+.section-pages .section-page[data-page="hero"] { background:#111820; }
+.section-pages .section-page[data-page="contact"] { background:#17212b; }
+.section-pages .reading-progress { display:none; }
+.section-pages .page-view-bar { display:flex; align-items:center; gap:28px; flex:none; min-height:var(--page-bar-height); padding:0 var(--page-gutter); background:#d7dfe6; border-bottom:1px solid #b9c5d0; }
+.section-pages .page-view-name { flex:none; color:#536777; font-size:11px; letter-spacing:.06em; font-weight:600; }
+.section-pages .page-view-tabs { display:flex; gap:24px; align-self:stretch; min-width:0; overflow-x:auto; scrollbar-width:none; }
+.section-pages .page-view-tabs::-webkit-scrollbar { display:none; }
+.section-pages .page-view-tab { display:flex; align-items:center; justify-content:center; flex:none; border:0; border-bottom:2px solid transparent; padding:14px 2px 12px; color:#5e6e7d; font-size:13px; font-weight:500; white-space:nowrap; }
+.section-pages .page-view-tab[aria-selected="true"] { color:#193d57; border-bottom-color:#345f7d; font-weight:650; }
+.section-pages .page-view-tab:hover { color:#193d57; }
+.section-pages .page-view-tab:focus-visible, .section-pages .solution-detail-tabs button:focus-visible { outline-offset:-4px; border-radius:3px; }
+.section-pages .page-pane { flex:1 1 auto; min-width:0; min-height:0; overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; scrollbar-width:thin; scrollbar-color:#8e9eac transparent; scroll-behavior:auto; }
+.section-pages .page-pane:focus { outline:none; }
+.section-pages .page-pane:focus-visible { outline:2px solid #7e9db4; outline-offset:-3px; }
+.section-pages .page-pane.page-arriving { animation:page-clarify .18s cubic-bezier(.2,.65,.3,1) both; transform-origin:50% 30%; }
+@keyframes page-clarify { from { opacity:.72; transform:scale(.994); } to { opacity:1; transform:scale(1); } }
+.section-pages.motion-paused .page-pane.page-arriving { animation:none; }
+.section-pages .page-source { min-height:100%; padding:30px var(--page-gutter) 32px; scroll-margin:0; }
+.section-pages .page-source::after { content:""; display:block; width:100%; height:1px; margin-top:28px; background:linear-gradient(90deg,#7e92a755,transparent); }
+.section-pages .page-source.hero-section::after, .section-pages .page-source.footer::after { display:none; }
+.section-pages .enter-surface, .section-pages .enter-pending { opacity:1!important; transform:none!important; transition:none!important; }
+.section-pages .sim-stage, .section-pages .technology-architecture, .section-pages .section-title h2, .section-pages .about-container h3 { animation:none!important; clip-path:none!important; transform:none; }
+.section-pages .section-title { margin-bottom:16px; }
+.section-pages .section-title h2 { margin-top:7px; font-size:clamp(27px,2.25vw,36px); }
+.section-pages .section-title>p { margin-top:7px; font-size:14px; line-height:1.75; }
+.section-pages .section-title .eyebrow { font-size:10px; }
+.section-pages .section-intro { max-width:1080px; margin:18px 0 24px; font-size:14px; line-height:1.9; }
+
+/* Keep the first view substantial while leaving its complete boundary visible. */
+.section-pages .hero-section { padding-top:0; padding-bottom:0; }
+.section-pages .hero-main { min-height:0; padding:30px 0 26px; gap:36px; }
+.section-pages .hero-visual { height:clamp(450px,calc(100dvh - var(--page-nav-height) - 212px),660px); }
+.section-pages .hero-content h1 { font-size:clamp(36px,3.75vw,60px); }
+.section-pages .hero-product { margin-top:24px; }
+.section-pages .hero-footnote { margin-top:22px; }
+.section-pages .hero-lead { margin-top:19px; font-size:16px; }
+.section-pages .hero-actions { margin-top:25px; }
+.section-pages .hero-bottom { padding:20px 0 24px; gap:36px; }
+.section-pages .architecture-copy h2 { font-size:18px; }
+.section-pages .hero-feature-row { gap:18px; }
+.section-pages .hero-feature { padding-left:18px; }
+.section-pages .hf-num { font-size:30px; }
+
+/* Each solution opens on its moving 3D stage, with full details in the next view. */
+.section-pages .simulator-section { padding-top:22px; padding-bottom:22px; }
+.section-pages .sim-tabs { margin-top:14px; gap:10px; }
+.section-pages .sim-tab { padding:8px 10px 12px; }
+.section-pages .tab-num { font-size:9px; }
+.section-pages .tab-name { margin-top:3px; font-size:14px; }
+.section-pages .tab-meta { margin-top:2px; font-size:10px; }
+.section-pages .sim-stage { grid-template-columns:34% 66%; min-height:340px; height:clamp(340px,calc(100dvh - var(--page-nav-height) - 324px),660px); margin-top:16px; }
+.section-pages .sim-scene { max-height:100%; overflow:auto; overscroll-behavior:contain; padding:25px 28px; }
+.section-pages .scene-info h3 { font-size:26px; margin-top:10px; }
+.section-pages .scene-info>p { margin-top:16px; font-size:14px; line-height:1.85; }
+.section-pages .scene-stats { margin-top:22px; padding-top:16px; }
+.section-pages .ss-num { font-size:24px; }
+.section-pages .sim-scene .operation-notes { margin-top:18px; }
+.section-pages .solution-visual { min-height:0; height:100%; }
+.section-pages .simulator-section::after { display:none; }
+.section-pages .solution-detail-tabs { display:flex; gap:9px; flex-wrap:wrap; margin:20px 0; }
+.section-pages .solution-detail-tabs button { min-height:42px; padding:8px 14px; border:1px solid #b4c1cd; border-radius:4px; background:#e5ebf0; color:#536777; font-size:12px; font-weight:550; text-align:left; }
+.section-pages .solution-detail-tabs button[aria-selected="true"] { background:#2c465c; border-color:#2c465c; color:#eef3f7; }
+.section-pages .solutions-section .grid-container { display:block; }
+.section-pages .solutions-section .solution-card { max-width:1120px; padding:25px 32px; }
+.section-pages .solution-card .card-header { display:grid; grid-template-columns:minmax(200px,.85fr) minmax(0,1.5fr); gap:0 40px; padding-bottom:22px; }
+.section-pages .solution-card .card-header h3 { grid-column:1; margin-top:10px; }
+.section-pages .solution-card .card-header .sub { grid-column:1; align-self:start; }
+.section-pages .solution-card .card-header .differentiator { grid-column:2; grid-row:1 / span 2; margin-top:10px; }
+.section-pages .solution-card .card-detail-list { grid-column:2; margin-top:14px; }
+.section-pages .solution-card .operation-notes { margin-top:0; }
+.section-pages .solution-card .solution-link { width:max-content; max-width:100%; gap:30px; }
+.section-pages .usecase-section, .section-pages .industry-section { margin-top:0; }
+.section-pages .usecase-grid, .section-pages .industry-grid { margin-top:24px; gap:25px 32px; }
+.section-pages .industry-card, .section-pages .uc-card { padding-top:18px; }
+.section-pages .industry-card p, .section-pages .uc-card p { line-height:1.8; }
+.section-pages .experience-cta { margin-top:30px; padding:23px 30px; }
+.section-pages .experience-cta h3 { font-size:22px; }
+
+.section-pages .about-page-content .about-stats { margin-top:12px; }
+.section-pages .about-page-content .certification-badges { margin-top:34px; }
+.section-pages .about-page-content .value-grid { margin-top:8px; }
+.section-pages .about-page-content .timeline-wrap { margin-top:48px; }
+.section-pages .tech-section .technology-architecture { margin:20px 0 24px; height:clamp(320px,calc(100dvh - var(--page-nav-height) - 400px),580px); }
+.section-pages .tech-section .process-strip { margin:20px 0 0; }
+.section-pages .technology-page-content>.section-intro { margin-top:0; }
+.section-pages .technology-page-content .tech-grid { gap:18px; }
+.section-pages .technology-page-content .tech-card { padding:24px 28px; }
+.section-pages .technology-page-content .tech-card .card-header h3 { margin-top:12px; font-size:23px; }
+.section-pages .technology-page-content .perf-dashboard:first-child { margin-top:0; }
+.section-pages .technology-page-content .perf-grid { gap:26px; margin-top:22px; }
+.section-pages .technology-page-content .perf-card { padding-top:17px; }
+.section-pages .technology-page-content .perf-value { font-size:39px; }
+.section-pages .technology-page-content .perf-dashboard+.perf-dashboard { margin-top:32px; }
+.section-pages .footer { padding-top:32px; padding-bottom:0; }
+.section-pages .contact-heading { padding-bottom:24px; }
+.section-pages .contact-heading h2 { font-size:34px; }
+.section-pages .footer-content { padding:30px 0; gap:45px; }
+
+@media(min-width:761px) and (max-height:760px) {
+  .section-pages .hero-main { padding-top:25px; }
+  .section-pages .hero-content h1 { font-size:39px; }
+  .section-pages .hero-visual { height:450px; }
+  .section-pages .hero-footnote { font-size:11px; }
+  .section-pages .hero-product { margin-top:18px; }
+  .section-pages .hero-lead { font-size:14px; }
+  .section-pages .hero-actions { margin-top:20px; }
+}
+@media(max-width:1100px) {
+  .section-pages { --page-gutter:26px; }
+  .section-pages .page-view-bar { gap:20px; }
+  .section-pages .page-view-tabs { gap:20px; }
+  .section-pages .page-view-name { display:none; }
+  .section-pages .hero-main { gap:24px; }
+  .section-pages .hero-content h1 { font-size:clamp(34px,4vw,45px); }
+  .section-pages .hero-bottom { gap:24px; }
+  .section-pages .sim-stage { grid-template-columns:38% 62%; }
+  .section-pages .sim-scene { padding:24px; }
+  .section-pages .scene-info h3 { font-size:23px; }
+  .section-pages .scene-info>p { font-size:13px; }
+  .section-pages .ss-num { font-size:21px; }
+}
+@media(max-width:760px) {
+  .section-pages { --page-nav-height:70px; --page-gutter:20px; --page-bar-height:50px; }
+  .section-pages .page-view-bar { padding:0 20px; }
+  .section-pages .page-view-tabs { gap:22px; }
+  .section-pages .page-view-tab { font-size:12px; min-height:50px; padding-top:12px; padding-bottom:10px; }
+  .section-pages .page-pane { scrollbar-gutter:auto; }
+  .section-pages .page-source { padding-top:22px; padding-bottom:24px; }
+  .section-pages .section-title h2 { font-size:25px; margin-top:5px; }
+  .section-pages .section-title>p { font-size:12px; margin-top:5px; line-height:1.7; }
+  .section-pages .section-title .eyebrow { font-size:9px; }
+  .section-pages .section-intro { font-size:13px; margin-top:14px; line-height:1.8; }
+  .section-pages .hero-section { padding-top:0; padding-bottom:0; }
+  .section-pages .hero-main { display:flex; flex-direction:column; padding:22px 0 28px; gap:25px; }
+  .section-pages .hero-content { width:100%; }
+  .section-pages .hero-content h1 { font-size:36px; }
+  .section-pages .hero-product { margin-top:18px; margin-bottom:12px; }
+  .section-pages .hero-lead { font-size:14px; margin-top:15px; }
+  .section-pages .hero-visual { order:-1; width:100%; height:clamp(330px,calc(100dvh - var(--page-nav-height) - 80px),440px); }
+  .section-pages .hero-bottom { padding:24px 0 28px; }
+  .section-pages .hero-feature-row { gap:16px; }
+  .section-pages .hero-feature { padding-left:12px; }
+  .section-pages .hf-num { font-size:26px; }
+  .section-pages .hero-feature:first-child { padding-left:0; }
+  .section-pages .simulator-section { padding-top:16px; }
+  .section-pages .simulator-section .section-title { margin-bottom:10px; }
+  .section-pages .sim-tabs { margin-top:10px; gap:0 7px; }
+  .section-pages .sim-tab { padding:6px 7px 8px; position:relative; }
+  .section-pages .sim-tab .tab-num { position:absolute; right:5px; top:8px; font-size:8px; }
+  .section-pages .tab-name { font-size:12px; margin-top:0; padding-right:13px; }
+  .section-pages .tab-meta { font-size:9px; margin-top:2px; }
+  .section-pages .sim-stage { height:auto; min-height:0; margin-top:13px; }
+  .section-pages .solution-visual { height:clamp(290px,39dvh,390px); min-height:290px; flex:none; }
+  .section-pages .sim-scene { max-height:none; overflow:visible; padding:23px; }
+  .section-pages .scene-info h3 { font-size:26px; }
+  .section-pages .scene-info>p { font-size:14px; }
+  .section-pages .scene-stats { margin-top:18px; }
+  .section-pages .ss-num { font-size:25px; }
+  .section-pages .solution-detail-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+  .section-pages .solution-detail-tabs button { padding:8px 10px; font-size:11px; }
+  .section-pages .solutions-section .solution-card { padding:23px; }
+  .section-pages .solution-card .card-header { display:block; }
+  .section-pages .solution-card .card-header h3 { font-size:26px; }
+  .section-pages .solution-card .card-header .differentiator { margin-top:20px; }
+  .section-pages .solution-card .card-detail-list { margin-top:20px; }
+  .section-pages .usecase-grid, .section-pages .industry-grid { gap:22px 18px; }
+  .section-pages .industry-card p, .section-pages .uc-card p { font-size:13px; }
+  .section-pages .experience-cta { padding:24px; }
+  .section-pages .about-page-content .certification-badges { margin-top:25px; }
+  .section-pages .about-page-content .timeline-wrap { margin-top:36px; }
+  .section-pages .tech-section .technology-architecture { margin-top:16px; height:490px; }
+  .section-pages .technology-architecture>.webgl { height:310px; }
+  .section-pages .technology-architecture .tech-visual-copy { top:22px; left:22px; }
+  .section-pages .tech-section .process-strip { grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px 15px; }
+  .section-pages .technology-page-content .tech-card { padding:23px; }
+  .section-pages .technology-page-content .perf-grid { gap:23px 18px; }
+  .section-pages .technology-page-content .perf-value { font-size:35px; }
+  .section-pages .footer-content { gap:30px; }
+  .section-pages .contact-heading h2 { font-size:31px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .section-pages .page-pane, .section-pages .page-view-tabs { scroll-behavior:auto; }
+  .section-pages .page-pane.page-arriving { animation:none; }
+}
+@media print {
+  html.section-pages, .section-pages body { overflow:visible; height:auto; }
+  .section-pages .navbar, .section-pages .page-view-bar, .section-pages .solution-detail-tabs { display:none!important; }
+  .section-pages #main, .section-pages .section-page { position:static; display:block!important; overflow:visible; }
+  .section-pages .page-pane, .section-pages .solution-card { display:block!important; height:auto; overflow:visible; }
+  .section-pages .page-source { min-height:0; padding:24px; break-before:page; }
+}
