@@ -46,6 +46,10 @@ body{background:#e4e7ea}
 .contact-form input,.contact-form select,.contact-form textarea{background:#222e3a;border-color:#43515f}
 .reading-progress{background:#abc4d9}
 .logo-text,.footer-logo-text{background-image:linear-gradient(110deg,#d4dfe8 0%,#fff 18%,#99b6cb 37%,#e5eef5 49%,#bac8d2 65%,#fff 80%,#d4dfe8 100%)}
+.logo-shine::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 40%,#ffffff25 46%,#ffffffb0 50%,#ffffff25 54%,transparent 60%);background-size:300% 100%;background-position:150% 50%;-webkit-mask:url('logo-symbol.png') center/contain no-repeat;mask:url('logo-symbol.png') center/contain no-repeat;animation:logo-shine-sweep 7s ease-in-out infinite}
+@keyframes logo-shine-sweep{0%,60%{background-position:150% 50%}90%,100%{background-position:-50% 50%}}
+html.motion-paused .logo-shine::after{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.logo-shine::after{display:none}}
 @media(min-width:761px){
   .hero-main{grid-template-columns:.94fr 1.06fr;gap:34px;min-height:690px}
   .hero-visual{height:584px}

@@ -1,6 +1,5 @@
 import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stories1';
 import { mountScene } from './scene3d.js?v=20260913-stories1';
-import { mountLogo } from './logo3d.js?v=20260913-ribbons1';
 import { mountPhotographic } from './photographic.js?v=20260912-photo1';
 import { mountPhotoreal } from './photoreal3d.js?v=20260912-capabilities1';
 
@@ -10,15 +9,10 @@ let motionChosen=false;
 let dialogOpen=false;
 const mounted=[];
 const cameraSurfaces=[];
-const logoObserver=new IntersectionObserver(entries=>{
- for(const entry of entries){if(!entry.isIntersecting)continue;
-   const logo=mountLogo(entry.target,{imageUrl:'logo-symbol.png'});logo.setPaused(paused||dialogOpen,{manual:motionChosen});mounted.push(logo);logoObserver.unobserve(entry.target);
- }
-},{rootMargin:'120px'});
 document.querySelectorAll('.logo-symbol,.footer-logo-symbol').forEach(img=>{
- const host=document.createElement('span');host.className='logo-3d-host';img.before(host);host.append(img);logoObserver.observe(host);
+ const host=document.createElement('span');host.className='logo-3d-host logo-shine';img.before(host);host.append(img);
 });
-logoObserver.observe(document.querySelector('#about-webgl'));
+document.querySelector('#about-webgl')?.classList.add('logo-shine');
 function mount(el,kind){return mountScene(el,{kind,onReady:()=>el.querySelector('.scene-loading')?.remove()});}
 const photographicAlt=()=>document.documentElement.lang==='en'?'Photographic concept of enterprise AI computing infrastructure':'기업 AI 컴퓨팅 인프라를 표현한 실사 스타일 콘셉트 이미지';
 const photographs=[];
@@ -100,6 +94,7 @@ const lazy=new IntersectionObserver(entries=>{
 lazy.observe(solutionEl);lazy.observe(document.querySelector('#technology-webgl'));
 function updateMotion(){
  document.documentElement.classList.toggle('motion-paused',paused);
+ window.dispatchEvent(new CustomEvent('ziewise:motion',{detail:{paused,manual:motionChosen}}));
  mounted.forEach(s=>s.setPaused(paused||dialogOpen,{manual:motionChosen}));
  document.querySelectorAll('.motion-toggle').forEach(button=>{
    button.setAttribute('aria-pressed',String(paused));
