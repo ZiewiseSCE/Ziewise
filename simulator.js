@@ -3,7 +3,7 @@
    Multi-step interactive popup:
      1) Industry pick
      2) System registration
-     3) Training animation (full cyberpunk visuals)
+     3) Training pipeline visualization
      4) Personalized results dashboard
    ============================================================ */
 (function () {
@@ -27,11 +27,11 @@
             step2s: '2개 이상 선택하세요. 선택한 시스템끼리 상호 학습 시너지가 생깁니다',
             step3h: 'ZiewCore가 학습 중입니다',
             step3s: '엣지 디바이스에서 실시간 자가학습 파이프라인 가동',
-            step4h: '🎉 학습 완료! 예상 성과',
+            step4h: '학습 완료! 예상 성과',
             step4s: '실제 고객사 평균 기준 시뮬레이션',
             next: '다음 →',
             prev: '← 이전',
-            start: '🚀 학습 시작',
+            start: '학습 시작',
             again: '↺ 다시 해보기',
             close: '닫기',
             selected: '선택됨',
@@ -51,11 +51,11 @@
             step2s: 'Select 2 or more. Synergy emerges across selected systems',
             step3h: 'ZiewCore is training…',
             step3s: 'Self-learning pipeline running on edge runtime',
-            step4h: '🎉 Training complete! Expected outcomes',
+            step4h: 'Training complete! Expected outcomes',
             step4s: 'Simulated on averaged benchmarks from real deployments',
             next: 'Next →',
             prev: '← Back',
-            start: '🚀 Start training',
+            start: 'Start training',
             again: '↺ Try again',
             close: 'Close',
             selected: 'selected',
@@ -80,15 +80,15 @@
     ];
 
     const SYSTEMS = [
-        { id: 'erp',   icon: '📊', ko: 'ERP',        en: 'ERP',         ko_d: '전사자원관리',   en_d: 'Enterprise Resource',  color: '#00f0ff' },
-        { id: 'mes',   icon: '🔧', ko: 'MES',        en: 'MES',         ko_d: '제조실행시스템', en_d: 'Mfg. Execution',       color: '#00f0ff' },
-        { id: 'scada', icon: '📡', ko: 'SCADA',      en: 'SCADA',       ko_d: '설비 감시제어',  en_d: 'Supervisory Control',  color: '#8a5bff' },
-        { id: 'cctv',  icon: '📹', ko: 'CCTV',       en: 'CCTV',        ko_d: '비전 카메라',    en_d: 'Vision Cameras',       color: '#ff2bd6' },
-        { id: 'iot',   icon: '🌡️', ko: 'IoT 센서',   en: 'IoT Sensors', ko_d: '온도·진동·전력', en_d: 'Temp · Vibration · Power', color: '#00f0ff' },
-        { id: 'crm',   icon: '👥', ko: 'CRM',        en: 'CRM',         ko_d: '고객관계관리',   en_d: 'Customer Relationship', color: '#ff2bd6' },
-        { id: 'wms',   icon: '📦', ko: 'WMS',        en: 'WMS',         ko_d: '창고관리',       en_d: 'Warehouse Mgmt',       color: '#8a5bff' },
-        { id: 'pos',   icon: '💳', ko: 'POS',        en: 'POS',         ko_d: '판매시점정보',   en_d: 'Point of Sale',        color: '#ff2bd6' },
-        { id: 'hrm',   icon: '👤', ko: 'HRM',        en: 'HRM',         ko_d: '인사관리',       en_d: 'Human Resource',       color: '#00f0ff' },
+        { id: 'erp',   icon: '📊', ko: 'ERP',        en: 'ERP',         ko_d: '전사자원관리',   en_d: 'Enterprise Resource',  color: '#2763df' },
+        { id: 'mes',   icon: '🔧', ko: 'MES',        en: 'MES',         ko_d: '제조실행시스템', en_d: 'Mfg. Execution',       color: '#2763df' },
+        { id: 'scada', icon: '📡', ko: 'SCADA',      en: 'SCADA',       ko_d: '설비 감시제어',  en_d: 'Supervisory Control',  color: '#15233b' },
+        { id: 'cctv',  icon: '📹', ko: 'CCTV',       en: 'CCTV',        ko_d: '비전 카메라',    en_d: 'Vision Cameras',       color: '#597295' },
+        { id: 'iot',   icon: '🌡️', ko: 'IoT 센서',   en: 'IoT Sensors', ko_d: '온도·진동·전력', en_d: 'Temp · Vibration · Power', color: '#2763df' },
+        { id: 'crm',   icon: '👥', ko: 'CRM',        en: 'CRM',         ko_d: '고객관계관리',   en_d: 'Customer Relationship', color: '#597295' },
+        { id: 'wms',   icon: '📦', ko: 'WMS',        en: 'WMS',         ko_d: '창고관리',       en_d: 'Warehouse Mgmt',       color: '#15233b' },
+        { id: 'pos',   icon: '💳', ko: 'POS',        en: 'POS',         ko_d: '판매시점정보',   en_d: 'Point of Sale',        color: '#597295' },
+        { id: 'hrm',   icon: '👤', ko: 'HRM',        en: 'HRM',         ko_d: '인사관리',       en_d: 'Human Resource',       color: '#2763df' },
     ];
 
     // Pre-canned insights per system combination.
@@ -108,11 +108,11 @@
 
     // Synergy combos — when 2 specific systems picked together, add a bonus line
     const SYNERGIES = [
-        { need: ['erp', 'mes'],   ko: '⚡ ERP × MES 시너지: 실시간 원가 추적으로 마진 +11%p',   en: '⚡ ERP × MES synergy: real-time costing, margin +11pp' },
-        { need: ['scada', 'iot'], ko: '⚡ SCADA × IoT 시너지: 설비 디지털 트윈 완성도 96%',     en: '⚡ SCADA × IoT synergy: digital twin completeness 96%' },
-        { need: ['cctv', 'scada'],ko: '⚡ CCTV × SCADA 시너지: 영상+센서 교차검증으로 오탐 -83%', en: '⚡ CCTV × SCADA synergy: cross-validation reduces false positives -83%' },
-        { need: ['crm', 'pos'],   ko: '⚡ CRM × POS 시너지: 매장별 고객 세그먼트 자동 최적화',    en: '⚡ CRM × POS synergy: per-store segment auto-optimization' },
-        { need: ['erp', 'wms'],   ko: '⚡ ERP × WMS 시너지: 발주 리드타임 -52%',                  en: '⚡ ERP × WMS synergy: procurement lead time -52%' },
+        { need: ['erp', 'mes'],   ko: 'ERP × MES 시너지: 실시간 원가 추적으로 마진 +11%p',   en: 'ERP × MES synergy: real-time costing, margin +11pp' },
+        { need: ['scada', 'iot'], ko: 'SCADA × IoT 시너지: 설비 디지털 트윈 완성도 96%',     en: 'SCADA × IoT synergy: digital twin completeness 96%' },
+        { need: ['cctv', 'scada'],ko: 'CCTV × SCADA 시너지: 영상+센서 교차검증으로 오탐 -83%', en: 'CCTV × SCADA synergy: cross-validation reduces false positives -83%' },
+        { need: ['crm', 'pos'],   ko: 'CRM × POS 시너지: 매장별 고객 세그먼트 자동 최적화',    en: 'CRM × POS synergy: per-store segment auto-optimization' },
+        { need: ['erp', 'wms'],   ko: 'ERP × WMS 시너지: 발주 리드타임 -52%',                  en: 'ERP × WMS synergy: procurement lead time -52%' },
     ];
 
     // Training log lines — will be typed out during step 3
@@ -150,94 +150,130 @@
     };
 
     // ---------- DOM ROOT ----------
-    const root = document.getElementById('sim-root');
-    if (!root) return;
+    const root = document.getElementById('sim-root') || document.body.appendChild(Object.assign(document.createElement('div'), { id: 'sim-root' }));
+    root.setAttribute('aria-hidden', 'true');
 
     // Helper: create element
     function el(tag, cls, html) {
         const e = document.createElement(tag);
         if (cls) e.className = cls;
+        if (tag === 'button') e.type = 'button';
         if (html !== undefined) e.innerHTML = html;
         return e;
     }
 
-    // ---------- OPEN / CLOSE ----------
+    // ---------- OPEN / CLOSE AND KEYBOARD ACCESS ----------
+    let returnFocus = null;
+    let savedOverflow = '';
+    let background = [];
+    let isOpen = false;
+    let trainingRun = 0;
+    function stopTraining() {
+        trainingRun++;
+        cancelAnimationFrame(state.animTimer);
+        clearTimeout(state.logTimer);
+        state.animTimer = null;
+        state.logTimer = null;
+    }
+    function lockBackground() {
+        background = [];
+        let branch = root;
+        while (branch.parentElement && branch !== document.body) {
+            Array.from(branch.parentElement.children).forEach((sibling) => {
+                if (sibling === branch || /^(SCRIPT|STYLE|LINK)$/.test(sibling.tagName)) return;
+                background.push([sibling, sibling.inert]);
+                sibling.inert = true;
+            });
+            branch = branch.parentElement;
+        }
+    }
     function open() {
+        stopTraining();
+        if (!isOpen) {
+            returnFocus = document.activeElement;
+            savedOverflow = document.body.style.overflow;
+            lockBackground();
+        }
+        isOpen = true;
         state.step = 0;
         state.industry = null;
         state.systems = [];
         root.innerHTML = '';
         root.setAttribute('aria-hidden', 'false');
-
-        const overlay = el('div', 'sim-overlay');
+        const L = T[getLang()];
+        const overlay = el('div', 'sim-overlay open');
         const modal = el('div', 'sim-modal');
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'sim-title');
+        modal.setAttribute('aria-describedby', 'sim-subtitle');
+        modal.tabIndex = -1;
         overlay.appendChild(modal);
         root.appendChild(overlay);
-
-        // Header
-        const header = el('div', 'sim-header');
-        header.innerHTML = `
+        const header = el('div', 'sim-header', `
             <div class="sim-title-wrap">
-                <div class="sim-title-line"></div>
-                <h2 class="sim-title">${T[getLang()].title}</h2>
-                <p class="sim-sub">${T[getLang()].subtitle}</p>
+                <span class="sim-eyebrow">ZIEWCORE / EXPERIENCE</span>
+                <h2 class="sim-title" id="sim-title">${L.title}</h2>
+                <p class="sim-sub" id="sim-subtitle">${L.subtitle}</p>
             </div>
-            <button class="sim-close" aria-label="${T[getLang()].close}">×</button>
-        `;
+            <button type="button" class="sim-close" aria-label="${L.close}">×</button>`);
         modal.appendChild(header);
-
-        // Progress stepper
-        const stepper = el('div', 'sim-stepper');
-        ['step1', 'step2', 'step3', 'step4'].forEach((k, i) => {
-            const pill = el('div', 'sim-step-pill', `<span class="sim-step-dot"></span>${T[getLang()][k]}`);
-            pill.dataset.step = i;
+        const stepper = el('ol', 'sim-stepper');
+        ['step1', 'step2', 'step3', 'step4'].forEach((key, index) => {
+            const pill = el('li', 'sim-step-pill', `<span class="sim-step-dot" aria-hidden="true"></span>${L[key]}`);
+            pill.dataset.step = index;
             stepper.appendChild(pill);
         });
         modal.appendChild(stepper);
-
-        // Body
-        const body = el('div', 'sim-body');
-        modal.appendChild(body);
-
-        // Footer
-        const footer = el('div', 'sim-footer');
-        footer.innerHTML = `
-            <button class="sim-btn sim-prev">${T[getLang()].prev}</button>
-            <span class="sim-footer-hint"></span>
-            <button class="sim-btn sim-primary sim-next">${T[getLang()].next}</button>
-        `;
+        modal.appendChild(el('div', 'sim-body'));
+        const footer = el('div', 'sim-footer', `
+            <button type="button" class="sim-btn sim-prev">${L.prev}</button>
+            <span class="sim-footer-hint" role="status" aria-live="polite"></span>
+            <button type="button" class="sim-btn sim-primary sim-next">${L.next}</button>`);
         modal.appendChild(footer);
-
-        // Wire
-        overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+        overlay.addEventListener('click', (event) => { if (event.target === overlay) close(); });
         header.querySelector('.sim-close').addEventListener('click', close);
         footer.querySelector('.sim-prev').addEventListener('click', prevStep);
         footer.querySelector('.sim-next').addEventListener('click', nextStep);
-        document.addEventListener('keydown', onEscape);
-
+        document.addEventListener('keydown', onDialogKey);
         document.body.style.overflow = 'hidden';
-        requestAnimationFrame(() => overlay.classList.add('open'));
         renderStep();
     }
-
     function close() {
+        if (!isOpen) return;
+        stopTraining();
+        isOpen = false;
         root.setAttribute('aria-hidden', 'true');
-        const overlay = root.querySelector('.sim-overlay');
-        if (overlay) overlay.classList.remove('open');
-        if (state.animTimer) { cancelAnimationFrame(state.animTimer); state.animTimer = null; }
-        if (state.logTimer) { clearTimeout(state.logTimer); state.logTimer = null; }
-        setTimeout(() => {
-            root.innerHTML = '';
-            document.body.style.overflow = '';
-            document.removeEventListener('keydown', onEscape);
-        }, 280);
+        root.innerHTML = '';
+        document.body.style.overflow = savedOverflow;
+        document.removeEventListener('keydown', onDialogKey);
+        background.forEach(([element, inert]) => { element.inert = inert; });
+        background = [];
+        if (returnFocus && returnFocus.isConnected) returnFocus.focus({ preventScroll: true });
     }
-    function onEscape(e) { if (e.key === 'Escape') close(); }
+    function onDialogKey(event) {
+        if (event.key === 'Escape') { event.preventDefault(); close(); return; }
+        if (event.key !== 'Tab') return;
+        const modal = root.querySelector('.sim-modal');
+        if (!modal) return;
+        const focusable = Array.from(modal.querySelectorAll('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex="0"]'))
+            .filter((element) => element.getClientRects().length && getComputedStyle(element).visibility !== 'hidden');
+        if (!focusable.length) { event.preventDefault(); modal.focus(); return; }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && (document.activeElement === first || !focusable.includes(document.activeElement))) {
+            event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !modal.contains(document.activeElement))) {
+            event.preventDefault(); first.focus();
+        }
+    }
 
     // ---------- NAVIGATION ----------
     function prevStep() {
         if (state.step === 0) return close();
-        state.step--;
+        stopTraining();
+        // Results return to the retained system selection for another run.
+        state.step = state.step === 3 ? 1 : state.step - 1;
         renderStep();
     }
     function nextStep() {
@@ -257,6 +293,8 @@
         pills.forEach((p, i) => {
             p.classList.toggle('active', i === state.step);
             p.classList.toggle('done', i < state.step);
+            if (i === state.step) p.setAttribute('aria-current', 'step');
+            else p.removeAttribute('aria-current');
         });
     }
 
@@ -268,6 +306,7 @@
         if (!prev || !next || !hint) return;
 
         prev.style.visibility = state.step === 0 ? 'hidden' : 'visible';
+        prev.disabled = state.step === 0;
 
         if (state.step === 0) {
             next.textContent = L.next;
@@ -299,6 +338,9 @@
         else if (state.step === 2) renderTraining(body);
         else if (state.step === 3) renderResults(body);
         updateFooter();
+        body.scrollTop = 0;
+        const heading = body.querySelector('.sim-step-h');
+        if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
     }
 
     function renderIndustry(body) {
@@ -306,18 +348,21 @@
         body.appendChild(el('h3', 'sim-step-h', L.step1h));
         body.appendChild(el('p', 'sim-step-p', L.step1s));
         const grid = el('div', 'sim-industry-grid');
-        INDUSTRIES.forEach((ind) => {
+        INDUSTRIES.forEach((ind, index) => {
             const card = el('button', 'sim-industry-card');
             card.innerHTML = `
-                <div class="sim-ind-icon">${ind.icon}</div>
+                <div class="sim-ind-icon" aria-hidden="true">${String(index + 1).padStart(2, '0')}</div>
                 <div class="sim-ind-name">${getLang() === 'ko' ? ind.ko : ind.en}</div>
                 <div class="sim-ind-desc">${getLang() === 'ko' ? ind.ko_d : ind.en_d}</div>
             `;
-            if (state.industry && state.industry.id === ind.id) card.classList.add('active');
+            const selected = Boolean(state.industry && state.industry.id === ind.id);
+            card.classList.toggle('active', selected);
+            card.setAttribute('aria-pressed', String(selected));
             card.addEventListener('click', () => {
                 state.industry = ind;
-                body.querySelectorAll('.sim-industry-card').forEach((c) => c.classList.remove('active'));
+                body.querySelectorAll('.sim-industry-card').forEach((c) => { c.classList.remove('active'); c.setAttribute('aria-pressed', 'false'); });
                 card.classList.add('active');
+                card.setAttribute('aria-pressed', 'true');
                 updateFooter();
             });
             grid.appendChild(card);
@@ -334,12 +379,13 @@
             const card = el('button', 'sim-system-card');
             card.style.setProperty('--sys-color', sys.color);
             card.innerHTML = `
-                <div class="sim-sys-check">✓</div>
-                <div class="sim-sys-icon">${sys.icon}</div>
-                <div class="sim-sys-name">${sys.en}</div>
+                <div class="sim-sys-check" aria-hidden="true">✓</div>
+                <div class="sim-sys-name">${getLang() === 'ko' ? sys.ko : sys.en}</div>
                 <div class="sim-sys-desc">${getLang() === 'ko' ? sys.ko_d : sys.en_d}</div>
             `;
-            if (state.systems.find((s) => s.id === sys.id)) card.classList.add('active');
+            const selected = state.systems.some((s) => s.id === sys.id);
+            card.classList.toggle('active', selected);
+            card.setAttribute('aria-pressed', String(selected));
             card.addEventListener('click', () => {
                 const idx = state.systems.findIndex((s) => s.id === sys.id);
                 if (idx >= 0) {
@@ -349,6 +395,7 @@
                     state.systems.push(sys);
                     card.classList.add('active');
                 }
+                card.setAttribute('aria-pressed', String(card.classList.contains('active')));
                 updateFooter();
             });
             grid.appendChild(card);
@@ -358,188 +405,57 @@
 
     function renderTraining(body) {
         const L = T[getLang()];
+        const ko = getLang() === 'ko';
         body.appendChild(el('h3', 'sim-step-h', L.step3h));
         body.appendChild(el('p', 'sim-step-p', L.step3s));
-
         const arena = el('div', 'sim-arena');
         arena.innerHTML = `
-            <div class="sim-arena-left">
-                <div class="sim-modules" id="sim-modules"></div>
+            <div class="sim-pipeline">
+                <div class="sim-pipeline-sources"><span class="sim-pipeline-label">${ko ? '연결 시스템' : 'CONNECTED SYSTEMS'}</span><div class="sim-modules"></div></div>
+                <span class="sim-pipeline-arrow" aria-hidden="true">→</span>
+                <div class="sim-core"><span class="sim-pipeline-label">EDGE RUNTIME</span><strong>ZiewCore</strong><span>${ko ? '학습 · 예측' : 'Learn · Predict'}</span></div>
             </div>
-            <div class="sim-arena-center">
-                <div class="sim-core">
-                    <div class="sim-core-ring ring-a"></div>
-                    <div class="sim-core-ring ring-b"></div>
-                    <div class="sim-core-ring ring-c"></div>
-                    <div class="sim-core-orb">
-                        <div class="sim-core-pulse"></div>
-                        <div class="sim-core-label">ZiewCore</div>
-                    </div>
-                </div>
-                <svg class="sim-wires" id="sim-wires" viewBox="0 0 800 500" preserveAspectRatio="none"></svg>
-                <div class="sim-packets" id="sim-packets"></div>
+            <div class="sim-progress">
+                <div class="sim-progress-top"><span>${ko ? 'AI 학습 진행' : 'Training progress'}</span><span id="sim-prog-pct">0%</span></div>
+                <div class="sim-progress-bar" role="progressbar" aria-label="${ko ? 'AI 학습 진행' : 'Training progress'}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="sim-progress-fill" id="sim-prog-fill"></div></div>
             </div>
-            <div class="sim-arena-right">
-                <div class="sim-progress">
-                    <div class="sim-progress-label">Training</div>
-                    <div class="sim-progress-bar"><div class="sim-progress-fill" id="sim-prog-fill"></div></div>
-                    <div class="sim-progress-pct" id="sim-prog-pct">0%</div>
-                </div>
-                <div class="sim-log" id="sim-log"></div>
-            </div>
-        `;
+            <div class="sim-log" id="sim-log" role="log" aria-live="off" aria-label="${ko ? '학습 로그' : 'Training log'}"></div>`;
+        state.systems.forEach((sys) => arena.querySelector('.sim-modules').appendChild(el('span', 'sim-module', ko ? sys.ko : sys.en)));
         body.appendChild(arena);
-
-        // Populate modules on the left
-        const modulesEl = arena.querySelector('#sim-modules');
-        state.systems.forEach((sys, i) => {
-            const m = el('div', 'sim-module');
-            m.style.setProperty('--sys-color', sys.color);
-            m.style.animationDelay = (i * 0.12) + 's';
-            m.innerHTML = `<span class="sim-m-icon">${sys.icon}</span><span class="sim-m-name">${sys.en}</span>`;
-            modulesEl.appendChild(m);
-        });
     }
-
-    // ---------- TRAINING ANIMATION ----------
     function runTraining() {
+        stopTraining();
+        const run = trainingRun;
         const body = root.querySelector('.sim-body');
         if (!body) return;
-
         const fill = body.querySelector('#sim-prog-fill');
         const pct = body.querySelector('#sim-prog-pct');
-        const logEl = body.querySelector('#sim-log');
-        const wiresSvg = body.querySelector('#sim-wires');
-        const packetsEl = body.querySelector('#sim-packets');
-        const arena = body.querySelector('.sim-arena');
-
-        // Draw curved wires from each module to core
-        function drawWires() {
-            wiresSvg.innerHTML = '';
-            const arenaRect = arena.getBoundingClientRect();
-            const coreEl = body.querySelector('.sim-core-orb');
-            const coreRect = coreEl.getBoundingClientRect();
-            const cx = coreRect.left + coreRect.width / 2 - arenaRect.left;
-            const cy = coreRect.top + coreRect.height / 2 - arenaRect.top;
-            const vbW = arenaRect.width;
-            const vbH = arenaRect.height;
-            wiresSvg.setAttribute('viewBox', `0 0 ${vbW} ${vbH}`);
-
-            const modules = body.querySelectorAll('.sim-module');
-            modules.forEach((m, i) => {
-                const mr = m.getBoundingClientRect();
-                const sx = mr.right - arenaRect.left;
-                const sy = mr.top + mr.height / 2 - arenaRect.top;
-                const c1x = sx + (cx - sx) * 0.4;
-                const c1y = sy;
-                const c2x = sx + (cx - sx) * 0.6;
-                const c2y = cy;
-                const d = `M ${sx} ${sy} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${cx} ${cy}`;
-                const color = state.systems[i].color;
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', d);
-                path.setAttribute('fill', 'none');
-                path.setAttribute('stroke', color);
-                path.setAttribute('stroke-width', '1.5');
-                path.setAttribute('stroke-opacity', '0.55');
-                path.setAttribute('stroke-dasharray', '4 4');
-                path.classList.add('sim-wire');
-                path.id = `sim-wire-${i}`;
-                wiresSvg.appendChild(path);
-            });
-        }
-
-        // Spawn a data packet (glowing dot) that travels along a wire
-        function spawnPacket() {
-            const modules = body.querySelectorAll('.sim-module');
-            if (!modules.length) return;
-            const i = Math.floor(Math.random() * modules.length);
-            const path = body.querySelector(`#sim-wire-${i}`);
-            if (!path) return;
-            const color = state.systems[i].color;
-            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            dot.setAttribute('r', '4');
-            dot.setAttribute('fill', color);
-            dot.setAttribute('filter', 'url(#sim-glow)');
-            wiresSvg.appendChild(dot);
-
-            const totalLen = path.getTotalLength();
-            const duration = 900 + Math.random() * 500;
-            const start = performance.now();
-            function step(now) {
-                const t = Math.min(1, (now - start) / duration);
-                const p = path.getPointAtLength(t * totalLen);
-                dot.setAttribute('cx', p.x);
-                dot.setAttribute('cy', p.y);
-                dot.setAttribute('opacity', 1 - t * 0.3);
-                if (t < 1) requestAnimationFrame(step);
-                else { dot.remove(); pulseCore(); }
-            }
-            requestAnimationFrame(step);
-        }
-
-        function pulseCore() {
-            const orb = body.querySelector('.sim-core-orb');
-            if (!orb) return;
-            orb.classList.remove('hit');
-            void orb.offsetWidth;
-            orb.classList.add('hit');
-        }
-
-        // Add SVG glow filter
-        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-        defs.innerHTML = `
-            <filter id="sim-glow" x="-200%" y="-200%" width="500%" height="500%">
-                <feGaussianBlur stdDeviation="3" result="blur"/>
-                <feMerge>
-                    <feMergeNode in="blur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-            </filter>
-        `;
-        wiresSvg.appendChild(defs);
-
-        // Initial wire draw + redraw on resize
-        setTimeout(drawWires, 120);
-        const onResize = () => drawWires();
-        window.addEventListener('resize', onResize);
-
-        // Training progress ~9 seconds total
+        const progress = body.querySelector('[role="progressbar"]');
+        const log = body.querySelector('#sim-log');
+        const lines = buildLog(state.systems);
         const startTime = performance.now();
-        const DURATION = 9000;
-        let lastPacket = 0;
+        const duration = 6500;
+        let lineIndex = 0;
         function tick(now) {
-            const t = Math.min(1, (now - startTime) / DURATION);
-            const curPct = Math.floor(t * 100);
-            fill.style.width = curPct + '%';
-            pct.textContent = curPct + '%';
-            if (now - lastPacket > 220) {
-                for (let k = 0; k < 2; k++) spawnPacket();
-                lastPacket = now;
+            if (!isOpen || state.step !== 2 || run !== trainingRun) return;
+            const fraction = Math.min(1, (now - startTime) / duration);
+            const value = Math.floor(fraction * 100);
+            fill.style.width = value + '%';
+            pct.textContent = value + '%';
+            progress.setAttribute('aria-valuenow', String(value));
+            const visibleLines = Math.min(lines.length, Math.floor(fraction * lines.length) + 1);
+            while (lineIndex < visibleLines) {
+                const line = el('div', 'sim-log-line');
+                line.textContent = lines[lineIndex++];
+                log.appendChild(line);
+                log.scrollTop = log.scrollHeight;
             }
-            if (t < 1) state.animTimer = requestAnimationFrame(tick);
-            else {
-                window.removeEventListener('resize', onResize);
-                setTimeout(() => {
-                    if (state.step === 2) { state.step = 3; renderStep(); }
-                }, 600);
-            }
+            if (fraction < 1) state.animTimer = requestAnimationFrame(tick);
+            else state.logTimer = setTimeout(() => {
+                if (isOpen && state.step === 2 && run === trainingRun) { state.step = 3; renderStep(); }
+            }, 450);
         }
         state.animTimer = requestAnimationFrame(tick);
-
-        // Stream training log
-        const lines = buildLog(state.systems);
-        let idx = 0;
-        function typeLine() {
-            if (idx >= lines.length || state.step !== 2) return;
-            const line = el('div', 'sim-log-line', lines[idx]);
-            logEl.appendChild(line);
-            logEl.scrollTop = logEl.scrollHeight;
-            idx++;
-            const delay = idx < 3 ? 420 : 480 + Math.random() * 300;
-            state.logTimer = setTimeout(typeLine, delay);
-        }
-        typeLine();
     }
 
     // ---------- RESULTS STEP ----------
@@ -555,7 +471,7 @@
         const hero = el('div', 'sim-roi-hero');
         hero.innerHTML = `
             <div class="sim-roi-left">
-                <div class="sim-roi-tag">${lang === 'ko' ? '💰 예상 연간 경제효과' : '💰 Estimated Annual Impact'}</div>
+                <div class="sim-roi-tag">${lang === 'ko' ? '예상 연간 경제효과' : 'Estimated Annual Impact'}</div>
                 <div class="sim-roi-amount-wrap">
                     <span class="sim-roi-currency">₩</span>
                     <span class="sim-roi-amount" data-roi-target="${data.annual}">0</span>
@@ -563,9 +479,9 @@
                 </div>
                 <div class="sim-roi-sub">${lang === 'ko' ? '비용 절감 + 매출 증대 + 리스크 회피 합산' : 'Cost savings + revenue uplift + risk avoidance'}</div>
                 <div class="sim-roi-pills">
-                    <span class="sim-roi-pill"><i>📉</i>${lang === 'ko' ? '비용' : 'Cost'} <b>-${data.savePct}%</b></span>
-                    <span class="sim-roi-pill"><i>📈</i>${lang === 'ko' ? '매출' : 'Revenue'} <b>+${data.revPct}%</b></span>
-                    <span class="sim-roi-pill"><i>🛡️</i>${lang === 'ko' ? '리스크' : 'Risk'} <b>-${data.riskPct}%</b></span>
+                    <span class="sim-roi-pill">${lang === 'ko' ? '비용' : 'Cost'} <b>-${data.savePct}%</b></span>
+                    <span class="sim-roi-pill">${lang === 'ko' ? '매출' : 'Revenue'} <b>+${data.revPct}%</b></span>
+                    <span class="sim-roi-pill">${lang === 'ko' ? '리스크' : 'Risk'} <b>-${data.riskPct}%</b></span>
                 </div>
             </div>
             <div class="sim-roi-divider"></div>
@@ -574,15 +490,15 @@
                     <div class="sim-roi-payback-num"><span data-pay-target="${data.payback}">0</span><span class="sim-roi-payback-unit">${lang === 'ko' ? '개월' : 'mo'}</span></div>
                     <div class="sim-roi-payback-label">${lang === 'ko' ? '예상 투자 회수' : 'Payback period'}</div>
                 </div>
-                <svg class="sim-roi-spark" viewBox="0 0 220 70" preserveAspectRatio="none">
+                <svg class="sim-roi-spark" aria-hidden="true" viewBox="0 0 220 70" preserveAspectRatio="none">
                     <defs>
                         <linearGradient id="sparkGrad" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.55"/>
-                            <stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/>
+                            <stop offset="0%" stop-color="#2763df" stop-opacity="0.55"/>
+                            <stop offset="100%" stop-color="#2763df" stop-opacity="0"/>
                         </linearGradient>
                     </defs>
                     <path class="sim-spark-area" fill="url(#sparkGrad)" d="M0,62 L22,58 L44,52 L66,44 L88,34 L110,26 L132,18 L154,12 L176,8 L198,5 L220,3 L220,70 L0,70 Z"/>
-                    <path class="sim-spark-line" fill="none" stroke="#00f0ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M0,62 L22,58 L44,52 L66,44 L88,34 L110,26 L132,18 L154,12 L176,8 L198,5 L220,3"/>
+                    <path class="sim-spark-line" fill="none" stroke="#2763df" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M0,62 L22,58 L44,52 L66,44 L88,34 L110,26 L132,18 L154,12 L176,8 L198,5 L220,3"/>
                     <circle class="sim-spark-end" cx="220" cy="3" r="3.5" fill="#fff"/>
                 </svg>
                 <div class="sim-roi-trend-label">${lang === 'ko' ? '12개월 누적 효과 예측' : '12-month cumulative impact'}</div>
@@ -601,13 +517,13 @@
             const decimals = (m.suffix === '×' || m.after < 10) ? 1 : 0;
             card.innerHTML = `
                 <div class="sim-metric-gauge-wrap">
-                    <svg class="sim-metric-gauge" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.07)" stroke-width="7" fill="none"/>
+                    <svg class="sim-metric-gauge" aria-hidden="true" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="7" fill="none"/>
                         <circle class="sim-gauge-fill" cx="50" cy="50" r="42" stroke="${m.color}" stroke-width="7" fill="none"
                                 stroke-linecap="round" stroke-dasharray="${C.toFixed(2)}" stroke-dashoffset="${C.toFixed(2)}"
                                 data-gauge-target="${pct}" transform="rotate(-90 50 50)"/>
                     </svg>
-                    <div class="sim-metric-icon">${m.icon}</div>
+                    <div class="sim-metric-icon" aria-hidden="true">${String(i + 1).padStart(2, '0')}</div>
                 </div>
                 <div class="sim-metric-label">${lang === 'ko' ? m.ko : m.en}</div>
                 <div class="sim-metric-value" data-target="${m.after}" data-suffix="${m.suffix}" data-decimals="${decimals}">0${m.suffix}</div>
@@ -623,7 +539,7 @@
 
         // ===== PER-SYSTEM IMPROVEMENT BARS =====
         const insightWrap = el('div', 'sim-insight-wrap');
-        insightWrap.appendChild(el('div', 'sim-insight-h', lang === 'ko' ? '🔍 시스템별 개선 효과' : '🔍 Per-system improvements'));
+        insightWrap.appendChild(el('div', 'sim-insight-h', lang === 'ko' ? '시스템별 개선 효과' : 'Per-system improvements'));
 
         const sysGrid = el('div', 'sim-sys-result-grid');
         state.systems.forEach((sys, i) => {
@@ -638,7 +554,6 @@
             card.style.animationDelay = (i * 0.08) + 's';
             card.innerHTML = `
                 <div class="sim-sys-result-head">
-                    <span class="sim-sys-result-icon">${sys.icon}</span>
                     <strong class="sim-sys-result-name">${sys.en}</strong>
                     <span class="sim-sys-result-delta">+${delta}%p</span>
                 </div>
@@ -664,7 +579,7 @@
         const ids = state.systems.map((s) => s.id);
         const foundSyn = SYNERGIES.filter((s) => s.need.every((n) => ids.includes(n)));
         if (foundSyn.length) {
-            insightWrap.appendChild(el('div', 'sim-insight-h syn', lang === 'ko' ? '✨ 시스템 간 시너지' : '✨ Cross-system synergies'));
+            insightWrap.appendChild(el('div', 'sim-insight-h syn', lang === 'ko' ? '시스템 간 시너지' : 'Cross-system synergies'));
             const synGrid = el('div', 'sim-syn-grid');
             foundSyn.forEach((s, i) => {
                 const line = el('div', 'sim-syn-pill');
@@ -699,10 +614,10 @@
         const payback = Math.max(4, 18 - n * 2 - (seed % 4));
         return {
             cards: [
-                { ko: '예측 정확도',   en: 'Prediction Accuracy', before: 74,             after: acc,           suffix: '%',   icon: '🎯', max: 100, color: '#00f0ff' },
-                { ko: '설비 다운타임', en: 'Daily Downtime',      before: downtimeBefore, after: downtimeAfter, suffix: 'h',   icon: '⏱️', max: 12.4, color: '#ff2bd6' },
-                { ko: '운영 비용',     en: 'Operating Cost',      before: 100,            after: 100 - saving,  suffix: '%',   icon: '💰', max: 100, color: '#8a5bff' },
-                { ko: '의사결정 속도', en: 'Decision Speed',      before: 1,              after: speedup,       suffix: '×',   icon: '⚡', max: 8,   color: '#00f0ff' },
+                { ko: '예측 정확도',   en: 'Prediction Accuracy', before: 74,             after: acc,           suffix: '%',   icon: '🎯', max: 100, color: '#2763df' },
+                { ko: '설비 다운타임', en: 'Daily Downtime',      before: downtimeBefore, after: downtimeAfter, suffix: 'h',   icon: '⏱️', max: 12.4, color: '#597295' },
+                { ko: '운영 비용',     en: 'Operating Cost',      before: 100,            after: 100 - saving,  suffix: '%',   icon: '💰', max: 100, color: '#15233b' },
+                { ko: '의사결정 속도', en: 'Decision Speed',      before: 1,              after: speedup,       suffix: '×',   icon: '⚡', max: 8,   color: '#2763df' },
             ],
             annual,
             payback,
@@ -712,102 +627,23 @@
         };
     }
 
+    // Show final values immediately; charts remain readable with reduced motion.
     function animateMetrics(container) {
-        container.querySelectorAll('.sim-metric-value').forEach((valEl) => {
-            const target = parseFloat(valEl.dataset.target);
-            const suffix = valEl.dataset.suffix || '';
-            const decimals = parseInt(valEl.dataset.decimals || '0', 10);
-            const dur = 1500;
-            const start = performance.now();
-            function step(now) {
-                const t = Math.min(1, (now - start) / dur);
-                const eased = 1 - Math.pow(1 - t, 3);
-                const cur = (target * eased).toFixed(decimals);
-                valEl.textContent = cur + suffix;
-                if (t < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
+        container.querySelectorAll('[data-target]').forEach((element) => {
+            element.textContent = Number(element.dataset.target).toFixed(Number(element.dataset.decimals)) + element.dataset.suffix;
         });
     }
-
     function animateGauges(container) {
-        container.querySelectorAll('.sim-gauge-fill').forEach((c, i) => {
-            const C = 2 * Math.PI * 42;
-            const target = parseFloat(c.dataset.gaugeTarget);
-            const dur = 1700;
-            const startDelay = 100 + i * 80;
-            setTimeout(() => {
-                const start = performance.now();
-                function step(now) {
-                    const t = Math.min(1, (now - start) / dur);
-                    const eased = 1 - Math.pow(1 - t, 4);
-                    c.setAttribute('stroke-dashoffset', (C * (1 - target * eased)).toFixed(2));
-                    if (t < 1) requestAnimationFrame(step);
-                }
-                requestAnimationFrame(step);
-            }, startDelay);
+        container.querySelectorAll('[data-gauge-target]').forEach((circle) => {
+            circle.setAttribute('stroke-dashoffset', String(2 * Math.PI * 42 * (1 - Number(circle.dataset.gaugeTarget))));
         });
     }
-
     function animateRoi(hero) {
-        const amt = hero.querySelector('.sim-roi-amount');
-        if (amt) {
-            const target = parseInt(amt.dataset.roiTarget, 10);
-            const dur = 2000;
-            const start = performance.now();
-            function step(now) {
-                const t = Math.min(1, (now - start) / dur);
-                const eased = 1 - Math.pow(1 - t, 4);
-                const cur = Math.floor(target * eased);
-                amt.textContent = cur.toLocaleString();
-                if (t < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        }
-        const pay = hero.querySelector('[data-pay-target]');
-        if (pay) {
-            const target = parseInt(pay.dataset.payTarget, 10);
-            const dur = 1500;
-            const start = performance.now();
-            function step(now) {
-                const t = Math.min(1, (now - start) / dur);
-                const eased = 1 - Math.pow(1 - t, 3);
-                pay.textContent = Math.floor(target * eased);
-                if (t < 1) requestAnimationFrame(step);
-                else pay.textContent = target;
-            }
-            requestAnimationFrame(step);
-        }
-        // Sparkline draw + endpoint travel
-        const line = hero.querySelector('.sim-spark-line');
-        const endDot = hero.querySelector('.sim-spark-end');
-        if (line) {
-            const len = line.getTotalLength();
-            line.style.strokeDasharray = len;
-            line.style.strokeDashoffset = len;
-            line.style.transition = 'stroke-dashoffset 2.2s cubic-bezier(.2,.8,.2,1)';
-            requestAnimationFrame(() => { line.style.strokeDashoffset = '0'; });
-        }
-        const area = hero.querySelector('.sim-spark-area');
-        if (area) {
-            area.style.opacity = '0';
-            area.style.transition = 'opacity 1.6s ease 0.6s';
-            requestAnimationFrame(() => { area.style.opacity = '1'; });
-        }
-        if (endDot) {
-            endDot.style.opacity = '0';
-            endDot.style.transition = 'opacity 0.4s ease 2s';
-            requestAnimationFrame(() => { endDot.style.opacity = '1'; });
-        }
+        hero.querySelector('[data-roi-target]').textContent = Number(hero.querySelector('[data-roi-target]').dataset.roiTarget).toLocaleString();
+        hero.querySelector('[data-pay-target]').textContent = hero.querySelector('[data-pay-target]').dataset.payTarget;
     }
-
-    function animateBars(wrap) {
-        const bars = wrap.querySelectorAll('.sim-bar-fill');
-        bars.forEach((b, i) => {
-            const target = parseFloat(b.dataset.barTarget);
-            b.style.width = '0%';
-            setTimeout(() => { b.style.width = target + '%'; }, 250 + i * 50);
-        });
+    function animateBars(container) {
+        container.querySelectorAll('[data-bar-target]').forEach((bar) => { bar.style.width = bar.dataset.barTarget + '%'; });
     }
 
     // ---------- WIRE NAV BUTTON ----------
@@ -816,6 +652,7 @@
         if (!btn) return;
         btn.addEventListener('click', (e) => {
             e.preventDefault();
+            btn.focus({ preventScroll: true });
             open();
         });
     }

@@ -304,495 +304,97 @@ const extraI18n = {
     "기타 문의 (Other)": "Other / General Inquiry"
 };
 
-function normalizeKey(s) {
-    return (s || '').replace(/\s+/g, ' ').trim();
-}
-
-// Capture the original Korean innerHTML of every translatable element
-// EXACTLY ONCE, at page load, BEFORE any language switching happens.
-// This prevents the flaky-toggle bug where late snapshots could capture
-// already-translated English text and break later restores.
-let __koreanSnapshotted = false;
-function snapshotKoreanContent() {
-    if (__koreanSnapshotted) return;
-    const candidates = document.querySelectorAll(
-        'h1, h2, h3, h4, h5, h6, p, li, span, div, button, option, a'
-    );
-    candidates.forEach((el) => {
-        if (el.hasAttribute('data-i18n')) return;
-        if (el.id === 'btn-ko' || el.id === 'btn-en') return;
-        const hasBlockChild = Array.from(el.children).some((c) =>
-            /^(DIV|P|UL|OL|LI|H[1-6]|SECTION|ARTICLE|HEADER|FOOTER|NAV|TABLE|FORM|IFRAME|IMG|VIDEO|CANVAS|SVG)$/i.test(c.tagName)
-        );
-        if (hasBlockChild) return;
-        const original = el.innerHTML;
-        if (!/[\uAC00-\uD7AF]/.test(original)) return;
-        el.dataset.kOrig = original;
-    });
-    __koreanSnapshotted = true;
-}
-
-function applyExtraTranslations(lang) {
-    // Make sure we have a clean Korean snapshot to restore from.
-    if (!__koreanSnapshotted) snapshotKoreanContent();
-
-    const candidates = document.querySelectorAll(
-        'h1, h2, h3, h4, h5, h6, p, li, span, div, button, option, a'
-    );
-    candidates.forEach((el) => {
-        if (el.hasAttribute('data-i18n')) return;
-        if (el.id === 'btn-ko' || el.id === 'btn-en') return;
-        // NEVER rewrite anything inside the top nav — we'd destroy the
-        // anchor elements and lose their .active-nav class on every toggle.
-        if (el.closest && el.closest('.nav-links')) return;
-        const hasBlockChild = Array.from(el.children).some((c) =>
-            /^(DIV|P|UL|OL|LI|H[1-6]|SECTION|ARTICLE|HEADER|FOOTER|NAV|TABLE|FORM|IFRAME|IMG|VIDEO|CANVAS|SVG)$/i.test(c.tagName)
-        );
-        if (hasBlockChild) return;
-        // Also skip any element that contains an <a> child — rewriting its
-        // innerHTML would regenerate the anchor and strip runtime classes
-        // (like .active-nav) added by the SPA logic.
-        if (el.querySelector && el.querySelector('a')) return;
-        // Only operate on elements we snapshotted (i.e. that originally had Korean).
-        if (!el.dataset.kOrig) return;
-
-        const original = el.dataset.kOrig;
-        if (lang === 'ko') {
-            if (el.innerHTML !== original) el.innerHTML = original;
-        } else {
-            const trimmed = normalizeKey(original);
-            if (extraI18n[trimmed]) {
-                el.innerHTML = extraI18n[trimmed];
-            } else {
-                // Fallback: try replacing each known phrase substring
-                let updated = original;
-                for (const k in extraI18n) {
-                    if (updated.indexOf(k) !== -1) {
-                        updated = updated.split(k).join(extraI18n[k]);
-                    }
-                }
-                el.innerHTML = updated;
-            }
-        }
-    });
-}
-
-let currentLang = 'ko';
-
-// ============================================================
-// NAV MAP — single source of truth for nav text in either language
-// ============================================================
-const NAV_TEXT_MAP = {
-    ko: {
-        '#hero':        'ZiewCore 소개',
-        '#about':       '회사 소개',
-        '#solutions':   '솔루션',
-        '#technology':  '기술력',
-        '#contact':     '문의하기',
-        'try':          '🚀 체험 시뮬레이션'
-    },
-    en: {
-        '#hero':        'About ZiewCore',
-        '#about':       'About',
-        '#solutions':   'Solutions',
-        '#technology':  'Technology',
-        '#contact':     'Contact',
-        'try':          '🚀 Simulation'
-    }
-};
-
-function forceWriteNav(lang) {
-    const map = NAV_TEXT_MAP[lang];
-    if (!map) return;
-    document.querySelectorAll('.nav-links a').forEach((a) => {
-        if (a.id === 'nav-try') { a.textContent = map.try; return; }
-        const href = a.getAttribute('href');
-        if (map[href]) a.textContent = map[href];
-    });
-}
-
-function setLanguage(lang) {
-    currentLang = lang;
-    document.documentElement.lang = lang;
-
-    // (1) FIRST — write nav text directly using textContent. This runs
-    // before everything else so the user always sees the new menu
-    // language even if a later step throws.
-    forceWriteNav(lang);
-
-    // Toggle active classes on buttons
-    try {
-        document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
-        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-    } catch (e) {}
-
-    // Update all elements with data-i18n
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (i18n[lang] && i18n[lang][key] != null) {
-            el.innerHTML = i18n[lang][key];
-        }
-    });
-
-    // (2) Re-write nav AGAIN after the data-i18n loop in case the loop
-    // was the one that wrote the wrong language for any reason.
-    forceWriteNav(lang);
-
-    // Translate placeholders
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        const key = el.getAttribute('data-i18n-placeholder');
-        if (i18n[lang][key]) {
-            el.setAttribute('placeholder', i18n[lang][key]);
-        }
-    });
-
-    // Update dynamic SIGMING text if currently visible
-    const typingElement = document.getElementById('erp-typing');
-    if (typingElement && typingElement.textContent !== "") {
-        const today = new Date().toISOString().split('T')[0];
-        typingElement.textContent = `${today}${i18n[currentLang]['sigming-live-text']}`;
-    }
-
-    // Apply extra dictionary translations to non-data-i18n Korean text
-    try { applyExtraTranslations(lang); } catch (e) { console.warn('extra i18n failed', e); }
-}
-
-// ============================================================
-// Auto-detect language by visitor IP country
-//   - Korea (KR) → Korean (default)
-//   - All other countries → English
-//   - Manual user choice (KO/EN button) is remembered and overrides
-//     auto-detection on subsequent visits
-// ============================================================
-// Once the user clicks KO/EN, lock out any in-flight auto-detect responses.
-let __userLangLocked = false;
-
-function autoDetectLanguage() {
-    // 1) If user has previously chosen manually, respect that
-    try {
-        const saved = localStorage.getItem('ziewise_lang');
-        if (saved === 'ko' || saved === 'en') {
-            __userLangLocked = true;
-            setLanguage(saved);
-            return;
-        }
-    } catch (e) { /* ignore */ }
-
-    // 2) Try IP geolocation via free APIs (try multiple as fallback)
-    const apis = [
-        { url: 'https://api.country.is/', field: 'country' },
-        { url: 'https://ipapi.co/json/',    field: 'country_code' },
-        { url: 'https://ipwho.is/',         field: 'country_code' }
-    ];
-
-    // Helper: re-check localStorage before applying any auto-detected
-    // language, so a user click during the in-flight fetch is never
-    // overridden by the late response.
-    function safeApply(lang) {
-        // If the user already clicked KO/EN, never override.
-        if (__userLangLocked) return;
-        try {
-            const saved = localStorage.getItem('ziewise_lang');
-            if (saved === 'ko' || saved === 'en') {
-                __userLangLocked = true;
-                if (saved !== currentLang) setLanguage(saved);
-                return;
-            }
-        } catch (e) {}
-        setLanguage(lang);
-    }
-
-    let attempted = 0;
-    function tryNext() {
-        if (attempted >= apis.length) {
-            // 3) Final fallback: browser language
-            const navLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-            safeApply(navLang.startsWith('ko') ? 'ko' : 'en');
-            return;
-        }
-        const api = apis[attempted++];
-        fetch(api.url, { method: 'GET', cache: 'no-store' })
-            .then((r) => r.ok ? r.json() : Promise.reject())
-            .then((data) => {
-                const country = (data && data[api.field] ? String(data[api.field]) : '').toUpperCase();
-                if (!country) return tryNext();
-                safeApply(country === 'KR' ? 'ko' : 'en');
-            })
-            .catch(() => tryNext());
-    }
-    tryNext();
-}
+// The original Korean/English content dictionaries above are retained.
+Object.assign(i18n.ko, {
+ 'nav-try':'체험 시뮬레이션','skip':'본문으로 바로가기',
+ 'new-hero':'스스로 학습하고,<br><span>계속 진화하는 AI.</span>',
+ 'new-lead':'데이터 수집부터 자가 학습, 무중단 배포까지.<br>기업의 모든 AI를 하나의 인프라로 연결합니다.',
+ 'explore-3d':'솔루션 3D로 살펴보기','consult':'도입 문의','drag-hint':'드래그하여 3D 회전','pause-motion':'모션 일시정지','resume-motion':'모션 재생',
+ 'brain-title':'중앙 뇌가 6개의 전문 뇌를 학습시킨다','brain-desc':'ZiewCore 중앙 AI가 6대 전문 AI를 지속 훈련·오케스트레이션',
+ 'operation-example':'동작 예시','view-3d':'3D 동작 보기','illustrative':'작동 원리 시뮬레이션',
+ 'experience-title':'우리 회사에 적용하면 어떻게 달라질까요?','experience-desc':'업종과 연결할 시스템을 선택하고, AI 학습 과정과 예상 성과를 확인하세요.','experience-button':'맞춤 시뮬레이션 시작',
+ 'tech-visual-title':'멈추지 않는 서비스.<br>끊임없이 진화하는 모델.','contact-heading':'다음 가능성을,<br>함께 시작합니다.',
+ 'btn-send':'이메일로 문의하기','email-note':'작성한 내용으로 이메일 앱이 열립니다. 이메일 앱이 없으면 info@ziewise.com으로 직접 보내주세요.'
+});
+Object.assign(i18n.en, {
+ 'nav-try':'Simulation','skip':'Skip to content',
+ 'new-hero':'Intelligence that learns.<br><span>And keeps evolving.</span>',
+ 'new-lead':'From data collection to self-learning and zero-downtime deployment.<br>Connect all your enterprise AI in one infrastructure.',
+ 'explore-3d':'Explore solutions in 3D','consult':'Talk to us','drag-hint':'Drag to rotate in 3D','pause-motion':'Pause motion','resume-motion':'Resume motion',
+ 'brain-title':'One central brain trains six specialist AIs','brain-desc':'ZiewCore continuously trains and orchestrates six specialist AIs',
+ 'operation-example':'Operation example','view-3d':'View in 3D','illustrative':'Illustrative simulation',
+ 'experience-title':'What could change for your company?','experience-desc':'Choose your industry and systems to explore AI learning and potential outcomes.','experience-button':'Start your simulation',
+ 'tech-visual-title':'Services that never stop.<br>Models that keep evolving.','contact-heading':'Your next possibility.<br>Let’s build it together.',
+ 'btn-send':'Compose email enquiry','email-note':'Your email app opens with these details. If you do not use an email app, write directly to info@ziewise.com.',
+ 'about-desc':'Ziewise accelerates enterprise digital transformation with <strong>Edge MLOps OS (ZiewCore)</strong>, built on our experience in infrastructure, security and operations.<br>We combine proven virtual PC, smart CCTV and print-security capabilities with AI for a new level of business intelligence.<br><br>Beyond individual models, one OS integrates the entire AI lifecycle: <strong>data collection → self-learning → zero-downtime deployment → real-time inference</strong>. Customers can <strong>focus on business value without the infrastructure burden</strong>.',
+ 'ziewprint-diff':'✓ One driver across manufacturers and models, with no changes to existing equipment. Watermarks, print approval, statistics and conversational AI troubleshooting are supported.'
+});
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    // 0. Language Switcher Event Listeners — manual choice is authoritative.
-    // We snapshot Korean BEFORE the very first switch so restores always work,
-    // and we lock out any in-flight auto-detect so a late IP fetch can't flip
-    // the language back.
-    function chooseLang(lang) {
-        snapshotKoreanContent();
-        __userLangLocked = true;
-        try { localStorage.setItem('ziewise_lang', lang); } catch (e) {}
-        if (currentLang !== lang) setLanguage(lang);
-        else { forceWriteNav(lang); }
-    }
-    document.getElementById('btn-ko').addEventListener('click', () => chooseLang('ko'));
-    document.getElementById('btn-en').addEventListener('click', () => chooseLang('en'));
-
-    // ============================================================
-    // NAV MUTATION OBSERVER — third safety net.
-    // If anything (extension, late async, race, etc.) writes the wrong
-    // language into a nav link, immediately rewrite it back.
-    // ============================================================
-    try {
-        const navUl = document.querySelector('.nav-links');
-        if (navUl) {
-            let rewriting = false;
-            const navObserver = new MutationObserver(() => {
-                if (rewriting) return;
-                const map = NAV_TEXT_MAP[currentLang];
-                if (!map) return;
-                let needsFix = false;
-                navUl.querySelectorAll('a').forEach((a) => {
-                    const expected = a.id === 'nav-try'
-                        ? map.try
-                        : map[a.getAttribute('href')];
-                    if (expected && a.textContent.trim() !== expected.trim()) {
-                        needsFix = true;
-                    }
-                });
-                if (needsFix) {
-                    rewriting = true;
-                    forceWriteNav(currentLang);
-                    setTimeout(() => { rewriting = false; }, 0);
-                }
-            });
-            navObserver.observe(navUl, {
-                subtree: true,
-                childList: true,
-                characterData: true
-            });
-        }
-    } catch (e) { /* ignore */ }
-
-    // CRITICAL: snapshot the original Korean content BEFORE any language
-    // switch can mutate it. This is what makes KO ↔ EN toggling reliable.
-    snapshotKoreanContent();
-
-    // Auto-detect on first visit (or apply saved choice)
-    autoDetectLanguage();
-
-    // 1. Hyper-Warp smooth scrolling for nav links
-    // Creates a visual "warp" overlay, scrolls instantly under the hood, then fades out.
-    
-    // Create warp overlay in DOM
-    const warpOverlay = document.createElement('div');
-    warpOverlay.className = 'warp-overlay';
-    document.body.appendChild(warpOverlay);
-    
-    // Create star lines and planets for warp effect
-    for (let i = 0; i < 80; i++) {
-        const star = document.createElement('div');
-        // Randomly make some of them "planets" passing by quickly
-        if (i % 15 === 0) {
-            star.className = 'warp-star planet';
-        } else {
-            star.className = 'warp-star';
-        }
-        
-        star.style.left = `${50 + (Math.random() - 0.5) * 100}%`;
-        star.style.top = `${50 + (Math.random() - 0.5) * 100}%`;
-        // Randomize direction and length for 3D depth
-        star.style.setProperty('--angle', `${(Math.random() * 360)}deg`);
-        star.style.setProperty('--delay', `${Math.random() * 0.4}s`);
-        star.style.setProperty('--duration', `${0.4 + Math.random() * 0.6}s`);
-        
-        // Randomly add a blueish or yellowish tint to some stars
-        if (Math.random() > 0.7) {
-            star.style.boxShadow = '0 0 10px 2px rgba(240, 195, 48, 0.8), 0 0 20px 5px rgba(255, 255, 255, 0.4)';
-        } else if (Math.random() > 0.4) {
-             star.style.boxShadow = '0 0 10px 2px rgba(0, 159, 227, 0.8), 0 0 20px 5px rgba(255, 255, 255, 0.4)';
-        }
-
-        warpOverlay.appendChild(star);
-    }
-
-    // ============================================================
-    // SECTION NAVIGATION  +  SCROLL-SPY
-    // All sections are visible (CSS forces display:flex). Clicking a
-    // nav link smooth-scrolls to its section, and an IntersectionObserver
-    // automatically highlights the matching nav item as the user scrolls.
-    // ============================================================
-    const sections = ['#hero', '#about', '#solutions', '#technology', '#contact'];
-
-    // Helper: set the active nav link by section id (e.g. '#about').
-    let __spyLockUntil = 0;
-    function setActiveNav(targetId) {
-        document.querySelectorAll('.nav-links a').forEach((a) => {
-            if (a.id === 'nav-try') return; // skip CTA button
-            if (a.getAttribute('href') === targetId) {
-                a.classList.add('active-nav');
-            } else {
-                a.classList.remove('active-nav');
-            }
-        });
-    }
-
-    // Smooth scroll with offset for the fixed navbar
-    function getNavOffset() {
-        const nav = document.querySelector('.navbar');
-        return nav ? nav.getBoundingClientRect().bottom + 12 : 100;
-    }
-    function smoothScrollTo(targetId) {
-        const el = document.querySelector(targetId);
-        if (!el) return;
-        const top = el.getBoundingClientRect().top + window.pageYOffset - getNavOffset();
-        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
-    }
-
-    // Initial highlight = Hero
-    setActiveNav('#hero');
-
-    // Hijack in-page anchor clicks → warp + smooth scroll + lock spy briefly
-    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener('click', function (e) {
-            const targetId = this.getAttribute('href');
-            if (!targetId || targetId === '#' || !document.querySelector(targetId)) return;
-            e.preventDefault();
-
-            // Lock the scroll-spy while we programmatically scroll so it
-            // doesn't briefly flash other sections as we pass over them.
-            __spyLockUntil = Date.now() + 900;
-            setActiveNav(targetId);
-
-            // Blur/bleed-only transition:
-            // The warp star-field overlay was doubling up with the global
-            // scroll-bleeding blur effect, so we drop the warp overlay and
-            // keep only the smooth-scroll + scroll-bleeding blur.
-            smoothScrollTo(targetId);
-        });
-    });
-
-    // Scroll-spy via IntersectionObserver — highlight nav based on which
-    // section currently dominates the viewport.
-    try {
-        const sectionEls = sections
-            .map((id) => document.querySelector(id))
-            .filter(Boolean);
-
-        const spyObserver = new IntersectionObserver((entries) => {
-            if (Date.now() < __spyLockUntil) return; // ignore during programmatic scroll
-            // Pick the entry with the largest intersection ratio
-            let best = null;
-            entries.forEach((en) => {
-                if (en.isIntersecting) {
-                    if (!best || en.intersectionRatio > best.intersectionRatio) best = en;
-                }
-            });
-            if (best && best.target && best.target.id) {
-                setActiveNav('#' + best.target.id);
-            }
-        }, {
-            // Trigger when a section's middle band crosses the viewport center.
-            // Top margin pulls down the trigger line so the section is "current"
-            // once its content is roughly under the navbar.
-            rootMargin: '-40% 0px -55% 0px',
-            threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
-        });
-        sectionEls.forEach((el) => spyObserver.observe(el));
-
-        // Fallback: also recompute on plain scroll in case the observer
-        // misses an edge case (very tall sections, etc.).
-        let lastSpyId = '#hero';
-        function scrollSpyFallback() {
-            if (Date.now() < __spyLockUntil) return;
-            const probe = window.innerHeight * 0.35;
-            let current = '#hero';
-            for (const el of sectionEls) {
-                const r = el.getBoundingClientRect();
-                if (r.top <= probe) current = '#' + el.id;
-            }
-            if (current !== lastSpyId) {
-                lastSpyId = current;
-                setActiveNav(current);
-            }
-        }
-        window.addEventListener('scroll', scrollSpyFallback, { passive: true });
-    } catch (e) { /* ignore */ }
-
-    // 2. Intersection Observer for fade-in animations on scroll
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
-    };
-
-    const fadeObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = 1;
-                entry.target.style.transform = 'translateY(0)';
-                // Don't unobserve if we want hover effects to still work cleanly, 
-                // but since we only control initial load transform here, it's fine.
-                fadeObserver.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    // Apply init styles and observe for cards and hero content
-    const animatedElements = document.querySelectorAll('.solution-card, .tech-card, .hero-content');
-    animatedElements.forEach((el, index) => {
-        el.style.opacity = 0;
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = `opacity 0.8s ease-out ${index * 0.1}s, transform 0.8s ease-out ${index * 0.1}s`;
-        fadeObserver.observe(el);
-    });
-
-    // We must ensure that the transition doesn't interfere with hover transforms later.
-    // So after the animation completes, we remove the inline transition so the CSS stylesheet takes over.
-    setTimeout(() => {
-        animatedElements.forEach(el => {
-            el.style.transition = ''; 
-        });
-    }, 2000);
-
-    // 3. Dynamic typing simulation for SIGMING ERP
-    const typingElement = document.getElementById('erp-typing');
-    const sigmingCard = document.getElementById('card-sigming');
-    let hasTyped = false;
-
-    if (sigmingCard && typingElement) {
-        sigmingCard.addEventListener('mouseenter', () => {
-            if (!hasTyped) {
-                // The actual typing effect is handled by CSS steps animation,
-                // here we dynamically fill the text so it looks "live".
-                const today = new Date().toISOString().split('T')[0];
-                typingElement.textContent = `${today}${i18n[currentLang]['sigming-live-text']}`;
-                hasTyped = true;
-            }
-        });
-
-        sigmingCard.addEventListener('mouseleave', () => {
-             // Reset so the animation can play again on next hover
-             setTimeout(() => {
-                 typingElement.textContent = "";
-                 hasTyped = false;
-             }, 500);
-        });
-    }
-
-    // Contact Form MailTo Handler
-    document.getElementById('contact-form')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const category = document.getElementById('req-subject').value || "일반 문의";
-        const company = document.getElementById('req-company').value;
-        const name = document.getElementById('req-name').value;
-        const title = document.getElementById('req-title').value;
-        const email = document.getElementById('req-email').value;
-        const message = document.getElementById('req-message').value;
-
-        const subject = encodeURIComponent(`[Ziewise 문의 - ${category}] ${company} - ${name}`);
-        const body = encodeURIComponent(`문의 카테고리/Category: ${category}\n업체명/Company: ${company}\n성명/Name: ${name}\n직급/Title: ${title}\n이메일/Email: ${email}\n\n문의내용:\n${message}`);
-
-        window.location.href = `mailto:info@ziewise.com?subject=${subject}&body=${body}`;
-    });
+ const normalize=s=>s.replace(/\s+/g,' ').trim();
+ const additions={
+  '금융 · 공공기관':'Finance · Government','금융':'Finance','ZiewCore가 적용된 산업별 대표 시나리오':'Representative ZiewCore industry scenarios',
+  '지와이즈 주식회사 | 대표이사 : 이승현 | 사업자등록번호: 392-87-02849':'Ziewise Co., Ltd. | CEO: Seunghyun Lee | Business registration: 392-87-02849',
+  '검증된 산업별 도입 사례':'Proven industry applications','제조부터 금융까지 — ZiewCore는 모든 산업 환경에 적응합니다.':'From manufacturing to finance, ZiewCore adapts to each industry.',
+  '동작 예시':'Operation example','모호한 데이터':'Ambiguous data','재학습 완료':'Retraining complete','승인 중...':'Approving…','토너 10% 미만.':'Toner below 10%.','자동 주문 완료.':'Auto reorder complete.',
+  '심야택시':'Late-night taxi','구내식당':'Staff cafeteria','호텔':'Hotel','QR/PIN 인증':'QR/PIN authentication','토너 8% · 자동 발주 완료':'Toner 8% · Auto reorder complete',
+  '식대 8,000원 → 승인':'Meal KRW 8,000 → Approved','심야택시 → 규정 검토':'Late-night taxi → Policy review','호텔 120,000원 → 출장 매핑':'Hotel KRW 120,000 → Business-trip mapping',
+  '이탈 감지!':'Exit intent detected!','🔥 10% 추가 할인 쿠폰 발급':'Additional 10% discount coupon issued',
+  '[식대] 구내식당 - 8,000원':'[Meal] Staff cafeteria — KRW 8,000','[심야택시] 카카오T - 45,000원':'[Late-night taxi] Kakao T — KRW 45,000','> 자동 전표 생성 중...':'> Generating an ERP voucher…',
+  '&gt; 자동 전표 생성 중...':'&gt; Generating an ERP voucher…',
+  '보안 취약점 스캔 (Sec Scan)':'Security vulnerability scan (Sec Scan)','10만+ 대규모 부하 테스트 (Load)':'100K+ load simulations (Load)','비정상 트래픽 감지 (Anomaly)':'Abnormal traffic detection (Anomaly)','무중단 배포 승인 (Deploy)':'Zero-downtime deployment approval (Deploy)'
+ };
+ const dictionary=Object.assign({},extraI18n,additions);
+ const entries=Object.entries(dictionary).sort((a,b)=>b[0].length-a[0].length);
+ const translate=html=>dictionary[normalize(html)]||entries.reduce((t,[ko,en])=>t.split(ko).join(en),html);
+ document.querySelectorAll('[data-source-ko]').forEach(el=>{
+   i18n.ko[el.dataset.i18n]=el.dataset.sourceKo;
+   el.removeAttribute('data-source-ko');
+ });
+ // Preserve both the richer source description and the older operational details.
+ i18n.ko['ziewprint-diff']='✓ 제조사/모델 독립형 1-드라이버 & 기존 장비 무변경 적용. 워터마크·출력 승인·통계 및 AI 장애 대화 지원.';
+ const targets=[];
+ document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,span,div,button,option,a,summary').forEach(el=>{
+   if(el.closest('#sim-root'))return;
+   if(el.dataset.i18n){targets.push({el,key:el.dataset.i18n,ko:el.innerHTML});return;}
+   if(el.closest('[data-i18n]')||el.querySelector('[data-i18n],a,button,input,canvas,svg,img'))return;
+   if([...el.children].some(c=>/^(DIV|P|UL|OL|LI|H[1-6]|SECTION|ARTICLE|FORM|DETAILS)$/.test(c.tagName)))return;
+   if(/[가-힣]/.test(el.innerHTML))targets.push({el,ko:el.innerHTML,en:translate(el.innerHTML)});
+ });
+ let lang='ko';
+ const chooseLanguage=next=>{
+   lang=next==='en'?'en':'ko';document.documentElement.lang=lang;
+   for(const t of targets){
+     const value=t.key?(i18n[lang][t.key]??(lang==='ko'?t.ko:translate(t.ko))):(lang==='ko'?t.ko:t.en);
+     if(t.el.innerHTML!==value)t.el.innerHTML=value;
+   }
+   document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{el.placeholder=i18n[lang][el.dataset.i18nPlaceholder]||el.placeholder;el.setAttribute('aria-label',el.placeholder);});
+   for(const l of ['ko','en']){const b=document.getElementById('btn-'+l);b.classList.toggle('active',lang===l);b.setAttribute('aria-pressed',String(lang===l));}
+   document.querySelector('#req-subject').setAttribute('aria-label',lang==='ko'?'문의 카테고리':'Enquiry category');
+   document.querySelector('#mobileToggle').setAttribute('aria-label',lang==='ko'?'메뉴 열기':'Open menu');
+   document.title=lang==='ko'?'Ziewise | 스스로 진화하는 Edge AI, ZiewCore':'Ziewise | Self-evolving Edge AI, ZiewCore';
+   window.dispatchEvent(new CustomEvent('ziewise:language',{detail:lang}));
+ };
+ window.ziewiseTranslate=(key)=>i18n[lang][key]||key;
+ for(const l of ['ko','en'])document.getElementById('btn-'+l).addEventListener('click',()=>{try{localStorage.setItem('ziewise_lang',l);}catch{}chooseLanguage(l);});
+ let saved;try{saved=localStorage.getItem('ziewise_lang');}catch{}
+ chooseLanguage(saved||((navigator.language||'ko').startsWith('ko')?'ko':'en'));
+ const nav=document.querySelector('#primaryNav'),toggle=document.querySelector('#mobileToggle');
+ const closeNav=()=>{document.body.classList.remove('nav-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label',lang==='ko'?'메뉴 열기':'Open menu');};
+ toggle.addEventListener('click',()=>{const opened=document.body.classList.toggle('nav-open');toggle.setAttribute('aria-expanded',String(opened));toggle.setAttribute('aria-label',opened?(lang==='ko'?'메뉴 닫기':'Close menu'):(lang==='ko'?'메뉴 열기':'Open menu'));});
+ nav.addEventListener('click',e=>{if(e.target.closest('a'))closeNav();});
+ document.addEventListener('click',e=>{if(!nav.contains(e.target)&&!toggle.contains(e.target))closeNav();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
+ window.addEventListener('resize',()=>{if(innerWidth>1000)closeNav();},{passive:true});
+ document.querySelector('#open-experience').addEventListener('click',()=>window.ZiewSim?.open());
+ const observer=new IntersectionObserver(entries=>{for(const e of entries){if(e.isIntersecting){document.querySelectorAll('.nav-links a').forEach(a=>a.classList.toggle('active-nav',a.getAttribute('href')==='#'+e.target.id));}}},{rootMargin:'-15% 0px -60% 0px'});
+ document.querySelectorAll('main>section,footer').forEach(el=>observer.observe(el));
+ document.querySelector('#contact-form').addEventListener('submit',e=>{
+   e.preventDefault();const form=e.currentTarget;if(!form.reportValidity())return;
+   const get=id=>document.getElementById('req-'+id).value.trim();
+   const subject=`[Ziewise 문의] ${get('subject')} - ${get('company')}`;
+   const body=`업체명 / Company: ${get('company')}\n성명 / Name: ${get('name')}\n직급 / Title: ${get('title')}\n이메일 / Email: ${get('email')}\n\n${get('message')}`;
+   window.location.href=`mailto:info@ziewise.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+   document.querySelector('#form-status').textContent=lang==='ko'?'이메일 앱에서 내용을 확인하고 전송해 주세요.':'Review and send your message in your email app.';
+ });
 });
