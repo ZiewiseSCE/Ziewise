@@ -48,3 +48,24 @@ html.motion-paused .value-motion *,html.motion-paused .timeline *,html.motion-pa
 @media(max-width:1000px){.secondary-copy{padding:24px}.secondary-stage{grid-template-columns:1fr 1fr}.value-motion{height:160px}}
 @media(max-width:760px){.secondary-stage{grid-template-columns:1fr}.secondary-visual{height:330px}.secondary-copy{border-left:0;border-top:1px solid #3b5261;padding:25px}.secondary-copy h3{font-size:25px}.secondary-selectors{gap:6px}.secondary-selectors button{font-size:11px;padding:9px}.value-grid .value-card h4{margin-top:14px}.value-grid .value-card p{margin-top:12px}.value-motion{height:190px}.story-motion-control{gap:12px;font-size:8px}}
 @media(prefers-reduced-motion:reduce){.value-motion *,.timeline *,.timeline *::before,.secondary-flow i::after{animation:none!important}.timeline .t-item::before{transform:scaleX(1);opacity:.4}}
+
+/* Industry views follow a site workflow; product views keep their own models. */
+.industry-experience .secondary-stage{grid-template-columns:minmax(0,57%) minmax(0,43%)}
+.industry-experience .secondary-visual{height:auto;min-height:480px}
+.industry-scene-caption{position:absolute;z-index:1;left:22px;right:22px;top:20px;pointer-events:none;color:#b8d0db;font-size:10px;letter-spacing:.06em;line-height:1.6}
+.industry-experience .secondary-copy{padding:28px}
+.industry-experience .secondary-copy h3{font-size:clamp(21px,1.65vw,27px);margin:12px 0}
+.industry-experience .secondary-copy>p{font-size:13px;line-height:1.8}
+.industry-steps{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:20px 0 18px}
+.industry-steps button{border:1px solid #496473;border-radius:3px;padding:9px 10px;min-height:40px;font-size:11px;text-align:left;color:#b7cbd7;background:#1e3542}
+.industry-steps button[aria-pressed=true]{border-color:#a8d8db;background:#365967;color:#f1f7f8}
+.industry-step-copy{min-height:130px;border-left:2px solid #78bac4;padding:0 0 0 16px}
+.industry-step-copy>span{color:#90bcc7;font-size:10px;letter-spacing:.08em}
+.industry-step-copy h4{font-size:17px;line-height:1.6;margin:8px 0;color:#e2eef3}
+.industry-step-copy p{font-size:12px;line-height:1.85;color:#b5cbd5;margin:0}
+.industry-experience .secondary-copy .industry-outcome{font-size:11px;margin-top:17px;padding-top:14px;border-top:1px solid #3b5665;color:#a8c6d1}
+.industry-replay{align-self:flex-start;font-size:11px;color:#afd1d9;border:0;border-bottom:1px solid #527482;padding:9px 0;margin:5px 0 0}
+.industry-experience .secondary-copy small{margin-top:15px}
+.industry-steps button:focus-visible,.industry-replay:focus-visible{outline:2px solid #c7e5e8;outline-offset:3px}
+@media(max-width:1100px){.industry-experience .secondary-stage{grid-template-columns:1fr}.industry-experience .secondary-visual{min-height:380px;height:42vw;max-height:500px}.industry-experience .secondary-copy{border-left:0;border-top:1px solid #3b5261}.industry-steps{grid-template-columns:repeat(4,minmax(0,1fr))}.industry-step-copy{min-height:100px}}
+@media(max-width:600px){.industry-experience .secondary-visual{min-height:285px;height:80vw}.industry-experience .secondary-copy{padding:22px}.industry-steps{grid-template-columns:1fr 1fr}.industry-scene-caption{left:16px;right:16px;font-size:9px}.industry-experience .secondary-copy h3{font-size:22px}}

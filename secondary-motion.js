@@ -1,4 +1,5 @@
 import { mountScene } from './scene3d.js?v=20260913-d2c1';
+import { industryScenarios, createApplicationModel } from './industry-scenarios3d.js?v=20260913-context1';
 
 function initialize() {
  if(!window.ZiewisePages){window.addEventListener('ziewise:pagechange',initialize,{once:true});return;}
@@ -23,35 +24,71 @@ function initialize() {
  const cases=[...document.querySelectorAll('.industry-card')];
  const views={
   details:{items:cards,kinds,selected:0,anchor:document.querySelector('.solution-detail-tabs')},
-  applications:{items:applications,kinds:['vision','energy','commerce','print','observer','office'],selected:0,anchor:document.querySelector('.usecase-sub')},
-  cases:{items:cases,kinds:['vision','energy','commerce','office','observer','vision'],selected:0,anchor:document.querySelector('.industry-sub')}
+  applications:{items:applications,scenarios:['factory','energy','commerce','finance','healthcare','office'],selected:0,phase:0,anchor:document.querySelector('.usecase-sub')},
+  cases:{items:cases,scenarios:['factory','energy','commerce','office','healthcare','public'],selected:0,phase:0,anchor:document.querySelector('.industry-sub')}
  };
- let scene=null,active=null,paused=document.documentElement.classList.contains('motion-paused'),manual=false,dialog=false;
+ let scene=null,sceneKey='',sceneMode='',active=null,paused=document.documentElement.classList.contains('motion-paused'),manual=false,dialog=false;
  const host=document.createElement('div');host.className='secondary-webgl';host.id='secondary-webgl';host.setAttribute('role','group');
  for(const [key,view]of Object.entries(views)){
   const section=document.createElement('section');section.className='secondary-experience';section.dataset.motionView=key;
   section.innerHTML=`${key==='details'?'':'<div class="secondary-selectors"></div>'}<div class="secondary-stage"><div class="secondary-visual"></div><div class="secondary-copy"><span class="story-overline">${key==='details'?'PRODUCT IN MOTION':'SCENARIO IN MOTION'}</span><h3></h3><p></p><div class="secondary-flow" aria-hidden="true"><span>INPUT</span><i></i><span>AI</span><i></i><span>ACTION</span></div><small></small><button class="motion-toggle" type="button" aria-pressed="false"><span></span> Ⅱ</button></div></div>`;
   view.section=section;view.anchor.after(section);
+  if(view.scenarios){
+   section.classList.add('industry-experience');
+   const flow=section.querySelector('.secondary-flow');
+   flow.outerHTML='<div class="industry-steps"></div><div class="industry-step-copy"><span></span><h4></h4><p></p></div><p class="industry-outcome"></p><button class="industry-replay" type="button"></button>';
+   for(let i=0;i<4;i++){const button=document.createElement('button');button.type='button';button.dataset.phase=i;button.addEventListener('click',()=>scene?.setPhase(i));section.querySelector('.industry-steps').append(button);}
+   section.querySelector('.industry-replay').addEventListener('click',()=>scene?.playSteps());
+   const sceneCaption=document.createElement('div');sceneCaption.className='industry-scene-caption';section.querySelector('.secondary-visual').append(sceneCaption);
+  }
   if(key!=='details')view.items.forEach((item,index)=>{
    const button=document.createElement('button');button.type='button';button.setAttribute('aria-pressed','false');button.addEventListener('click',()=>{view.selected=index;update();});section.querySelector('.secondary-selectors').append(button);
   });
  }
- function syncMotion(){scene?.setPaused(paused||dialog||!active,{manual});document.querySelectorAll('.secondary-experience .motion-toggle,.story-motion-control .motion-toggle').forEach(button=>{button.setAttribute('aria-pressed',String(paused));button.querySelector('span').textContent=english()?(paused?'Play motion':'Pause motion'):(paused?'모션 재생':'모션 일시정지');});}
+ function renderPhase(view){
+  if(!view?.scenarios)return;
+  const data=industryScenarios[view.scenarios[view.selected]],steps=data.steps.map(s=>s[english()?'en':'ko']),phase=view.phase||0;
+  view.section.dataset.phase=phase;
+  view.section.querySelectorAll('.industry-steps button').forEach((button,i)=>{button.textContent=`0${i+1} · ${steps[i][0]}`;button.setAttribute('aria-pressed',String(i===phase));});
+  const copy=view.section.querySelector('.industry-step-copy');
+  copy.querySelector('span').textContent=`0${phase+1} / 04`;
+  copy.querySelector('h4').textContent=steps[phase][1];copy.querySelector('p').textContent=steps[phase][2];
+  view.section.querySelector('.industry-scene-caption').textContent=`${data.product} / 0${phase+1} · ${steps[phase][0]}`;
+ }
+ function syncMotion(){scene?.setPaused(paused||dialog||!active,{manual});document.querySelectorAll('.secondary-experience .motion-toggle,.story-motion-control .motion-toggle').forEach(button=>{button.setAttribute('aria-pressed',String(paused));button.querySelector('span').textContent=english()?(paused?'Play motion':'Pause motion'):(paused?'모션 재생':'모션 일시정지');button.lastChild.nodeValue=paused?' ▶':' Ⅱ';});}
  function update(){
   const current=window.ZiewisePages.getCurrent();active=current?.page==='solutions'?views[current.view]||null:null;
   for(const [key,view]of Object.entries(views)){
    if(key==='details')view.selected=Math.max(0,view.items.findIndex(item=>!item.hidden));
    const item=view.items[view.selected],title=item.querySelector('h3,h5')?.textContent.trim()||'';
-   view.section.querySelector('h3').textContent=title;
+   const data=view.scenarios?industryScenarios[view.scenarios[view.selected]]:null;
+   view.section.querySelector('h3').textContent=data?data.title[english()?1:0]:title;
    const description=item.querySelector('p,.differentiator');view.section.querySelector('.secondary-copy>p').textContent=description?.textContent.trim()||'';
-   view.section.querySelector('small').textContent=english()?'Illustrative 3D · Auto rotate · Drag to explore':'작동 원리 3D · 자동 회전 · 드래그 가능';
+   if(data){
+    view.section.querySelector('.story-overline').textContent=data.product;
+    view.section.querySelector('.secondary-copy>p').textContent=data.context[english()?1:0];
+    view.section.querySelector('.industry-outcome').textContent=data.outcome[english()?1:0];
+    view.section.querySelector('.industry-replay').textContent=english()?'Replay all four steps ↻':'네 단계 이어서 보기 ↻';
+    renderPhase(view);
+   }
+   view.section.querySelector('small').textContent=data?(english()?'Illustrative application scenario · Drag to explore':'활용 시나리오 예시 · 드래그로 둘러보기'):(english()?'Illustrative 3D · Auto rotate · Drag to explore':'작동 원리 3D · 자동 회전 · 드래그 가능');
    view.section.querySelectorAll('.secondary-selectors button').forEach((button,i)=>{button.textContent=view.items[i].querySelector('h3,h5')?.textContent.trim();button.setAttribute('aria-pressed',String(i===view.selected));});
    view.items.forEach((card,i)=>card.classList.toggle('scenario-focused',view===active&&i===view.selected));
   }
   if(active){
    const destination=active.section.querySelector('.secondary-visual');if(host.parentElement!==destination)destination.append(host);
-   const kind=active.kinds[active.selected];host.setAttribute('aria-label',active.section.querySelector('h3').textContent+' · 3D');
-   if(!scene)scene=mountScene(host,{kind});else scene.setKind(kind);
+   const mode=active.scenarios?'scenario':'product',kind=(active.scenarios||active.kinds)[active.selected],nextKey=`${active.section.dataset.motionView}:${mode}:${kind}`;
+   if(sceneMode!==mode){scene?.dispose();scene=null;sceneMode=mode;sceneKey='';}
+   if(nextKey!==sceneKey){
+    active.phase=0;sceneKey=nextKey;
+    const modelFactory=mode==='scenario'?T=>createApplicationModel(T,kind):null;
+    if(!scene)scene=mountScene(host,{kind:mode==='scenario'?'core':kind,modelFactory,onPhase:value=>{if(active?.scenarios){active.phase=value;renderPhase(active);}}});
+    else if(modelFactory)scene.setProcess(modelFactory);else scene.setKind(kind);
+   }
+   const label=active.section.querySelector('h3').textContent+' · '+(english()?'Illustrative 3D workflow. Drag to explore.':'3D 활용 흐름. 드래그로 둘러보기.');
+   host.setAttribute('aria-label',label);host.querySelector('canvas')?.setAttribute('aria-label',label);
+   const fallback=host.querySelector('.webgl-fallback');
+   if(fallback){fallback.querySelector('span').textContent=active.section.querySelector('h3').textContent;fallback.querySelector('small').textContent=english()?'3D is unavailable. Explore the workflow using the steps alongside.':'3D를 사용할 수 없습니다. 단계별 설명으로 활용 흐름을 확인하세요.';}
   }
   syncMotion();
  }

@@ -47,6 +47,8 @@ const i18n = {
         "neuro-verify": "0x1C7... Verified",
         "mpulse-sub": "D2C Commerce AI",
         "mpulse-diff": "✓ 고객 행동 분석 기반 개인화 추천·캠페인·전환율 최적화 · AR 상품 체험 지원",
+        "industry-workflow-title": "현장에서 업무로 이어지는, 산업별 활용",
+        "industry-workflow-sub": "현장 데이터가 AI 판단을 거쳐 업무로 이어지는 과정을 단계별 3D로 살펴보세요.",
         "mpulse-overview": "브랜드의 자사 판매 채널에서 고객 행동을 분석하고 개인화 추천·캠페인·이탈 대응을 연결하는 D2C Commerce AI입니다. AR 가상 체험도 상품 경험을 돕는 기능으로 제공합니다.",
         "mpulse-pop-title": "이탈 감지!",
         "mpulse-pop-desc": "🔥 10% 추가 할인 쿠폰 발급",
@@ -414,6 +416,8 @@ document.addEventListener('DOMContentLoaded', () => {
    el.removeAttribute('data-source-ko');
  });
  // Preserve both the richer source description and the older operational details.
+ i18n.en['industry-workflow-title']='Industry workflows, from the site to the business';
+ i18n.en['industry-workflow-sub']='Follow operational data through AI analysis into practical work, in four 3D steps.';
  i18n.ko['ziewprint-diff']='✓ 제조사/모델 독립형 1-드라이버 & 기존 장비 무변경 적용. 워터마크·출력 승인·통계 및 AI 장애 대화 지원.';
  const targets=[];
  document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,span,div,button,option,a,summary,[data-i18n]').forEach(el=>{
