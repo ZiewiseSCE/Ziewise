@@ -21,6 +21,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
   };
   let currentKind = labels[kind] ? kind : 'core';
   let processFactory = modelFactory, processModel = null, fixedPhase = null, phaseStart = 0, lastPhase = -1;
+  let processOverview = false, focusRadius = null;
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
@@ -44,6 +45,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
       setProcess() { onPhase?.(0); },
       setPhase(phase) { onPhase?.(Math.max(0, Math.min(3, Number(phase) || 0))); },
       playSteps() { onPhase?.(0); },
+      setOverview() {},
       setPaused() {},
       dispose() { fallback.remove(); },
     };
@@ -68,6 +70,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
   scene.fog = new THREE.Fog(sceneBackground, 17, 29);
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 60);
   const target = new THREE.Vector3(0, 1.05, 0);
+  const desiredTarget = target.clone();
   const orbit = { azimuth: 0.77, elevation: 0.44, distance: 11.4 };
   const desiredOrbit = { ...orbit };
   let scrollProgress = 0;
@@ -767,6 +770,10 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
   }
 
   function fittedDistance(elevation) {
+    if (focusRadius) {
+      const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
+      return focusRadius / Math.sin(Math.min(halfFov, Math.atan(Math.tan(halfFov) * aspect)));
+    }
     // Fit a cylinder around the equipment for every azimuth, including its rear.
     // The existing preferred distance remains the minimum visual framing.
     const vertical = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 0.9;
@@ -783,22 +790,23 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
 
   function updateCamera(snap = false) {
     const factor = snap || motionReduced() ? 1 : 0.08;
+    target.lerp(desiredTarget, factor);
     orbit.azimuth += (desiredOrbit.azimuth + scrollProgress * 0.48 - orbit.azimuth) * factor;
     orbit.elevation += (desiredOrbit.elevation + scrollProgress * 0.07 - orbit.elevation) * factor;
     const preferredDistance = (desiredOrbit.distance - scrollProgress * 0.65) * Math.max(1, 1.12 / aspect);
     const distance = Math.max(preferredDistance, fittedDistance(orbit.elevation));
     orbit.distance += (distance - orbit.distance) * factor;
     camera.position.set(
-      Math.sin(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
+      target.x + Math.sin(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
       Math.sin(orbit.elevation) * orbit.distance + target.y,
-      Math.cos(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
+      target.z + Math.cos(orbit.azimuth) * Math.cos(orbit.elevation) * orbit.distance,
     );
     camera.lookAt(target);
   }
 
-  function renderOnce() {
+  function renderOnce(snap = true) {
     if (disposed || graphicsLost) return;
-    updateCamera(true);
+    updateCamera(snap);
     renderer.shadowMap.needsUpdate = true;
     renderer.render(scene, camera);
     if (!readySent) { readySent = true; onReady?.({ webgl: true, kind: currentKind }); }
@@ -812,7 +820,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     const delta = previousTime ? Math.min((now - previousTime) / 1000, 0.05) : 0;
     previousTime = now;
     elapsed += delta;
-    if ((currentKind !== 'core' || processModel) && !dragging && now >= orbitResumeAt) desiredOrbit.azimuth += orbitSpeed * delta;
+    if ((currentKind !== 'core' || processModel) && processModel?.autoRotate !== false && !dragging && now >= orbitResumeAt) desiredOrbit.azimuth += orbitSpeed * delta;
     animations.forEach(animate => animate(elapsed));
     updateCamera(dragging);
     if (processModel || (currentKind !== 'core' && currentKind !== 'observer')) renderer.shadowMap.needsUpdate = true;
@@ -824,6 +832,16 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     frame = 0;
     previousTime = 0;
     if (active()) frame = requestAnimationFrame(tick);
+  }
+  function frameProcess(phase) {
+    if (!processModel?.getView) return;
+    const view = processOverview ? processModel.camera : processModel.getView(phase);
+    desiredTarget.set(...view.target);
+    desiredOrbit.azimuth = view.yaw;
+    desiredOrbit.elevation = view.pitch;
+    desiredOrbit.distance = view.distance;
+    focusRadius = processOverview ? null : view.radius;
+    element.dataset.cameraMode = processOverview ? 'overview' : 'step';
   }
   function setKind(next, force = false) {
     if (disposed) return;
@@ -837,13 +855,14 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     elapsed = 0;
     mats.beam.opacity = 0.075;
     processModel = processFactory?.(THREE) || null;
-    fixedPhase = null; phaseStart = 0; lastPhase = -1;
+    fixedPhase = null; phaseStart = 0; lastPhase = -1; processOverview = false; focusRadius = null;
+    delete element.dataset.cameraMode;
     if (processModel) {
       root.add(processModel.root);
       animations.push(time => {
         const phase = fixedPhase ?? Math.floor(time / 6) % 4;
         processModel.update({ phase, time: fixedPhase === null ? time % 6 : time - phaseStart, reducedMotion: motionReduced() });
-        if (phase !== lastPhase) { lastPhase = phase; onPhase?.(phase); }
+        if (phase !== lastPhase) { lastPhase = phase; frameProcess(phase); onPhase?.(phase); }
       });
       scene.fog.near = 35; scene.fog.far = 65;
     } else {
@@ -851,7 +870,6 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
       optimiseStatic(root);
     }
     // Start with complete, legible geometry even when animation is disabled.
-    animations.forEach(animate => animate(0));
     target.set(0, currentKind === 'energy' ? 1.3 : currentKind === 'observer' ? 1.18 : 1.0, 0);
     desiredOrbit.azimuth = currentKind === 'core' ? 0.55 : 0.51;
     desiredOrbit.elevation = currentKind === 'core' ? 0.28 : 0.32;
@@ -862,6 +880,8 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
       desiredOrbit.elevation = processModel.camera.pitch;
       desiredOrbit.distance = processModel.camera.distance;
     }
+    desiredTarget.copy(target);
+    animations.forEach(animate => animate(0));
     dragging = false;
     dragPointer = null;
     orbitResumeAt = 0;
@@ -960,8 +980,9 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     setPhase(phase) {
       fixedPhase = Math.max(0, Math.min(3, Number(phase) || 0)); phaseStart = elapsed;
       processModel?.update({ phase: fixedPhase, time: active() ? 0 : 3.4, reducedMotion: !active() });
-      lastPhase = fixedPhase; onPhase?.(fixedPhase); renderOnce();
+      lastPhase = fixedPhase; frameProcess(fixedPhase); onPhase?.(fixedPhase); renderOnce(!active());
     },
+    setOverview(value) { processOverview = Boolean(value); processModel?.setOverview?.(processOverview); frameProcess(Math.max(0, lastPhase)); renderOnce(!active()); },
     playSteps() { fixedPhase = null; elapsed = 0; lastPhase = -1; animations.forEach(fn => fn(0)); renderOnce(); },
     setScrollProgress(value) {
       if(disposed || userPaused || motionReduced())return;

@@ -69,3 +69,13 @@ html.motion-paused .value-motion *,html.motion-paused .timeline *,html.motion-pa
 .industry-steps button:focus-visible,.industry-replay:focus-visible{outline:2px solid #c7e5e8;outline-offset:3px}
 @media(max-width:1100px){.industry-experience .secondary-stage{grid-template-columns:1fr}.industry-experience .secondary-visual{min-height:380px;height:42vw;max-height:500px}.industry-experience .secondary-copy{border-left:0;border-top:1px solid #3b5261}.industry-steps{grid-template-columns:repeat(4,minmax(0,1fr))}.industry-step-copy{min-height:100px}}
 @media(max-width:600px){.industry-experience .secondary-visual{min-height:285px;height:80vw}.industry-experience .secondary-copy{padding:22px}.industry-steps{grid-template-columns:1fr 1fr}.industry-scene-caption{left:16px;right:16px;font-size:9px}.industry-experience .secondary-copy h3{font-size:22px}}
+
+.industry-experience .secondary-webgl{--scene-background:#14242d}
+.industry-scene-state{position:absolute;z-index:1;left:24px;right:24px;bottom:68px;pointer-events:none;display:flex;flex-direction:column;gap:8px;text-shadow:0 2px 12px #10212c}
+.industry-scene-state span{font-size:9px;letter-spacing:.13em;color:#a6cbd3}
+.industry-scene-state strong{font-size:clamp(17px,1.6vw,23px);font-weight:550;line-height:1.5;color:#f0f5f7;max-width:510px}
+.industry-view-toggle{position:absolute;left:24px;bottom:22px;z-index:1;border:1px solid #6c8e9c;background:#183441e8;color:#d8e9ed;padding:9px 13px;font-size:11px;border-radius:4px;min-height:36px}
+.industry-view-toggle:focus-visible{outline:2px solid #d1e7eb;outline-offset:3px}
+.industry-experience .secondary-visual::after{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,#10212c99);pointer-events:none}
+@media(max-width:1100px){.industry-experience .secondary-visual{min-height:410px}.industry-scene-state strong{max-width:85%}}
+@media(max-width:600px){.industry-experience .secondary-visual{height:106vw;min-height:370px;max-height:470px}.industry-scene-state{left:18px;right:18px;bottom:63px}.industry-scene-state strong{font-size:17px;max-width:100%}.industry-view-toggle{left:18px;bottom:17px}}

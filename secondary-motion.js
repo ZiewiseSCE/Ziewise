@@ -1,5 +1,5 @@
-import { mountScene } from './scene3d.js?v=20260913-d2c1';
-import { industryScenarios, createApplicationModel } from './industry-scenarios3d.js?v=20260913-context1';
+import { mountScene } from './scene3d.js?v=20260913-stage1';
+import { industryScenarios, createApplicationModel } from './industry-scenarios3d.js?v=20260913-stage1';
 
 function initialize() {
  if(!window.ZiewisePages){window.addEventListener('ziewise:pagechange',initialize,{once:true});return;}
@@ -37,9 +37,11 @@ function initialize() {
    section.classList.add('industry-experience');
    const flow=section.querySelector('.secondary-flow');
    flow.outerHTML='<div class="industry-steps"></div><div class="industry-step-copy"><span></span><h4></h4><p></p></div><p class="industry-outcome"></p><button class="industry-replay" type="button"></button>';
-   for(let i=0;i<4;i++){const button=document.createElement('button');button.type='button';button.dataset.phase=i;button.addEventListener('click',()=>scene?.setPhase(i));section.querySelector('.industry-steps').append(button);}
+   for(let i=0;i<4;i++){const button=document.createElement('button');button.type='button';button.dataset.phase=i;button.addEventListener('click',()=>{view.overview=false;scene?.setOverview(false);scene?.setPhase(i);});section.querySelector('.industry-steps').append(button);}
    section.querySelector('.industry-replay').addEventListener('click',()=>scene?.playSteps());
    const sceneCaption=document.createElement('div');sceneCaption.className='industry-scene-caption';section.querySelector('.secondary-visual').append(sceneCaption);
+   const state=document.createElement('div');state.className='industry-scene-state';state.innerHTML='<span></span><strong></strong>';section.querySelector('.secondary-visual').append(state);
+   const cameraButton=document.createElement('button');cameraButton.type='button';cameraButton.className='industry-view-toggle';cameraButton.addEventListener('click',()=>{view.overview=!view.overview;scene?.setOverview(view.overview);renderPhase(view);});section.querySelector('.secondary-visual').append(cameraButton);
   }
   if(key!=='details')view.items.forEach((item,index)=>{
    const button=document.createElement('button');button.type='button';button.setAttribute('aria-pressed','false');button.addEventListener('click',()=>{view.selected=index;update();});section.querySelector('.secondary-selectors').append(button);
@@ -54,6 +56,9 @@ function initialize() {
   copy.querySelector('span').textContent=`0${phase+1} / 04`;
   copy.querySelector('h4').textContent=steps[phase][1];copy.querySelector('p').textContent=steps[phase][2];
   view.section.querySelector('.industry-scene-caption').textContent=`${data.product} / 0${phase+1} · ${steps[phase][0]}`;
+  view.section.querySelector('.industry-scene-state span').textContent=english()?(view.overview?'SITE OVERVIEW':'STEP IN FOCUS'):(view.overview?'전체 현장':'단계별 집중 보기');
+  view.section.querySelector('.industry-scene-state strong').textContent=steps[phase][1];
+  const cameraButton=view.section.querySelector('.industry-view-toggle');cameraButton.textContent=english()?(view.overview?'Focus on this step':'View the whole site'):(view.overview?'이 단계에 집중':'전체 현장 보기');cameraButton.setAttribute('aria-pressed',String(Boolean(view.overview)));
  }
  function syncMotion(){scene?.setPaused(paused||dialog||!active,{manual});document.querySelectorAll('.secondary-experience .motion-toggle,.story-motion-control .motion-toggle').forEach(button=>{button.setAttribute('aria-pressed',String(paused));button.querySelector('span').textContent=english()?(paused?'Play motion':'Pause motion'):(paused?'모션 재생':'모션 일시정지');button.lastChild.nodeValue=paused?' ▶':' Ⅱ';});}
  function update(){
@@ -71,7 +76,7 @@ function initialize() {
     view.section.querySelector('.industry-replay').textContent=english()?'Replay all four steps ↻':'네 단계 이어서 보기 ↻';
     renderPhase(view);
    }
-   view.section.querySelector('small').textContent=data?(english()?'Illustrative application scenario · Drag to explore':'활용 시나리오 예시 · 드래그로 둘러보기'):(english()?'Illustrative 3D · Auto rotate · Drag to explore':'작동 원리 3D · 자동 회전 · 드래그 가능');
+   view.section.querySelector('small').textContent=data?(english()?'Illustrative workflow · Select a step to replay its action':'활용 시나리오 예시 · 단계를 누르면 해당 동작을 다시 보여줍니다'):(english()?'Illustrative 3D · Auto rotate · Drag to explore':'작동 원리 3D · 자동 회전 · 드래그 가능');
    view.section.querySelectorAll('.secondary-selectors button').forEach((button,i)=>{button.textContent=view.items[i].querySelector('h3,h5')?.textContent.trim();button.setAttribute('aria-pressed',String(i===view.selected));});
    view.items.forEach((card,i)=>card.classList.toggle('scenario-focused',view===active&&i===view.selected));
   }
@@ -80,7 +85,7 @@ function initialize() {
    const mode=active.scenarios?'scenario':'product',kind=(active.scenarios||active.kinds)[active.selected],nextKey=`${active.section.dataset.motionView}:${mode}:${kind}`;
    if(sceneMode!==mode){scene?.dispose();scene=null;sceneMode=mode;sceneKey='';}
    if(nextKey!==sceneKey){
-    active.phase=0;sceneKey=nextKey;
+    active.phase=0;active.overview=false;sceneKey=nextKey;
     const modelFactory=mode==='scenario'?T=>createApplicationModel(T,kind):null;
     if(!scene)scene=mountScene(host,{kind:mode==='scenario'?'core':kind,modelFactory,onPhase:value=>{if(active?.scenarios){active.phase=value;renderPhase(active);}}});
     else if(modelFactory)scene.setProcess(modelFactory);else scene.setKind(kind);

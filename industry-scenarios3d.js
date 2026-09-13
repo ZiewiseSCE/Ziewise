@@ -1,3 +1,4 @@
+import { directIndustryModel } from './industry-stage-direction.js?v=20260913-stage1';
 import { createIndustryModel } from './ai-briefing/assets/process-industry.js';
 import { createSurveillanceModel } from './ai-briefing/assets/process-surveillance.js';
 
@@ -84,8 +85,8 @@ export const industryScenarios = {
 };
 
 export function createApplicationModel(T, kind) {
- if(kind==='factory') return createIndustryModel(T,'inspection');
- if(kind==='public') return createSurveillanceModel(T,'before-after');
+ if(kind==='factory') return directIndustryModel(T,createIndustryModel(T,'inspection'),kind);
+ if(kind==='public') return directIndustryModel(T,createSurveillanceModel(T,'before-after'),kind);
  const root=new T.Group();root.name=`application-${kind}`;
  const material=(color,metalness=.45,roughness=.45)=>new T.MeshStandardMaterial({color,metalness,roughness});
  const m={dark:material('#172831'),steel:material('#8c9fa9',.8,.3),paper:material('#d1dcdf',.03,.8),teal:material('#4b929e'),amber:material('#c5a575'),glass:material('#294957')};
@@ -97,7 +98,7 @@ export function createApplicationModel(T, kind) {
  function screen(x,z,title){const g=group(x,0,z);box(1.7,.09,.85,0,.94,0,m.steel,g);for(const a of [-.69,.69])box(.065,.91,.065,a,.47,0,m.steel,g);box(.08,.4,.08,0,1.18,-.12,m.steel,g);box(1.26,.84,.07,0,1.69,-.12,m.dark,g);box(1.13,.7,.016,0,1.69,-.075,m.glass,g);const bars=[];for(let i=0;i<4;i++)bars.push(box(.17,.16+i*.085,.02,-.38+i*.25,1.52+i*.042,-.059,m.teal,g));box(.9,.03,.22,0,1.01,.24,m.dark,g);plaque(title,x,2.5,z);return {g,bars};}
  function room(){box(11.5,.12,5.8,0,.06,0,m.dark);for(let x=-5;x<6;x++)box(.012,.008,5.7,x,.124,0,m.steel);box(11.5,.014,.014,0,.14,2.83,m.steel);box(11.5,.7,.1,0,.46,-2.86,m.glass);}
  const wires=[];
- function wire(points,phase){const curve=new T.CatmullRomCurve3(points.map(v=>new T.Vector3(...v)),false,'centripetal');const line=new T.Mesh(new T.TubeGeometry(curve,32,.014,6,false),m.teal);root.add(line);const packet=new T.Mesh(new T.SphereGeometry(.06,10,8),lit);root.add(packet);wires.push({curve,packet,phase});return line;}
+ function wire(points,phase){const curve=new T.CatmullRomCurve3(points.map(v=>new T.Vector3(...v)),false,'centripetal');const line=new T.Mesh(new T.TubeGeometry(curve,32,.014,6,false),new T.MeshStandardMaterial({color:'#82becb',transparent:true,opacity:.1,depthWrite:false,roughness:.5}));root.add(line);const packet=new T.Mesh(new T.SphereGeometry(.06,10,8),lit);root.add(packet);wires.push({curve,packet,phase,line});return line;}
  function paper(parent,x=0,y=0,z=0){const g=new T.Group();g.position.set(x,y,z);parent.add(g);box(.55,.015,.72,0,0,0,m.paper,g);for(let i=0;i<5;i++)box(.36,.006,.012,0,.012,-.23+i*.085,m.steel,g);return g;}
  function printer(x,z){const g=group(x,.13,z);box(1.14,1.15,1,0,.575,0,m.paper,g);box(1.16,.18,1.02,0,1.21,-.04,m.steel,g);box(.85,.075,.43,0,1.34,-.13,m.dark,g);box(.89,.12,.4,0,.87,.52,m.dark,g);box(.9,.045,.53,0,.78,.59,m.steel,g);const doc=paper(g,0,.83,.43);box(.36,.2,.055,.31,1.12,.54,m.glass,g);const reader=box(.13,.12,.07,.32,1.12,.578,lit,g);for(let i=0;i<6;i++)box(.35,.012,.01,-.25,.29+i*.055,.505,m.dark,g);return {g,doc,reader};}
  function person(x,z){const g=group(x,.14,z);cyl(.16,.36,0,1.56,0,m.paper,g);box(.43,.62,.25,0,1.09,0,m.steel,g);for(const a of [-1,1]){cyl(.073,.65,a*.12,.44,0,m.dark,g);box(.17,.13,.31,a*.12,.14,.06,m.dark,g);cyl(.055,.55,a*.27,1.11,0,m.steel,g);}return g;}
@@ -123,11 +124,11 @@ export function createApplicationModel(T, kind) {
   const sheet=paper(root,0,1.02,-.49);wire([[-3.7,1.2,.1],[-1.9,.3,.5],[0,1.3,-.8]],1);wire([[0,1.3,-.8],[1.3,.3,.5],[3.55,1.3,.1]],3);
   update=(p,t)=>{receipt.position.z=p===0?.55-Math.min(t/3,1)*.4:.15;scan.visible=p===1;scan.position.z=.1+Math.sin(t*2)*.28;sheet.visible=p>=1;policy.bars.forEach(b=>b.material=p>=2?lit:m.teal);approval.bars.forEach(b=>b.material=p===3?lit:m.teal);input.bars.forEach(b=>b.material=p===0?lit:m.teal);};
  }else{
-  const medical=kind==='healthcare';screen(-3.6,0,medical?'RECEPTION / REQUEST':'STAFF / PRINT REQUEST');const output=printer(3.45,0);const policy=screen(0,-1.2,medical?'OPERATIONS / HISTORY':'POLICY / AUDIT');const staff=person(3.3,1.4);const card=box(.25,.16,.025,3.0,1.35,1.15,m.paper);plaque('AUTHENTICATED RELEASE',3.45,2.6,0);
+  const medical=kind==='healthcare';screen(-3.6,0,medical?'RECEPTION / REQUEST':'STAFF / PRINT REQUEST');const output=printer(3.45,0);const policy=screen(0,-1.2,medical?'OPERATIONS / HISTORY':'POLICY / AUDIT');const staff=person(4.6,.65);staff.scale.setScalar(.9);const card=box(.25,.16,.025,3.0,1.35,1.15,m.paper);plaque('AUTHENTICATED RELEASE',3.45,2.6,0);
   if(medical){box(2.5,.78,.65,-3.6,.52,1.03,m.paper);box(2.58,.08,.74,-3.6,.95,1.03,m.steel);box(.52,.12,.02,-3.6,.59,1.367,m.teal);box(.12,.52,.02,-3.6,.59,1.372,m.teal);for(const x of [-4.3,-3.3]){box(.65,.09,.61,x,.49,-1.8,m.steel);box(.65,.63,.09,x,.82,-2.08,m.glass);}}
   wire([[-3.6,1.4,0],[-1.7,.3,.2],[0,1.4,-1.2]],0);wire([[3.45,1.3,.55],[1.8,.3,.8],[0,1.4,-1.2]],1);wire([[0,1.4,-1.2],[1.5,.3,-.7],[3.45,1.3,.55]],2);wire([[3.45,1.3,.55],[1.8,.3,1.9],[0,1.4,-1.2]],3);
   update=(p,t)=>{const releasing=p>=(medical?2:3);output.doc.position.z=releasing?.43+Math.min(t/3,1)*.5:.35;output.doc.visible=releasing;output.reader.material=p>=1?lit:m.glass;card.position.z=p===1?1.15-Math.min(t/2,1)*.48:1.15;staff.rotation.y=p===1?-.3:0;policy.bars.forEach(b=>b.material=p>=2?lit:m.teal);};
  }
- const model={root,camera:{target:[0,1.0,0],distance:15,yaw:.28,pitch:.55},update({phase=0,time=0,reducedMotion=false}={}){const t=reducedMotion?3.4:time;update(phase,t);wires.forEach(({curve,packet,phase:p})=>{packet.visible=p===phase;packet.position.copy(curve.getPointAt(reducedMotion?.85:(t*.24)%1));});root.updateMatrixWorld(true);}};
- model.update();return model;
+ const model={root,camera:{target:[0,1.0,0],distance:15,yaw:.28,pitch:.55},update({phase=0,time=0,reducedMotion=false}={}){const t=reducedMotion?3.4:time;update(phase,t);wires.forEach(({curve,packet,phase:p,line})=>{line.material.opacity=p===phase?.65:.045;packet.visible=p===phase;packet.position.copy(curve.getPointAt(reducedMotion?.85:(t*.24)%1));});root.updateMatrixWorld(true);}};
+ model.update();return directIndustryModel(T,model,kind);
 }
