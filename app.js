@@ -358,6 +358,34 @@ Object.assign(i18n.en, {
  'ziewprint-diff':'✓ One driver across manufacturers and models, with no changes to existing equipment. Watermarks, print approval, statistics and conversational AI troubleshooting are supported.'
 });
 
+
+Object.assign(i18n.ko, {
+ 'brand-title':'현장의 데이터가,<br><em>비즈니스의 지능으로.</em>',
+ 'brand-lead':'인프라를 이해하는 기술. 스스로 진화하는 AI.<br>지와이즈는 기업의 시스템과 데이터를 연결하고,<br>ZiewCore로 현장에 필요한 지능을 구현합니다.',
+ 'neural-input':'데이터 연결','neural-learn':'자가 학습','neural-deploy':'모델 배포','neural-infer':'현장 추론',
+ 'brand-core':'ZiewCore 알아보기','brand-solutions':'솔루션 둘러보기',
+ 'brand-foundation':'인프라에서 시작해','brand-foundation-desc':'인프라 · 보안 · 운영의 경험',
+ 'brand-intelligence':'학습하는 AI로','brand-intelligence-desc':'데이터 수집부터 추론까지, ZiewCore',
+ 'brand-impact':'비즈니스에 닿다','brand-impact-desc':'현장과 업무를 연결하는 6대 솔루션',
+ 'new-hero':'하나의 신경망,<br><span>여섯 개의 전문 AI.</span>',
+ 'new-lead':'스스로 학습하고, 계속 진화하는 AI.<br>ZiewCore의 중앙 신경망이 현장 데이터를 학습하고,<br>6개 도메인 AI를 하나의 운영 체계로 연결합니다.',
+ 'neural-note':'데이터 수집 → 자가 학습 → 무중단 배포 → 실시간 추론. 기업의 모든 AI를 하나의 인프라로 연결합니다.',
+ 'neural-concept':'신경망과 연결 흐름은 ZiewCore의 오케스트레이션 구조를 표현한 개념도입니다.'
+});
+Object.assign(i18n.en, {
+ 'brand-title':'Data from your world.<br><em>Intelligence for<br>your business.</em>',
+ 'brand-lead':'Infrastructure expertise. AI that keeps evolving.<br>We connect enterprise systems and data,<br>bringing intelligence to operations with ZiewCore.',
+ 'neural-input':'Connect','neural-learn':'Learn','neural-deploy':'Deploy','neural-infer':'Infer',
+ 'brand-core':'Discover ZiewCore','brand-solutions':'Explore solutions',
+ 'brand-foundation':'Built on infrastructure','brand-foundation-desc':'Infrastructure, security and operations expertise',
+ 'brand-intelligence':'Designed to learn','brand-intelligence-desc':'From data to inference, with ZiewCore',
+ 'brand-impact':'Applied to your business','brand-impact-desc':'Six solutions connecting work and operations',
+ 'new-hero':'One neural core.<br><span>Six specialist AIs.</span>',
+ 'new-lead':'Intelligence that learns and keeps evolving.<br>ZiewCore learns from operational data and connects<br>six domain AIs through one operating system.',
+ 'neural-note':'Data collection → self-learning → zero-downtime deployment → real-time inference. All your enterprise AI, connected through one infrastructure.',
+ 'neural-concept':'The neural network illustrates ZiewCore’s orchestration architecture and connections.'
+});
+
 document.addEventListener('DOMContentLoaded', () => {
  const normalize=s=>s.replace(/\s+/g,' ').trim();
  const additions={
@@ -382,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
  // Preserve both the richer source description and the older operational details.
  i18n.ko['ziewprint-diff']='✓ 제조사/모델 독립형 1-드라이버 & 기존 장비 무변경 적용. 워터마크·출력 승인·통계 및 AI 장애 대화 지원.';
  const targets=[];
- document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,span,div,button,option,a,summary').forEach(el=>{
+ document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,li,span,div,button,option,a,summary,[data-i18n]').forEach(el=>{
    if(el.closest('#sim-root'))return;
    if(el.dataset.i18n){targets.push({el,key:el.dataset.i18n,ko:el.innerHTML});return;}
    if(el.closest('[data-i18n]')||el.querySelector('[data-i18n],a,button,input,canvas,svg,img'))return;

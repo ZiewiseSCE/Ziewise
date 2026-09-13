@@ -19,7 +19,7 @@ export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov
 }
 
 /** Full-volume, photo-textured racks with optional capability plaques and data paths. */
-export function mountPhotoreal(element, { onReady, onError, onContextLost, capabilities = false, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
+export function mountPhotoreal(element, { onReady, onError, onContextLost, capabilities = false, cinematic = false, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
   if (!element) return { setPaused() {}, setScrollProgress() {}, setLabel() {}, resetView() {}, dispose() {} };
   let renderer;
   try {
@@ -45,11 +45,11 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
   renderer.shadowMap.autoUpdate = false;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#10171b');
+  scene.background = new THREE.Color(cinematic ? '#0b1115' : '#10171b');
   scene.fog = new THREE.Fog('#10171b', 10, 21);
   const camera = new THREE.PerspectiveCamera(39, 1, .06, 80);
   const target = new THREE.Vector3(0, 2.15, 0);
-  const defaultOrbit = { azimuth: -.49, elevation: .09 };
+  const defaultOrbit = { azimuth: cinematic ? -.44 : -.49, elevation: cinematic ? .13 : .09 };
   const desired = { ...defaultOrbit, distance: 10 };
   const orbit = { ...desired };
   const geometries = new Set();
@@ -257,11 +257,43 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     }
   }
 
-  const floorMaterial = material(new THREE.MeshStandardMaterial({ color: '#0b1114', roughness: .96, metalness: .03 }));
+  const floorMaterial = material(new THREE.MeshStandardMaterial({ color: cinematic ? '#060a0c' : '#0b1114', roughness: cinematic ? .48 : .96, metalness: cinematic ? .28 : .03 }));
   const floor = new THREE.Mesh(geometry(new THREE.PlaneGeometry(100, 100)), floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
+  let statusLamps;
+  if (cinematic) {
+    const room = new THREE.Group(); scene.add(room);
+    const panelMat = material(new THREE.MeshStandardMaterial({ color: '#111c21', roughness: .67, metalness: .35 }));
+    const ceilingMat = material(new THREE.MeshBasicMaterial({ color: '#a3bec5' }));
+    for (let i = -4; i <= 4; i++) {
+      box(room, .018, 5.8, .055, i * 1.65, 2.9, -3.8, panelMat);
+      box(room, 1.58, 5.8, .055, i * 1.65 + .825, 2.9, -3.85, recess);
+      box(room, .013, .006, 15, i * 1.65, .008, -3, panelMat);
+    }
+    for (let i = 0; i < 4; i++) box(room, 5.2, .018, .065, 0, 5.8, -1.8 - i * 2.4, ceilingMat);
+    // Fine indicator lamps belong to the physical server faces, not an overlay.
+    const positions = [], indices = [];
+    rowX.forEach((x, rack) => {
+      for (let row = 0; row < 17; row++) for (let port = 0; port < 3; port++) {
+        positions.push(x - .40 + port * .10, .33 + row * .218, frontZ + .046 + (rack === 2 ? -.055 : 0));
+        indices.push(row + rack * 3 + port * .7);
+      }
+    });
+    const leds = geometry(new THREE.BufferGeometry());
+    leds.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    leds.setAttribute('phase', new THREE.Float32BufferAttribute(indices, 1));
+    statusLamps = material(new THREE.ShaderMaterial({
+      uniforms: { time: { value: 0 }, pixelRatio: { value: renderer.getPixelRatio() } }, transparent: true, depthWrite: false,
+      vertexShader: 'attribute float phase; varying float vPhase; uniform float pixelRatio; void main(){vPhase=phase;vec4 p=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*p;gl_PointSize=clamp(19.*pixelRatio/-p.z,1.5,4.);}',
+      fragmentShader: 'uniform float time; varying float vPhase; void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;float pulse=.45+.55*pow(max(0.,sin(time*1.8+vPhase*2.7)),5.);gl_FragColor=vec4(mix(vec3(.38,.62,.60),vec3(.84,.91,.71),pulse),smoothstep(.5,.1,r)*pulse);}'
+    }));
+    scene.add(new THREE.Points(leds, statusLamps));
+    key.intensity = 2.2;
+    edge.color.set('#9abdc9'); edge.intensity = 1.8;
+    scene.environmentIntensity = 1.05;
+  }
   const moduleDisplay = capabilities ? createRackModules(scene) : null;
   if (capabilities) canvas.setAttribute('aria-describedby', 'core-capabilities');
 
@@ -269,7 +301,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     const ease = snap ? 1 : .115;
     orbit.azimuth += (desired.azimuth - orbit.azimuth) * ease;
     orbit.elevation += (desired.elevation - orbit.elevation) * ease;
-    const space = moduleDisplay?.fit(viewWidth, viewHeight) || { x: 1, y: 1 };
+    const space = moduleDisplay?.fit(viewWidth, viewHeight) || { x: cinematic && camera.view?.enabled ? .49 : 1, y: 1 };
     const fitFov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * space.y));
     const fit = fitRackDistance(framingCorners, orbit.azimuth, orbit.elevation, aspect * space.x / space.y, fitFov);
     // Ease inward when space allows; pull outward immediately to avoid cropping.
@@ -287,6 +319,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     if (disposed || graphicsLost) return;
     cameraUpdate(snap);
     moduleDisplay?.update(camera, sceneTime, viewWidth, viewHeight, orbit.distance);
+    if (statusLamps) statusLamps.uniforms.time.value = sceneTime;
     if (dirtyShadows) { renderer.shadowMap.needsUpdate = true; dirtyShadows = false; }
     renderer.render(scene, camera);
   }
@@ -298,7 +331,12 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     const delta = previous ? Math.min(now - previous, 60) / 1000 : 0;
     previous = now;
     sceneTime += delta;
-    if (!pointerActive && now - lastInteraction >= 3000) desired.azimuth += delta * Math.PI * 2 / 60;
+    if (!pointerActive && now - lastInteraction >= 3000) {
+      if (cinematic) {
+        desired.azimuth = defaultOrbit.azimuth + Math.sin(sceneTime * .12) * .19;
+        desired.elevation = defaultOrbit.elevation + Math.sin(sceneTime * .075) * .028;
+      } else desired.azimuth += delta * Math.PI * 2 / 60;
+    }
     render();
     frame = requestAnimationFrame(tick);
   }
@@ -314,6 +352,8 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     viewWidth = width; viewHeight = height;
     aspect = width / height;
     camera.aspect = aspect;
+    if (cinematic && width > 760 && getComputedStyle(element).getPropertyValue('--cinema-layout').trim() !== 'stacked') camera.setViewOffset(width, height, -width * .235, 0, width, height);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
     render(true);

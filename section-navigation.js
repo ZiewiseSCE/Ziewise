@@ -1,19 +1,19 @@
 /* Menu destinations are separate screens; the original content stays in readable views. */
 function initializeSectionPages() {
   const main = document.querySelector('#main');
-  const source = Object.fromEntries(['hero', 'about', 'simulator', 'solutions', 'technology', 'contact'].map(id => [id, document.getElementById(id)]));
+  const source = Object.fromEntries(['home', 'hero', 'about', 'simulator', 'solutions', 'technology', 'contact'].map(id => [id, document.getElementById(id)]));
   if (!main || Object.values(source).some(element => !element) || document.documentElement.classList.contains('section-pages')) return;
 
   const language = () => document.documentElement.lang === 'en' ? 'en' : 'ko';
   const labels = {
     ko: {
-      hero: 'ZiewCore 소개', about: '회사 소개', solutions: '솔루션', technology: '기술력', contact: '문의하기',
+      home: '지와이즈', hero: 'ZiewCore 소개', about: '회사 소개', solutions: '솔루션', technology: '기술력', contact: '문의하기',
       overview: '소개', credentials: '인증 · 성과', story: '가치 · 연혁', live: '3D 둘러보기', details: '솔루션 상세',
       applications: '산업별 활용', cases: '도입 사례', architecture: '3D 아키텍처', engineering: '핵심 기술', performance: '성능 지표',
       views: '상세 화면', chooseSolution: '솔루션 상세 선택', end: '화면 끝', navigation: '상단 메뉴에서 다른 페이지를 선택하세요.'
     },
     en: {
-      hero: 'ZiewCore', about: 'About', solutions: 'Solutions', technology: 'Technology', contact: 'Contact',
+      home: 'Ziewise', hero: 'ZiewCore', about: 'About', solutions: 'Solutions', technology: 'Technology', contact: 'Contact',
       overview: 'Overview', credentials: 'Credentials & results', story: 'Values & milestones', live: 'Explore in 3D', details: 'Solution details',
       applications: 'Applications', cases: 'Industry scenarios', architecture: '3D architecture', engineering: 'Core technology', performance: 'Performance',
       views: 'Page views', chooseSolution: 'Choose a solution to read', end: 'End of view', navigation: 'Choose another page from the navigation.'
@@ -103,6 +103,7 @@ function initializeSectionPages() {
     return element;
   }
 
+  makePage('home', [{ key: 'overview', hash: '#home', content: source.home }]);
   makePage('hero', [{ key: 'overview', hash: '#hero', content: source.hero }]);
 
   const credentials = contentGroup('about-page-content', [source.about.querySelector('.about-stats'), source.about.querySelector('.certification-badges')]);
@@ -178,7 +179,7 @@ function initializeSectionPages() {
   selectCard(cards[0]?.id);
 
   const routes = new Map([
-    ['', ['hero', 'overview']], ['#main', ['hero', 'overview']], ['#hero', ['hero', 'overview']], ['#hero-webgl', ['hero', 'overview']],
+    ['', ['home', 'overview']], ['#home', ['home', 'overview']], ['#main', ['home', 'overview']], ['#hero', ['hero', 'overview']], ['#hero-webgl', ['hero', 'overview']],
     ['#about', ['about', 'overview']], ['#about-certifications', ['about', 'credentials']], ['#about-milestones', ['about', 'story']],
     ['#solutions', ['solutions', 'live']], ['#simulator', ['solutions', 'live']], ['#solution-webgl', ['solutions', 'live']],
     ['#solution-details', ['solutions', 'details']], ['#industry-applications', ['solutions', 'applications']], ['#industry-scenarios', ['solutions', 'cases']],
@@ -276,7 +277,7 @@ function initializeSectionPages() {
       navigate(destination, { focus: Boolean(link.closest('.navbar')) });
     }
   }, true);
-  const followHistory = () => activate(resolve(location.hash) || { page: 'hero', view: 'overview' });
+  const followHistory = () => activate(resolve(location.hash) || { page: 'home', view: 'overview' });
   addEventListener('popstate', followHistory);
   addEventListener('hashchange', followHistory);
   main.addEventListener('animationend', event => {

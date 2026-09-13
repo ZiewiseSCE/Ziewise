@@ -1,7 +1,7 @@
 import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stories1';
 import { mountScene } from './scene3d.js?v=20260913-stories1';
-import { mountPhotographic } from './photographic.js?v=20260912-photo1';
-import { mountPhotoreal } from './photoreal3d.js?v=20260912-capabilities1';
+import { mountPhotoreal } from './photoreal3d.js?v=20260913-cinema1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-brain1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches;
@@ -14,20 +14,6 @@ document.querySelectorAll('.logo-symbol,.footer-logo-symbol').forEach(img=>{
 });
 document.querySelector('#about-webgl')?.classList.add('logo-shine');
 function mount(el,kind){return mountScene(el,{kind,onReady:()=>el.querySelector('.scene-loading')?.remove()});}
-const photographicAlt=()=>document.documentElement.lang==='en'?'Photographic concept of enterprise AI computing infrastructure':'기업 AI 컴퓨팅 인프라를 표현한 실사 스타일 콘셉트 이미지';
-const photographs=[];
-function mountPhoto(el){
- el.setAttribute('role','group');el.setAttribute('aria-label',photographicAlt());
- const photo=mountPhotographic(el,{
-   src:'assets/infrastructure-photo-1536-v1.webp',
-   srcset:'assets/infrastructure-photo-768-v1.webp 768w, assets/infrastructure-photo-1536-v1.webp 1536w',
-   sizes:'(min-width:1450px) 680px, (min-width:761px) 50vw, calc(100vw - 40px)',
-   alt:photographicAlt(),onReady:()=>el.querySelector('.scene-loading')?.remove()
- });
- const updateAlt=photo.setAlt;
- photo.setAlt=value=>{updateAlt(value);el.setAttribute('aria-label',value);};
- photographs.push(photo);return photo;
-}
 const heroEl=document.querySelector('#hero-webgl');
 let heroPhoto=null;
 const heroVisual=document.querySelector('.hero-visual');
@@ -37,7 +23,24 @@ let diagramReady=false;
 let diagramFailed=false;
 let diagramRequest=0;
 let heroDisposed=false;
-const infrastructureLabel=()=>document.documentElement.lang==='en'?'Interactive 3D server infrastructure. Drag or use arrow keys to rotate. Press Home to reset.':'인터랙티브 3D 서버 인프라. 드래그 또는 방향키로 회전하고 Home 키로 처음 시점으로 돌아갑니다.';
+const infrastructureLabel=()=>document.documentElement.lang==='en'?'ZiewCore neural brain connected to six specialist AIs. Drag or use arrow keys to rotate. Press Home to reset.':'6개 전문 AI를 연결하는 ZiewCore 신경망 뇌. 드래그 또는 방향키로 회전하고 Home 키로 처음 시점으로 돌아갑니다.';
+const neuralPhaseCopy={
+ ko:['현장의 영상·센서·업무 데이터를 모아, 중앙 신경망의 입력으로 연결합니다.','모호한 사례와 현장 피드백을 선별해 학습하고, 다음 모델을 검증합니다.','검증한 모델을 전문 AI에 전달하고, 서비스 중단을 줄이는 배포 흐름으로 연결합니다.','현장 가까이에서 판단하고, 결과를 다음 학습의 피드백으로 되돌립니다.'],
+ en:['Connect video, sensor and business data from operations to the central neural core.','Select uncertain cases and operational feedback for learning, then validate the next model.','Distribute validated models to specialist AIs through a deployment flow designed for service continuity.','Run inference close to operations and return results as feedback for the next learning cycle.']
+};
+let neuralPhase=0;
+function refreshNeuralPhase(phase=neuralPhase){
+ neuralPhase=phase;
+ document.querySelectorAll('[data-neural-phase]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.neuralPhase)===phase)));
+ const copy=document.querySelector('#neural-phase-copy');if(copy)copy.textContent=neuralPhaseCopy[document.documentElement.lang==='en'?'en':'ko'][phase];
+}
+document.querySelectorAll('[data-neural-phase]').forEach(button=>button.addEventListener('click',()=>{heroDiagram?.setPhase(Number(button.dataset.neuralPhase));refreshNeuralPhase(Number(button.dataset.neuralPhase));}));
+refreshNeuralPhase();
+function neuralPreview(){
+ if(heroPhoto)return;
+ const img=document.createElement('img');img.className='neural-preview';img.src='assets/neural-preview.svg';img.alt='ZiewCore neural network';heroEl.append(img);
+ heroPhoto={setPaused(){},dispose(){img.remove();}};
+}
 function refreshHeroView(){
  heroVisual.dataset.view=diagramFailed?'photographic':'diagram';
  heroVisual.dataset.sceneReady=String(diagramReady);
@@ -45,7 +48,7 @@ function refreshHeroView(){
  viewButton.disabled=!diagramReady&&!diagramFailed;
  const english=document.documentElement.lang==='en';
  viewButton.textContent=diagramFailed?(english?'Retry 3D':'3D 다시 시도'):(english?'Reset view':'시점 초기화');
- heroEl.setAttribute('aria-label',diagramFailed?photographicAlt():infrastructureLabel());
+ heroEl.setAttribute('aria-label',infrastructureLabel());
  heroDiagram?.setLabel?.(infrastructureLabel());
  const hint=heroVisual.querySelector('.hero-view-hint');
  hint.textContent=diagramFailed?(english?'3D unavailable · Preview shown':'3D 연결 대기 · 미리보기 표시'):diagramReady?(paused?(english?'Drag to rotate · 360°':'드래그하여 회전 · 360°'):(english?'Auto rotate · Drag to explore':'자동 회전 · 드래그 가능')):(english?'Loading 3D…':'3D 준비 중…');
@@ -59,17 +62,17 @@ function startHero(){
  heroDiagram?.dispose();
  diagramReady=false;diagramFailed=false;
  refreshHeroView();
-  heroDiagram=mountPhotoreal(heroEl,{
-   capabilities:true,
+  heroDiagram=mountNeuralBrain(heroEl,{
+   onPhase:refreshNeuralPhase,
    onReady:()=>{
-    if(heroDisposed||request!==diagramRequest)return;diagramReady=true;heroEl.querySelector('.scene-loading')?.remove();refreshHeroView();
+    if(heroDisposed||request!==diagramRequest)return;diagramReady=true;heroPhoto?.dispose();heroPhoto=null;heroEl.querySelector('.scene-loading')?.remove();refreshHeroView();
    },
-   onContextLost:()=>{if(heroDisposed||request!==diagramRequest)return;diagramReady=false;heroPhoto??=mountPhoto(heroEl);heroPhoto.setPaused(true);refreshHeroView();},
+   onContextLost:()=>{if(heroDisposed||request!==diagramRequest)return;diagramReady=false;neuralPreview();refreshHeroView();},
    onError:()=>{queueMicrotask(()=>{
     if(heroDisposed||request!==diagramRequest)return;
     const hadFocus=heroEl.contains(document.activeElement);
     heroDiagram?.dispose();heroDiagram=null;diagramReady=false;diagramFailed=true;
-    heroPhoto??=mountPhoto(heroEl);
+    neuralPreview();
     refreshHeroView();hero.setPaused(paused||dialogOpen,{manual:motionChosen});
     if(hadFocus)viewButton.focus({preventScroll:true});
    });}
@@ -79,7 +82,26 @@ function startHero(){
 viewButton.addEventListener('click',()=>{
  if(diagramFailed)startHero();else heroDiagram?.resetView();
 });
-mounted.push(hero);startHero();
+mounted.push(hero);
+const heroLoader=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){startHero();heroLoader.disconnect();}});
+heroLoader.observe(heroEl);
+
+const brandElement=document.querySelector('#brand-webgl');
+const brandSection=document.querySelector('#home');
+let brandScene=null;
+const brand={setPaused(value,options){brandScene?.setPaused(value,options);},dispose(){brandLoader.disconnect();brandScene?.dispose();}};
+const brandLoader=new IntersectionObserver(entries=>{
+ if(!entries.some(entry=>entry.isIntersecting)||brandScene)return;
+ brandScene=mountPhotoreal(brandElement,{
+  cinematic:true,
+  label:document.documentElement.lang==='en'?'Ziewise enterprise AI infrastructure, in cinematic 3D. Drag or use the arrow keys to explore.':'지와이즈 기업 AI 인프라의 3D 공간. 드래그 또는 방향키로 시점을 조절합니다.',
+  onReady:()=>{brandSection.dataset.sceneState='ready';},
+  onContextLost:()=>{brandSection.dataset.sceneState='preview';},
+  onError:()=>{queueMicrotask(()=>{brandScene?.dispose();brandScene=null;brandSection.dataset.sceneState='preview';});}
+ });
+ brandScene.setPaused(paused||dialogOpen,{manual:motionChosen});brandLoader.disconnect();
+});
+brandLoader.observe(brandElement);mounted.push(brand);
 let solution=null;
 let technology=null;
 let selected='vision';
@@ -105,7 +127,7 @@ function updateMotion(){
 }
 document.addEventListener('click',e=>{if(e.target.closest('.motion-toggle')){paused=!paused;motionChosen=true;updateMotion();}});
 reduced.addEventListener('change',e=>{paused=e.matches;motionChosen=false;updateMotion();});
-window.addEventListener('ziewise:language',()=>{updateMotion();photographs.forEach(photo=>photo.setAlt(photographicAlt()));technology?.setLabel(infrastructureLabel());refreshHeroView();});
+window.addEventListener('ziewise:language',()=>{updateMotion();brandScene?.setLabel(document.documentElement.lang==='en'?'Ziewise enterprise AI infrastructure, in cinematic 3D. Drag or use the arrow keys to explore.':'지와이즈 기업 AI 인프라의 3D 공간. 드래그 또는 방향키로 시점을 조절합니다.');refreshHeroView();refreshNeuralPhase();});
 window.addEventListener('ziewise:dialog',event=>{dialogOpen=event.detail;mounted.forEach(scene=>scene.setPaused(paused||dialogOpen,{manual:motionChosen}));});
 updateMotion();
 let cameraUpdatePending=false;
@@ -137,4 +159,4 @@ tabs.forEach((tab,i)=>{
  });
 });
 document.querySelectorAll('[data-open-scene]').forEach(link=>link.addEventListener('click',()=>selectScene(link.dataset.openScene)));
-window.addEventListener('pagehide',event=>{if(!event.persisted)mounted.forEach(s=>s.dispose());});
+window.addEventListener('pagehide',event=>{if(!event.persisted){heroLoader.disconnect();mounted.forEach(s=>s.dispose());}});
