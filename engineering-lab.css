@@ -1,0 +1,88 @@
+/* Engineering and performance share a restrained technical exhibition palette. */
+.section-pages .engineering-page,.section-pages .performance-page{--lab-ink:#e2edef;--lab-muted:#a5bbc3;--lab-line:#34505e;--lab-accent:#92d6d8;background:#111e27;color:var(--lab-ink);padding-top:clamp(22px,3vh,38px);padding-bottom:36px}
+.eng-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:36px;margin-bottom:26px}
+.eng-kicker,.compare-overline{display:block;color:#83b5bf;font-size:10px;font-weight:600;letter-spacing:.16em;line-height:1.6}
+.eng-heading h2{font-size:clamp(27px,2.45vw,40px);line-height:1.3;font-weight:650;letter-spacing:-.045em;white-space:pre-line;margin-top:12px;color:var(--lab-ink)}
+.eng-heading>p{max-width:440px;white-space:pre-line;color:var(--lab-muted);font-size:13px;line-height:1.9;padding-bottom:4px}
+.eng-topics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:#38505b;border:1px solid #38505b;border-radius:8px 8px 0 0;overflow:hidden}
+.eng-topic{background:#182933;display:grid;grid-template-columns:26px 1fr;column-gap:12px;text-align:left;padding:17px 20px;position:relative;color:#a5bac3;min-width:0;transition:background .2s}
+.eng-topic>span{font-size:11px;grid-row:span 2;padding-top:3px;color:#81a5b3}
+.eng-topic strong{font-size:14px;line-height:1.5;font-weight:600;color:inherit}
+.eng-topic small{font-size:9px;letter-spacing:.12em;margin-top:5px;color:#93aebc}
+.eng-topic[aria-selected=true]{background:#29434e;color:#f0f9fa;box-shadow:inset 0 -3px #9bdcda}
+.engineering-lab button,.performance-comparison button{appearance:none;font-family:inherit;border:0;border-radius:0}
+.engineering-lab .eng-steps button{border-top:2px solid #3a5460;background:transparent}
+.engineering-lab .eng-steps button[aria-pressed=true]{border-top-color:#9fdbda}
+.engineering-lab .eng-pause{border:1px solid #526974;border-radius:4px}
+.engineering-lab .eng-bottom button,.performance-comparison .comparison-replay{border-bottom:1px solid #4f737f;background:transparent}
+.eng-topic:hover{background:#25404b}.eng-topic:focus-visible,.engineering-lab button:focus-visible,.performance-comparison button:focus-visible{outline:2px solid #b3e5e4;outline-offset:-4px}
+.eng-theater{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(360px,1fr);border:1px solid #38505b;border-top:0;border-radius:0 0 8px 8px;overflow:hidden;min-height:440px;background:#192c36}
+.eng-visual{position:relative;min-height:440px;background:#0e1a22;overflow:hidden}
+.eng-canvas{position:absolute;inset:0;--scene-background:#0f1c24}
+.eng-stage-head{position:absolute;top:23px;left:25px;right:25px;display:flex;justify-content:space-between;gap:14px;z-index:2;pointer-events:none;font-size:9px;letter-spacing:.11em;color:#a2c0cd}
+.eng-stage-head b{font-weight:400;white-space:nowrap;color:#70929f}
+.eng-scene-status{position:absolute;left:25px;top:58px;z-index:2;right:25px;pointer-events:none}
+.eng-scene-status span{font-size:9px;color:#80aab7;letter-spacing:.09em;display:block;margin-bottom:7px}
+.eng-scene-status strong{font-size:16px;font-weight:500;line-height:1.6;display:block;max-width:390px;color:#e4eef1;text-wrap:balance}
+.eng-controls{position:absolute;z-index:3;inset:auto 20px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.eng-controls small{font-size:10px;color:#a4c1cb}.eng-pause{font-size:11px;white-space:nowrap;padding:10px 13px;border:1px solid #526974;border-radius:4px;background:#13232ccc;color:#dce8ed;min-height:38px}
+.eng-narrative{padding:clamp(22px,2vw,34px);display:flex;flex-direction:column;min-width:0;border-left:1px solid #34505e}
+.eng-narrative>h3{font-size:clamp(22px,1.8vw,29px);letter-spacing:-.04em;line-height:1.4;color:#edf5f6;margin-top:10px;font-weight:600;text-wrap:balance}
+.eng-why{font-size:13px;line-height:1.85;color:#afc1c8;margin-top:13px}
+.eng-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:22px 0 18px}
+.eng-steps button{color:#8faeba;text-align:left;border-top:2px solid #3a5460;font-size:10px;line-height:1.6;padding:10px 0 6px;min-height:42px;transition:color .2s,border .2s}
+.eng-steps button[aria-pressed=true]{border-color:#9fdbda;color:#e7f7f7}
+.eng-phase{min-height:118px}.eng-phase>span{font-size:9px;letter-spacing:.08em;color:#82bdc8}
+.eng-phase h4{font-size:17px;line-height:1.65;letter-spacing:-.025em;margin-top:8px;color:#e5eff3;font-weight:600}
+.eng-phase p{font-size:12px;line-height:1.9;color:#a8c0cb;margin-top:8px}
+.eng-outcome{margin-top:18px;padding:15px 0 0;border-top:1px solid #3a5561}
+.eng-outcome>b{font-size:10px;letter-spacing:.08em;color:#8bc9cc;font-weight:500}.eng-outcome>p{font-size:12px;line-height:1.9;margin-top:7px;color:#c1d4db}
+.eng-bottom{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between;margin-top:auto;padding-top:18px;font-size:10px;color:#a9d0d5}
+.eng-bottom a,.eng-bottom button{padding:6px 0;border-bottom:1px solid #4f737f;text-align:left;color:inherit}
+.eng-note{color:#7e9baa;font-size:10px;line-height:1.7;margin-top:11px}
+.section-pages .engineering-page .eng-original-intro{color:#92adba;font-size:12px;max-width:none;margin:30px 0 16px;line-height:1.9}
+.engineering-page .eng-original-intro strong{color:#d4e4e8}
+.eng-spec-heading{font-size:15px;font-weight:600;color:#d9e9ec;margin:24px 0 15px}
+.section-pages .engineering-page .tech-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:0}
+.section-pages .engineering-page .tech-card{background:#172a35;padding:22px;border-color:#324c59;border-radius:6px;min-height:0!important}
+.section-pages .engineering-page .tech-card .card-index{font-size:10px;color:#84b7c4}
+.section-pages .engineering-page .tech-card h3{font-size:19px;color:#dfecef;margin-top:9px}
+.section-pages .engineering-page .tech-card .sub{font-size:10px;color:#8ac2d0;margin-top:5px}
+.section-pages .engineering-page .tech-card .differentiator{font-size:12px;color:#a8c0ca;margin-top:12px;line-height:1.85}
+.section-pages .engineering-page .tech-card strong{color:#d4e9ed}
+.section-pages .engineering-page .operation-notes{border-color:#344f5e;margin-top:15px;padding-top:9px;color:#91b2bf}
+.section-pages .engineering-page .operation-notes summary{font-size:11px}
+.section-pages .engineering-page .operation-labels{margin-top:8px}.section-pages .engineering-page .operation-labels span{color:#a8c9d5;background:#223e4e;font-size:10px}
+.performance-page .eng-heading{margin-bottom:27px}.perf-comparison-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.compare-card{border:1px solid #3c5561;border-radius:8px;padding:25px;background:linear-gradient(155deg,#203944,#14242f);position:relative;overflow:hidden;min-width:0}
+.compare-card h3{font-size:19px;font-weight:550;line-height:1.6;color:#dfecf0;margin-top:14px;letter-spacing:-.03em}
+.compare-result{display:flex;align-items:center;gap:15px;margin:16px 0 25px}.compare-result strong{font-size:clamp(32px,3.2vw,51px);color:#b8e8e6;font-weight:550;letter-spacing:-.06em;line-height:1.15;font-variant-numeric:tabular-nums}
+.compare-result small{font-size:20px;letter-spacing:-.04em;margin-left:4px}.compare-result>span{font-size:11px;line-height:1.7;color:#a8c0cc;max-width:115px}
+.comparison-bars,.packet-comparison,.continuity-track{height:111px}
+.comparison-bars>div{position:relative;display:flex;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;font-size:11px;color:#a9c0cb}
+.comparison-bars b{font-weight:500;font-variant-numeric:tabular-nums;color:#d5e4eb}.comparison-bars i{position:absolute;left:0;bottom:0;width:var(--size);height:7px;border-radius:1px;background:#718895;transform-origin:left}
+.comparison-bars>div:nth-child(2) i{background:#a7e2dc;box-shadow:0 0 14px #8ddbd455}
+.packet-comparison{display:grid;grid-template-columns:1fr 1fr;gap:23px}.packet-comparison>div{min-width:0;display:grid;grid-template-columns:1fr auto;gap:8px;align-content:start}.packet-comparison span{font-size:11px;color:#a9c1cc;grid-column:1}.packet-comparison b{font-size:12px;font-weight:500;color:#d6e9ee;grid-row:1;grid-column:2}
+.packet-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;grid-column:span 2}.packet-grid i{height:4px;background:#698391;border-radius:1px}.packet-grid .transmitted{background:#a6e0db;box-shadow:0 0 6px #8fd4d03b}.packet-grid .retained{background:#304b58}
+.continuity-track>div{display:grid;gap:11px;margin-bottom:25px}.continuity-track span{font-size:11px;color:#a8bfca}.continuity-track i{height:7px;position:relative;overflow:hidden;display:block}
+.broken-path{background:linear-gradient(90deg,#718c98 0 37%,transparent 37% 60%,#718c98 60%)}.broken-path:before{content:'Ⅱ';position:absolute;left:46%;top:-5px;font-size:13px;font-style:normal;color:#d7a472}
+.unbroken-path{background:#547f86}.unbroken-path:after{content:'';position:absolute;inset:0 auto 0 0;width:24%;background:linear-gradient(90deg,transparent,#c1f3e9,transparent);transform:translateX(-110%)}
+.comparison-active .unbroken-path:after{animation:request-continuity 3s linear infinite}
+.compare-card>p{font-size:11px;line-height:1.9;color:#91afbc;margin-top:17px;min-height:42px}
+.comparison-table-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:28px 0 15px}.comparison-table-heading h3{font-size:18px;color:#dbeaf0;font-weight:550}.comparison-replay{font-size:11px;color:#b2dcd9;padding:8px 0;border-bottom:1px solid #4b737e;min-height:36px}
+.comparison-table-wrap{border:1px solid #3a5663;border-radius:6px;overflow:hidden}.performance-comparison table{border-collapse:collapse;width:100%;text-align:left;table-layout:fixed;color:#acc2cc;font-size:12px;line-height:1.7}
+.performance-comparison caption{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden;white-space:nowrap}
+.performance-comparison th,.performance-comparison td{padding:15px 18px;border-bottom:1px solid #2e4b59;vertical-align:top}.performance-comparison thead{background:#223a46;color:#b9d3de}.performance-comparison th{font-weight:550}.performance-comparison th:first-child{width:16%}.performance-comparison th:nth-child(2){width:24%}.performance-comparison th:nth-child(3){width:25%}.performance-comparison td:nth-child(3){background:#1d343e;color:#cdeae8}.performance-comparison tbody th{color:#c8dfe6}.performance-comparison td strong{font-weight:550}.performance-comparison td small{display:block;color:#819eac;font-size:10px;line-height:1.7;margin-top:5px}.performance-comparison tr:last-child>*{border-bottom:0}
+.performance-provenance{font-size:10px;color:#88a5b4;line-height:1.9;max-width:1130px;margin-top:15px}
+.section-pages .performance-page .perf-dashboard{margin-top:30px}.section-pages .performance-page .perf-title{font-size:18px;color:#d2e5ec}.section-pages .performance-page .perf-sub{font-size:11px;color:#8facba}
+.section-pages .performance-page .perf-grid{gap:20px;margin-top:18px}.section-pages .performance-page .perf-card{border-color:#385360;padding-top:15px}.section-pages .performance-page .perf-label{color:#91adbb;font-size:11px}.section-pages .performance-page .perf-value{font-size:28px;color:#d6e8ed;margin-top:5px}.section-pages .performance-page .perf-value>span{font-size:16px}.section-pages .performance-page .perf-meta{font-size:10px;color:#89a8b7;line-height:1.75}.section-pages .performance-page .perf-bar{display:none}
+.comparison-playing .comparison-bars i{animation:bar-build 1.8s cubic-bezier(.2,.7,.2,1) both}.comparison-playing .selected-packets .retained{animation:packet-filter 2.4s ease both}.comparison-playing .compare-result{animation:result-arrive 1s ease both}
+@keyframes bar-build{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes packet-filter{0%,22%{background:#89bbc4}100%{background:#304b58}}@keyframes result-arrive{from{opacity:.3;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes request-continuity{to{transform:translateX(520%)}}
+.motion-paused .performance-comparison *,.motion-paused .performance-comparison *:after{animation-play-state:paused!important}
+@media(min-width:1600px) and (min-height:900px){.eng-visual{min-height:500px}.eng-narrative{padding:35px}.eng-phase{min-height:140px}.eng-why{font-size:14px}.eng-phase p,.eng-outcome>p{font-size:13px}.eng-phase h4{font-size:19px}}
+@media(max-width:1100px){.eng-heading{align-items:flex-start;gap:22px}.eng-heading>p{max-width:340px;font-size:12px}.eng-topic{padding:15px 12px;column-gap:5px}.eng-topic strong{font-size:12px}.eng-theater{grid-template-columns:minmax(0,1fr) minmax(320px,.9fr)}.eng-narrative{padding:22px}.eng-stage-head{left:18px;right:18px;font-size:8px}.eng-scene-status{left:18px;right:18px}.eng-scene-status strong{font-size:14px}.compare-card{padding:19px}.compare-card h3{font-size:16px}.compare-result{gap:9px}.compare-result>span{font-size:10px}.packet-comparison{gap:12px}.packet-grid{gap:2px}.performance-comparison th,.performance-comparison td{padding:13px 12px}}
+@media(max-width:900px){.eng-theater{grid-template-columns:1fr}.eng-visual{min-height:430px}.eng-narrative{border-left:0;border-top:1px solid #34505e;display:grid;grid-template-columns:1fr 1fr;column-gap:28px}.eng-narrative>.eng-kicker,.eng-narrative>h3,.eng-why{grid-column:1}.eng-steps{grid-column:2;grid-row:1 / span 2;margin:0;align-self:start}.eng-phase{grid-column:2;grid-row:3 / span 2;margin-top:10px}.eng-outcome{grid-column:1}.eng-bottom{grid-column:span 2}.perf-comparison-grid{grid-template-columns:1fr 1fr}.continuity-comparison{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;column-gap:30px}.continuity-comparison .compare-overline,.continuity-comparison h3,.continuity-comparison .compare-result{grid-column:1}.continuity-comparison .continuity-track{grid-column:2;grid-row:2 / span 2;align-self:center}.continuity-comparison>p{grid-column:span 2;min-height:0;margin:0}.compare-result strong{font-size:39px}.eng-heading>p{max-width:300px}}
+@media(max-width:600px){.eng-heading{display:block;margin-bottom:20px}.eng-heading h2{font-size:28px}.eng-heading>p{margin-top:15px;max-width:none;white-space:normal;font-size:12px}.eng-topics{grid-template-columns:1fr 1fr}.eng-topic{padding:14px 12px;min-height:75px}.eng-topic strong{font-size:12px}.eng-topic small{font-size:8px}.eng-topic>span{font-size:10px}.eng-visual{min-height:360px}.eng-stage-head{top:18px;font-size:8px}.eng-stage-head b{display:none}.eng-scene-status{top:45px}.eng-scene-status strong{font-size:14px;max-width:280px}.eng-controls{left:13px;right:13px;bottom:14px;gap:8px}.eng-controls small{font-size:9px;max-width:130px}.eng-pause{font-size:10px;padding:10px}.eng-narrative{display:flex;padding:23px 20px}.eng-narrative>h3{font-size:23px}.eng-why{font-size:13px}.eng-steps{margin:20px 0 10px;gap:8px}.eng-steps button{font-size:10px}.eng-phase{min-height:148px}.eng-phase h4{font-size:17px}.eng-phase p{font-size:12px}.eng-outcome{margin-top:12px}.eng-bottom{font-size:10px}.section-pages .engineering-page .tech-grid{grid-template-columns:1fr}.section-pages .engineering-page .tech-card{padding:20px}.eng-note{font-size:9px}.perf-comparison-grid{grid-template-columns:1fr}.continuity-comparison{grid-column:auto;display:block}.compare-card{padding:24px}.compare-card h3{font-size:21px}.compare-result{margin:18px 0 24px}.compare-result strong{font-size:48px}.compare-result>span{font-size:11px}.packet-grid{gap:3px}.continuity-comparison>p{margin-top:17px}.comparison-table-heading{align-items:flex-start}.comparison-table-heading h3{font-size:17px;max-width:200px}.comparison-replay{white-space:nowrap;font-size:10px}.performance-comparison table,.performance-comparison tbody,.performance-comparison tr,.performance-comparison th,.performance-comparison td{display:block;width:auto!important}.performance-comparison thead{display:none}.performance-comparison tr{padding:14px 17px;border-bottom:1px solid #36525e}.performance-comparison tbody th{font-size:15px;color:#d8eeef;padding:0 0 10px}.performance-comparison td{padding:9px 0;border:0;background:none!important}.performance-comparison td:before{content:attr(data-label);display:block;font-size:9px;color:#7f9eac;margin-bottom:4px;letter-spacing:.04em}.performance-comparison td:nth-child(3){padding:10px 12px;background:#243e49!important;border-radius:3px}.performance-comparison td small{font-size:10px}.performance-provenance{font-size:10px}.section-pages .performance-page .perf-grid{grid-template-columns:1fr 1fr;gap:20px 17px}}
+@media(prefers-reduced-motion:reduce){.performance-comparison *,.performance-comparison *:after{animation:none!important;transition:none!important}.engineering-lab *{transition:none!important}}
+
+.performance-comparison tbody tr{transition:background .2s}.performance-comparison tbody tr:hover{background:#203643}

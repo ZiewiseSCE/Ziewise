@@ -6,7 +6,7 @@ import {createSolutionMiniature} from './solution-miniatures3d.js?v=20260913-d2c
  * No remote textures, models, telemetry, or live-data assumptions.
  * mountScene(host, { kind, onReady }) -> { setKind, setPaused, dispose }
  */
-export function mountScene(element, { kind = 'core', onReady, modelFactory = null, onPhase } = {}) {
+export function mountScene(element, { kind = 'core', onReady, modelFactory = null, onPhase, studioFloor = false } = {}) {
   if (!element) return { setKind() {}, setProcess() {}, setPhase() {}, playSteps() {}, setPaused() {}, dispose() {} };
   const sceneBackground = getComputedStyle(element).getPropertyValue('--scene-background').trim() || '#131a21';
 
@@ -206,7 +206,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     photovoltaic: new THREE.MeshPhysicalMaterial({ color: '#14222e', metalness: 0.65, roughness: 0.21, clearcoat: 0.9 }),
   };
   const sharedMaterials = new Set(Object.values(mats));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshStandardMaterial({ color: '#090d12', roughness: 0.84, metalness: 0.05 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), studioFloor ? new THREE.ShadowMaterial({color:'#00050a',opacity:.32}) : new THREE.MeshStandardMaterial({ color: '#090d12', roughness: 0.84, metalness: 0.05 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.075;
   floor.receiveShadow = false;
