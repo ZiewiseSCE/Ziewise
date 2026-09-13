@@ -361,6 +361,8 @@ Object.assign(i18n.en, {
 
 Object.assign(i18n.ko, {
  'brand-title':'현장의 데이터가,<br><em>비즈니스의 지능으로.</em>',
+ 'journey-example':'작동 예시 / 생산 현장의 품질 검사','journey-capture':'현장 감지','journey-connect':'데이터 연결','journey-analyse':'AI 분석','journey-action':'업무 실행',
+ 'miniature-hint':'미니어처를 선택해 솔루션을 살펴보세요','miniature-explore':'이 솔루션 체험하기',
  'brand-lead':'인프라를 이해하는 기술. 스스로 진화하는 AI.<br>지와이즈는 기업의 시스템과 데이터를 연결하고,<br>ZiewCore로 현장에 필요한 지능을 구현합니다.',
  'neural-input':'데이터 연결','neural-learn':'자가 학습','neural-deploy':'모델 배포','neural-infer':'현장 추론',
  'brand-core':'ZiewCore 알아보기','brand-solutions':'솔루션 둘러보기',
@@ -373,7 +375,9 @@ Object.assign(i18n.ko, {
  'neural-concept':'신경망과 연결 흐름은 ZiewCore의 오케스트레이션 구조를 표현한 개념도입니다.'
 });
 Object.assign(i18n.en, {
- 'brand-title':'Data from your world.<br><em>Intelligence for<br>your business.</em>',
+ 'brand-title':'Data from your world.<br><em>Intelligence for your business.</em>',
+ 'journey-example':'IN ACTION / PRODUCTION QUALITY INSPECTION','journey-capture':'Capture','journey-connect':'Connect','journey-analyse':'Analyse','journey-action':'Act',
+ 'miniature-hint':'Select a miniature to explore its solution','miniature-explore':'Explore this solution',
  'brand-lead':'Infrastructure expertise. AI that keeps evolving.<br>We connect enterprise systems and data,<br>bringing intelligence to operations with ZiewCore.',
  'neural-input':'Connect','neural-learn':'Learn','neural-deploy':'Deploy','neural-infer':'Infer',
  'brand-core':'Discover ZiewCore','brand-solutions':'Explore solutions',

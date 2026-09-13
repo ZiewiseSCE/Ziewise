@@ -1,7 +1,8 @@
 import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stories1';
 import { mountScene } from './scene3d.js?v=20260913-stories1';
-import { mountPhotoreal } from './photoreal3d.js?v=20260913-cinema1';
-import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-brain1';
+import { mountPhotoreal } from './photoreal3d.js?v=20260913-journey1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-mini1';
+import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-mini1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches;
@@ -36,10 +37,20 @@ function refreshNeuralPhase(phase=neuralPhase){
 }
 document.querySelectorAll('[data-neural-phase]').forEach(button=>button.addEventListener('click',()=>{heroDiagram?.setPhase(Number(button.dataset.neuralPhase));refreshNeuralPhase(Number(button.dataset.neuralPhase));}));
 refreshNeuralPhase();
+let neuralSolution=0;
+function refreshNeuralSolution(index=neuralSolution){
+ neuralSolution=index;const data=solutionMiniatures[index],en=document.documentElement.lang==='en';
+ document.querySelector('#neural-solution-title').textContent=`${data.name} · ${data[en?'en':'ko']}`;
+ document.querySelector('#neural-solution-copy').textContent=data.description[en?1:0];
+ document.querySelector('#neural-solution-link').dataset.openScene=data.kind;
+ document.querySelectorAll('.neural-fallback-solutions button').forEach((button,i)=>{button.textContent=`${solutionMiniatures[i].name} · ${solutionMiniatures[i][en?'en':'ko']}`;button.setAttribute('aria-pressed',String(i===index));});
+}
+refreshNeuralSolution();
 function neuralPreview(){
  if(heroPhoto)return;
  const img=document.createElement('img');img.className='neural-preview';img.src='assets/neural-preview.svg';img.alt='ZiewCore neural network';heroEl.append(img);
- heroPhoto={setPaused(){},dispose(){img.remove();}};
+ const choices=document.createElement('div');choices.className='neural-fallback-solutions';solutionMiniatures.forEach((data,i)=>{const button=document.createElement('button');button.type='button';button.addEventListener('click',()=>refreshNeuralSolution(i));choices.append(button);});heroEl.append(choices);refreshNeuralSolution();
+ heroPhoto={setPaused(){},dispose(){img.remove();choices.remove();}};
 }
 function refreshHeroView(){
  heroVisual.dataset.view=diagramFailed?'photographic':'diagram';
@@ -64,6 +75,7 @@ function startHero(){
  refreshHeroView();
   heroDiagram=mountNeuralBrain(heroEl,{
    onPhase:refreshNeuralPhase,
+   onSolution:refreshNeuralSolution,
    onReady:()=>{
     if(heroDisposed||request!==diagramRequest)return;diagramReady=true;heroPhoto?.dispose();heroPhoto=null;heroEl.querySelector('.scene-loading')?.remove();refreshHeroView();
    },
@@ -89,12 +101,21 @@ heroLoader.observe(heroEl);
 const brandElement=document.querySelector('#brand-webgl');
 const brandSection=document.querySelector('#home');
 let brandScene=null;
+let journeyStage=0;
+const journeyCopy={
+ ko:['검사 카메라가 제품을 살피고 영상·센서 데이터를 만듭니다.','현장의 데이터를 ZiewCore로 전달해, 분석에 사용할 흐름으로 연결합니다.','AI가 영상의 특징과 이상 징후를 분석해 검토할 대상을 판단합니다.','판단을 관제 알림과 업무 흐름에 반영하고, 현장 피드백을 다음 학습으로 연결합니다.'],
+ en:['An inspection camera observes products and captures video and sensor data.','Operational data travels to ZiewCore, connecting the field to the analysis pipeline.','AI analyses visual features and anomalies to identify items that need review.','Decisions inform monitoring and workflows. Operational feedback feeds the next learning cycle.']
+};
+function refreshJourney(stage=journeyStage){journeyStage=stage;brandSection.dataset.journeyStage=stage;document.querySelectorAll('[data-journey-stage]').forEach(button=>{if(button.matches('button'))button.setAttribute('aria-pressed',String(Number(button.dataset.journeyStage)===stage));});document.querySelector('#brand-journey-copy').textContent=journeyCopy[document.documentElement.lang==='en'?'en':'ko'][stage];}
+document.querySelectorAll('button[data-journey-stage]').forEach(button=>button.addEventListener('click',()=>{const stage=Number(button.dataset.journeyStage);brandScene?.setStage?.(stage);refreshJourney(stage);}));refreshJourney();
+const journeyLabel=()=>document.documentElement.lang==='en'?'A 3D journey from camera inspection through ZiewCore analysis to operational monitoring and feedback. Drag or use the arrow keys to explore.':'카메라 검사에서 ZiewCore 분석, 관제와 현장 피드백으로 이어지는 3D 과정. 드래그 또는 방향키로 시점을 조절합니다.';
 const brand={setPaused(value,options){brandScene?.setPaused(value,options);},dispose(){brandLoader.disconnect();brandScene?.dispose();}};
 const brandLoader=new IntersectionObserver(entries=>{
  if(!entries.some(entry=>entry.isIntersecting)||brandScene)return;
  brandScene=mountPhotoreal(brandElement,{
   cinematic:true,
-  label:document.documentElement.lang==='en'?'Ziewise enterprise AI infrastructure, in cinematic 3D. Drag or use the arrow keys to explore.':'지와이즈 기업 AI 인프라의 3D 공간. 드래그 또는 방향키로 시점을 조절합니다.',
+  onStage:refreshJourney,
+  label:journeyLabel(),
   onReady:()=>{brandSection.dataset.sceneState='ready';},
   onContextLost:()=>{brandSection.dataset.sceneState='preview';},
   onError:()=>{queueMicrotask(()=>{brandScene?.dispose();brandScene=null;brandSection.dataset.sceneState='preview';});}
@@ -127,7 +148,7 @@ function updateMotion(){
 }
 document.addEventListener('click',e=>{if(e.target.closest('.motion-toggle')){paused=!paused;motionChosen=true;updateMotion();}});
 reduced.addEventListener('change',e=>{paused=e.matches;motionChosen=false;updateMotion();});
-window.addEventListener('ziewise:language',()=>{updateMotion();brandScene?.setLabel(document.documentElement.lang==='en'?'Ziewise enterprise AI infrastructure, in cinematic 3D. Drag or use the arrow keys to explore.':'지와이즈 기업 AI 인프라의 3D 공간. 드래그 또는 방향키로 시점을 조절합니다.');refreshHeroView();refreshNeuralPhase();});
+window.addEventListener('ziewise:language',()=>{updateMotion();brandScene?.setLabel(journeyLabel());refreshJourney();refreshHeroView();refreshNeuralPhase();refreshNeuralSolution();});
 window.addEventListener('ziewise:dialog',event=>{dialogOpen=event.detail;mounted.forEach(scene=>scene.setPaused(paused||dialogOpen,{manual:motionChosen}));});
 updateMotion();
 let cameraUpdatePending=false;

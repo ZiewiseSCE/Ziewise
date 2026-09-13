@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700;750;800&amp;family=Noto+Sans+KR:wght@400;500;600;650;700;750;800&amp;display=swap" rel="stylesheet"/>
 <link rel="preload" as="image" href="assets/rack-front-photo-v1.webp" type="image/webp"/>
-<link href="redesign.css?v=20260912-bg1" rel="stylesheet"/><link href="simulator.css?v=20260912-bg1" rel="stylesheet"/><link href="premium.css?v=20260913-shine1" rel="stylesheet"/><link href="photographic.css?v=20260912-photo1" rel="stylesheet"/><link href="section-navigation.css?v=20260913-hero1" rel="stylesheet"/><link href="guided-content.css?v=20260913-stories1" rel="stylesheet"/><link href="credentials.css?v=20260913-fit1" rel="stylesheet"/><link href="secondary-motion.css?v=20260913-motion1" rel="stylesheet"/><link href="brand-hero.css?v=20260913-hero1" rel="stylesheet"/></head>
+<link href="redesign.css?v=20260912-bg1" rel="stylesheet"/><link href="simulator.css?v=20260912-bg1" rel="stylesheet"/><link href="premium.css?v=20260913-shine1" rel="stylesheet"/><link href="photographic.css?v=20260912-photo1" rel="stylesheet"/><link href="section-navigation.css?v=20260913-hero1" rel="stylesheet"/><link href="guided-content.css?v=20260913-stories1" rel="stylesheet"/><link href="credentials.css?v=20260913-fit1" rel="stylesheet"/><link href="secondary-motion.css?v=20260913-motion1" rel="stylesheet"/><link href="brand-hero.css?v=20260913-journey1" rel="stylesheet"/></head>
 <body><div class="reading-progress" aria-hidden="true"></div><a class="skip-link" data-i18n="skip" href="#main">본문으로 바로가기</a>
 <nav class="navbar">
 <a class="logo-link" href="#home">
@@ -44,6 +44,15 @@
 <h1 data-i18n="brand-title">현장의 데이터가,<br/><em>비즈니스의 지능으로.</em></h1>
 <p class="brand-lead" data-i18n="brand-lead">인프라를 이해하는 기술. 스스로 진화하는 AI.<br/>지와이즈는 기업의 시스템과 데이터를 연결하고,<br/>ZiewCore로 현장에 필요한 지능을 구현합니다.</p>
 <div class="brand-actions"><a class="brand-primary" href="#hero"><span data-i18n="brand-core">ZiewCore 알아보기</span><span aria-hidden="true">↗</span></a><a class="brand-secondary" href="#solutions"><span data-i18n="brand-solutions">솔루션 둘러보기</span><span aria-hidden="true">→</span></a></div>
+<div class="brand-journey" role="group" aria-label="Data to business intelligence">
+<span class="brand-journey-kicker" data-i18n="journey-example">작동 예시 / 생산 현장의 품질 검사</span>
+<div class="brand-journey-steps">
+<button data-journey-stage="0" aria-pressed="true"><span>01</span><b data-i18n="journey-capture">현장 감지</b></button>
+<button data-journey-stage="1" aria-pressed="false"><span>02</span><b data-i18n="journey-connect">데이터 연결</b></button>
+<button data-journey-stage="2" aria-pressed="false"><span>03</span><b data-i18n="journey-analyse">AI 분석</b></button>
+<button data-journey-stage="3" aria-pressed="false"><span>04</span><b data-i18n="journey-action">업무 실행</b></button>
+</div><p id="brand-journey-copy"></p>
+</div>
 </div>
 <div class="brand-scene-caption"><span class="brand-status-dot" aria-hidden="true"></span><span>ZIEWCORE / EDGE INTELLIGENCE</span><button class="motion-toggle" aria-pressed="false"><span data-i18n="pause-motion">모션 일시정지</span> Ⅱ</button></div>
 <div class="brand-foundations">
@@ -64,7 +73,9 @@
 <button data-neural-phase="1" aria-pressed="false"><span>02</span><b data-i18n="neural-learn">자가 학습</b></button>
 <button data-neural-phase="2" aria-pressed="false"><span>03</span><b data-i18n="neural-deploy">모델 배포</b></button>
 <button data-neural-phase="3" aria-pressed="false"><span>04</span><b data-i18n="neural-infer">현장 추론</b></button>
-</div><p id="neural-phase-copy" class="neural-phase-copy"></p><div class="hero-footnote"><b>Alive and Evolving.</b><p data-i18n="hero-subtitle">'살아있고 진화한다'는 의미로, ZiewCore의 진보적인 자가 학습(Self-learning) 인프라 특성을 직관적으로 보여줍니다.</p></div>
+</div><p id="neural-phase-copy" class="neural-phase-copy"></p>
+<div class="neural-solution-detail"><p class="neural-solution-kicker" data-i18n="miniature-hint">미니어처를 선택해 솔루션을 살펴보세요</p><h3 id="neural-solution-title">VISION AI · 카메라로 검사·탐지</h3><p id="neural-solution-copy"></p><a href="#simulator" id="neural-solution-link" data-open-scene="vision"><span data-i18n="miniature-explore">이 솔루션 체험하기</span> ↗</a></div>
+<div class="hero-footnote"><b>Alive and Evolving.</b><p data-i18n="hero-subtitle">'살아있고 진화한다'는 의미로, ZiewCore의 진보적인 자가 학습(Self-learning) 인프라 특성을 직관적으로 보여줍니다.</p></div>
 </div><div class="hero-visual" data-view="diagram" data-scene-ready="false"><div aria-label="중앙 신경망과 6개 전문 AI를 연결하는 3D 뇌" aria-busy="true" class="webgl" id="hero-webgl" role="group"><span class="scene-loading">ZiewCore · Neural network</span></div>
 <div class="visual-topline"><span>ZIEWCORE / NEURAL ORCHESTRATION</span><span>01 — 06</span></div>
 <div class="core-labels" id="core-capabilities"><span>VISION AI<small>CV · Detection</small></span><span>NLP<small>LLM · Intent</small></span><span>RPA<small>Auto · Workflow</small></span><span>DATA PLUGIN<small>Stream · ETL</small></span></div>
@@ -690,5 +701,5 @@
         </div>
 </footer>
 <div aria-hidden="true" id="sim-root"></div>
-<script defer="" src="app.js?v=20260913-hero1"></script><script defer="" src="simulator.js?v=20260912-studio1"></script><script src="experience.js?v=20260913-hero1" type="module"></script><script src="enhancements.js?v=20260912-bg1" type="module"></script><script src="section-navigation.js?v=20260913-hero1" type="module"></script><script src="guided-content.js?v=20260913-stories1" type="module"></script><script src="secondary-motion.js?v=20260913-motion1" type="module"></script></body>
+<script defer="" src="app.js?v=20260913-journey1"></script><script defer="" src="simulator.js?v=20260912-studio1"></script><script src="experience.js?v=20260913-journey1" type="module"></script><script src="enhancements.js?v=20260912-bg1" type="module"></script><script src="section-navigation.js?v=20260913-hero1" type="module"></script><script src="guided-content.js?v=20260913-stories1" type="module"></script><script src="secondary-motion.js?v=20260913-motion1" type="module"></script></body>
 </html>

@@ -115,3 +115,71 @@
  .section-pages #hero .hero-content{width:100%}
 }
 @media(prefers-reduced-motion:reduce){.brand-scene canvas,.brand-poster,.brand-primary,.brand-foundations a::after{transition:none}}
+
+/* The story and controls remain readable beside the physical data journey. */
+.brand-copy{padding-top:30px;padding-bottom:25px;width:49%}
+.brand-copy h1{font-size:clamp(36px,3.25vw,59px)}
+.brand-journey{margin-top:28px;max-width:510px}
+.brand-journey-kicker{display:block;color:#8faab6;font-size:9px;letter-spacing:.06em;margin-bottom:11px}
+.brand-journey-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.brand-journey-steps button{position:relative;display:grid;gap:6px;text-align:left;color:#79939f;border:0;border-top:1px solid #344c59;padding:10px 0;min-height:47px}
+.brand-journey-steps button>span{font-size:8px;letter-spacing:.08em}
+.brand-journey-steps button>b{font-size:12px;font-weight:500}
+.brand-journey-steps button[aria-pressed=true]{color:#d5edf0;border-color:#aacfd4}
+.brand-journey-steps button:focus-visible{outline:2px solid #b1d9df;outline-offset:3px}
+#brand-journey-copy{font-size:12px;line-height:1.75;color:#a2bac6;min-height:3.5em;margin-top:7px}
+.neural-domain-labels{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.neural-domain{position:absolute;transform:translate(-50%,-66px);width:156px;padding:66px 4px 6px;border:0;background:transparent;display:grid;gap:3px;text-align:center;pointer-events:auto;line-height:1.5;border-bottom:1px solid transparent}
+.neural-domain strong{font-size:11px;color:#cfdee6;font-weight:600;letter-spacing:.02em}
+.neural-domain>span{font-size:11px;color:#8ba6b6;white-space:nowrap}
+.neural-domain[aria-pressed=true]{border-bottom-color:#94c3ce}
+.neural-domain:hover>span,.neural-domain:focus-visible>span{color:#d0e6ee}
+.neural-domain:focus-visible{outline:1px solid #97c1d1;outline-offset:3px}
+.neural-fallback-solutions{position:absolute;bottom:8px;left:12px;right:12px;z-index:3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.neural-fallback-solutions button{font-size:10px;line-height:1.6;padding:6px;color:#aec7d4;background:#13232eef;border:1px solid #3e5866;min-height:44px}
+.neural-fallback-solutions button[aria-pressed=true]{border-color:#a2cad5}
+.neural-solution-detail{max-width:550px;padding:14px 0 0;border-top:1px solid #3a5360;margin-top:6px}
+.neural-solution-kicker{font-size:9px;color:#8aa5b4;letter-spacing:.04em}
+#neural-solution-title{font-size:15px;color:#d5e5ec;line-height:1.6;margin-top:6px}
+#neural-solution-copy{font-size:12px;line-height:1.8;color:#9fb5c3;margin-top:5px;min-height:3.6em}
+#neural-solution-link{display:inline-block;font-size:11px;color:#bedae4;margin-top:7px;padding:5px 0;border-bottom:1px solid #587684}
+#hero .hero-visual{height:clamp(615px,calc(100dvh - var(--page-nav-height) - 210px),700px)}
+#hero .hero-footnote{margin-top:16px}
+@media(min-width:1101px) and (max-height:850px){
+ .brand-copy{padding-top:12px;padding-bottom:10px}
+ .brand-kicker{margin-bottom:15px}
+ .brand-copy h1{font-size:clamp(33px,3vw,50px)}
+ .brand-lead{margin-top:15px;font-size:13px;line-height:1.8}
+ .brand-actions{margin-top:19px;font-size:12px}
+ .brand-journey{margin-top:21px}
+ .brand-foundations strong{font-size:15px}
+ .brand-foundations a{gap:5px;padding-top:14px}
+ .brand-scene-caption{margin-bottom:13px}
+ .brand-foundations a>span:last-child{font-size:10px}
+}
+@media(min-width:1101px){
+ .section-pages #hero .hero-main{padding-top:24px;padding-bottom:20px}
+ .section-pages #hero .hero-content h1{font-size:clamp(34px,2.8vw,45px);line-height:1.25}
+ .section-pages #hero .hero-product{margin-top:18px;margin-bottom:13px}
+ .section-pages #hero .hero-lead{font-size:14px;line-height:1.8;margin-top:16px}
+ #hero .hero-actions{margin-top:22px}
+ .neural-process{margin-top:17px}
+ .neural-phase-copy{min-height:3.2em;margin-top:7px}
+ #hero .hero-footnote{margin-top:12px;max-width:550px}
+ #hero .hero-footnote p{margin-top:3px}
+}
+@media(max-width:760px),(min-width:761px) and (max-width:1100px) and (orientation:portrait){
+ .brand-copy{width:auto;padding:14px 0 8px}
+ .brand-copy h1{font-size:clamp(31px,7.5vw,49px)}
+ .brand-journey{margin-top:23px;max-width:none}
+ #brand-journey-copy{font-size:12px}
+ .brand-journey-steps button>b{font-size:11px}
+ .brand-scene{height:350px}
+ #hero .hero-visual{height:570px}
+ .neural-domain{width:117px;padding-top:54px;transform:translate(-50%,-54px);gap:2px}
+ .neural-domain strong{font-size:10px}
+ .neural-domain>span{font-size:9px;letter-spacing:-.035em}
+ #neural-solution-link{min-height:40px}
+}
+@media(max-width:380px){.neural-domain{width:101px}.neural-domain>span{font-size:8px}.neural-domain strong{font-size:9px}}
+@media(min-width:761px) and (max-width:1100px) and (orientation:portrait){.brand-scene{height:400px}.section-pages #hero .hero-visual{height:640px}.neural-domain{width:152px}.neural-domain strong,.neural-domain>span{font-size:11px}}

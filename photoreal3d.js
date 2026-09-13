@@ -1,5 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { createRackModules } from './rack-modules3d.js?v=20260912-capabilities1';
+import { createBusinessJourney } from './business-journey3d.js?v=20260913-journey1';
 
 /** Exact perspective fit for bounds expressed relative to the camera's orbit target. */
 export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov = 39) {
@@ -19,7 +20,7 @@ export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov
 }
 
 /** Full-volume, photo-textured racks with optional capability plaques and data paths. */
-export function mountPhotoreal(element, { onReady, onError, onContextLost, capabilities = false, cinematic = false, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
+export function mountPhotoreal(element, { onReady, onError, onContextLost, onStage, capabilities = false, cinematic = false, label = 'Photographic 3D infrastructure. Drag or use the arrow keys to explore all sides.' } = {}) {
   if (!element) return { setPaused() {}, setScrollProgress() {}, setLabel() {}, resetView() {}, dispose() {} };
   let renderer;
   try {
@@ -49,7 +50,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
   scene.fog = new THREE.Fog('#10171b', 10, 21);
   const camera = new THREE.PerspectiveCamera(39, 1, .06, 80);
   const target = new THREE.Vector3(0, 2.15, 0);
-  const defaultOrbit = { azimuth: cinematic ? -.44 : -.49, elevation: cinematic ? .13 : .09 };
+  const defaultOrbit = { azimuth: cinematic ? -.18 : -.49, elevation: cinematic ? .26 : .09 };
   const desired = { ...defaultOrbit, distance: 10 };
   const orbit = { ...desired };
   const geometries = new Set();
@@ -73,6 +74,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
   let lastX = 0;
   let lastY = 0;
   let sceneTime = 0;
+  let lastStage=-1;
   let viewWidth = 1, viewHeight = 1;
 
   const geometry = value => { geometries.add(value); return value; };
@@ -160,6 +162,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
   // Life-size racks in a continuous room: no turntable, floating stage or display plinth.
   const installation = new THREE.Group();
   scene.add(installation);
+  const racks=new THREE.Group();installation.add(racks);
   const allScrews = [];
   const rackHeight = 4.18;
   const rackWidth = 1.39;
@@ -171,7 +174,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
   rowX.forEach((rackX, rackIndex) => {
     const rack = new THREE.Group();
     rack.position.set(rackX, 0, rackIndex === 2 ? -.055 : 0);
-    installation.add(rack);
+    racks.add(rack);
     // Enclosures remain opaque and dimensional from the sides, top and rear.
     for (const side of [-1, 1]) box(rack, .035, rackHeight, rackDepth, side * (rackWidth / 2 - .0175), rackHeight / 2 + .06, 0, black);
     box(rack, rackWidth - .07, rackHeight, .035, 0, rackHeight / 2 + .06, -frontZ + .0175, black);
@@ -241,9 +244,12 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     const transform = new THREE.Object3D();
     points.forEach((point, i) => { transform.position.set(...point); transform.rotation.x = rotation; transform.updateMatrix(); mesh.setMatrixAt(i, transform.matrix); });
     mesh.castShadow = false;
-    scene.add(mesh);
+    racks.add(mesh);
   }
   instances(allScrews, new THREE.CylinderGeometry(.012, .012, .008, 8), aluminium, Math.PI / 2);
+
+  if(cinematic){racks.scale.setScalar(.59);racks.position.set(0,0,-.87);}
+  const journey=cinematic?createBusinessJourney(installation):null;
 
   installation.updateMatrixWorld(true);
   const installationBounds = new THREE.Box3().setFromObject(installation).expandByScalar(.035);
@@ -289,7 +295,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
       vertexShader: 'attribute float phase; varying float vPhase; uniform float pixelRatio; void main(){vPhase=phase;vec4 p=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*p;gl_PointSize=clamp(19.*pixelRatio/-p.z,1.5,4.);}',
       fragmentShader: 'uniform float time; varying float vPhase; void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;float pulse=.45+.55*pow(max(0.,sin(time*1.8+vPhase*2.7)),5.);gl_FragColor=vec4(mix(vec3(.38,.62,.60),vec3(.84,.91,.71),pulse),smoothstep(.5,.1,r)*pulse);}'
     }));
-    scene.add(new THREE.Points(leds, statusLamps));
+    racks.add(new THREE.Points(leds, statusLamps));
     key.intensity = 2.2;
     edge.color.set('#9abdc9'); edge.intensity = 1.8;
     scene.environmentIntensity = 1.05;
@@ -318,6 +324,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
   function render(snap = false) {
     if (disposed || graphicsLost) return;
     cameraUpdate(snap);
+    if(journey){const stage=Math.floor(sceneTime/6)%4;journey.update(sceneTime,stage);frontMaterial.emissiveIntensity=stage===2?.22:.12;if(stage!==lastStage){lastStage=stage;onStage?.(stage);}}
     moduleDisplay?.update(camera, sceneTime, viewWidth, viewHeight, orbit.distance);
     if (statusLamps) statusLamps.uniforms.time.value = sceneTime;
     if (dirtyShadows) { renderer.shadowMap.needsUpdate = true; dirtyShadows = false; }
@@ -333,7 +340,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     sceneTime += delta;
     if (!pointerActive && now - lastInteraction >= 3000) {
       if (cinematic) {
-        desired.azimuth = defaultOrbit.azimuth + Math.sin(sceneTime * .12) * .19;
+        desired.azimuth = defaultOrbit.azimuth + Math.sin(sceneTime * .12) * .09;
         desired.elevation = defaultOrbit.elevation + Math.sin(sceneTime * .075) * .028;
       } else desired.azimuth += delta * Math.PI * 2 / 60;
     }
@@ -461,7 +468,8 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
     // The installation has its own orbit; scrolling does not interrupt its framing.
     setScrollProgress() {},
     resetView,
-    setLabel(value) { label = value || ''; canvas.setAttribute('aria-label', label); },
+    setStage(stage){sceneTime=THREE.MathUtils.clamp(Math.trunc(stage),0,3)*6;lastStage=-1;render(true);},
+    setLabel(value) { label = value || ''; canvas.setAttribute('aria-label', label);journey?.setLanguage(); },
     dispose() {
       if (disposed) return;
       disposed = true;
@@ -480,6 +488,7 @@ export function mountPhotoreal(element, { onReady, onError, onContextLost, capab
       canvas.removeEventListener('webglcontextrestored', contextRestored);
       geometries.forEach(item => item.dispose()); materials.forEach(item => item.dispose()); textures.forEach(item => item.dispose());
       moduleDisplay?.dispose();
+      journey?.dispose();
       environment?.dispose();
       renderer.dispose(); renderer.forceContextLoss(); canvas.remove();
     },
