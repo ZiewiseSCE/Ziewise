@@ -28,18 +28,18 @@ const copy = {
    'Distributed generation · ESS operations · Charging infrastructure','Connect generation and demand signals with asset coordination and transaction records.']
  },
  commerce: {
-  ko:['M-Pulse · 체험에서 구매 의사결정까지','제품 촬영 장치와 회전하는 제품, 커머스 화면은 디지털 상품 체험과 고객 반응 분석의 관계를 표현합니다.',[
-   ['상품 체험','제품의 형태와 특징을 디지털 환경에서 살펴봅니다. AR 가상 체험과 페이스 트래킹·톤 매칭으로 이어지는 접점을 구성합니다.'],
+  ko:['M-Pulse · D2C Commerce AI','브랜드 자사몰과 모바일 판매 채널, 고객 분석 화면을 통해 고객 행동이 개인화 추천과 캠페인으로 이어지는 과정을 보여줍니다.',[
+   ['자사 판매 채널','브랜드가 고객에게 직접 판매하는 자사몰과 모바일 채널에서 탐색·상품 반응을 수집합니다. AR 가상 체험과 페이스 트래킹·톤 매칭은 상품 경험을 보완하는 기능입니다.'],
    ['행동 분석','탐색, 체험, 장바구니와 이탈 신호를 함께 읽어 고객이 어느 단계에서 망설이는지 분석합니다.'],
    ['개인화 액션','고객 행동과 운영 정책에 따라 추천이나 쿠폰 등 적절한 액션을 연결합니다. 체험과 구매 흐름이 자연스럽게 이어지도록 설계합니다.'],
    ['반응 비교','캠페인과 A/B 테스트의 반응을 비교하고 다음 운영에 반영합니다. 현장 데이터로 효과를 확인하는 과정입니다.']],
-   '브랜드 D2C · AR 상품 체험 · 개인화 캠페인','상품 체험과 행동 데이터를 연결해 고객별 구매 여정을 구성합니다.'],
-  en:['M-Pulse · From product experience to purchase decisions','The capture rig, rotating product and commerce display connect digital product experiences with customer behavior.',[
-   ['Experience products','Explore product shape and features digitally, with touchpoints for AR try-on, face tracking and tone matching.'],
+   '브랜드 D2C · 고객 행동 분석 · 개인화 캠페인','자사 판매 채널의 고객 행동을 분석하고 추천·캠페인·이탈 대응으로 연결합니다.'],
+  en:['M-Pulse · D2C Commerce AI','A brand storefront, mobile channel and customer analytics display show how behaviour signals inform recommendations and campaigns.',[
+   ['Direct sales channels','Gather browsing and product-response signals from a brand’s own web and mobile channels. AR try-on, face tracking and tone matching complement the product experience.'],
    ['Understand behavior','Analyze browsing, try-on, cart and exit signals to identify where a customer hesitates.'],
    ['Personalize actions','Connect recommendations or offers to behavior and campaign rules so experience and purchase flow together.'],
    ['Compare responses','Compare campaigns and A/B test responses to guide the next iteration. Evaluate impact using actual business data.']],
-   'Brand D2C · AR experiences · Personalized campaigns','Connect product experiences and behavior signals throughout the customer journey.']
+   'Brand D2C · Customer analytics · Personalized campaigns','Connect behaviour in direct sales channels with recommendations, campaigns and retention actions.']
  },
  office: {
   ko:['SIGMING · 문서를 읽고, 규정을 확인하고, 업무로','스캐너와 검증 화면은 영수증이나 문서가 구조화된 업무 데이터로 바뀌는 과정을 보여줍니다.',[

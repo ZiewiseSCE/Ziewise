@@ -1,4 +1,4 @@
-import { mountScene } from './scene3d.js?v=20260913-stories1';
+import { mountScene } from './scene3d.js?v=20260913-d2c1';
 
 function initialize() {
  if(!window.ZiewisePages){window.addEventListener('ziewise:pagechange',initialize,{once:true});return;}

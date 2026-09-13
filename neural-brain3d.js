@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.js';
-import {createSolutionMiniature, solutionMiniatures} from './solution-miniatures3d.js?v=20260913-mini1';
+import {createSolutionMiniature, solutionMiniatures} from './solution-miniatures3d.js?v=20260913-d2c1';
 
 /** A dimensional neural-brain concept: folded hemispheres, fibers, and six domains. */
 export function mountNeuralBrain(element, { onReady, onError, onContextLost, onPhase, onSolution, label = 'ZiewCore neural brain and six specialist AIs' } = {}) {

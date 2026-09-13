@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.js';
-import {createSolutionMiniature} from './solution-miniatures3d.js?v=20260913-mini1';
+import {createSolutionMiniature} from './solution-miniatures3d.js?v=20260913-d2c1';
 
 /** A physical inspection example: field → core → operational decision → feedback. */
 export function createBusinessJourney(parent) {

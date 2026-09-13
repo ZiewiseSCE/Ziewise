@@ -1,4 +1,5 @@
 import * as THREE from './vendor/three.module.js';
+import {createSolutionMiniature} from './solution-miniatures3d.js?v=20260913-d2c1';
 
 /**
  * Ziewise — small, self-contained, procedural WebGL product illustrations.
@@ -13,7 +14,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     core: 'Connected intelligence: precision rack servers, edge computing hardware and physical network connections',
     vision: 'Machine vision: products passing through a camera inspection station',
     energy: 'Renewable energy: wind and solar generation connected to storage',
-    commerce: 'Immersive commerce: studio product capture with a precision headphone turntable and commerce display',
+    commerce: 'M-Pulse D2C Commerce AI: a brand storefront, customer behaviour signals, personalised recommendations and campaigns',
     office: 'Document intelligence: a professional document scanner and a verification workstation',
     print: 'Secure printing: a protected printer releasing verified documents',
     observer: 'Network observability: connected infrastructure and moving signal paths',
@@ -410,15 +411,8 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
       ctx.font = '500 47px Arial'; ctx.fillStyle = '#d3dfe5'; ctx.fillText('99.9%', 45, 550); ctx.fillText('ACTIVE', 408, 550); ctx.fillText('45 ms', 763, 550);
       ctx.fillStyle = '#8da1ad'; ctx.font = '19px Arial'; ctx.fillText('AVAILABILITY', 46, 588); ctx.fillText('SYSTEM STATUS', 409, 588); ctx.fillText('EDGE RESPONSE', 764, 588);
     } else if (title.includes('COMMERCE')) {
-      ctx.fillStyle = '#192930'; ctx.fillRect(40, 143, 431, 443);
-      ctx.strokeStyle = '#a8b7bf'; ctx.lineWidth = 23; ctx.beginPath(); ctx.arc(253, 325, 118, Math.PI, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = '#66818f'; ctx.fillRect(113, 313, 54, 145); ctx.fillRect(340, 313, 54, 145);
-      ctx.fillStyle = '#d3dfe5'; ctx.font = '36px Arial'; ctx.fillText('STUDIO HEADPHONES', 521, 218);
-      ctx.fillStyle = '#8da6b2'; ctx.font = '22px Arial'; ctx.fillText('Graphite / precision audio', 522, 266);
-      ctx.fillText('Interactive 360° product view', 522, 316);
-      for (const [index, color] of ['#70828b', '#b6b9b6', '#334a57'].entries()) { ctx.fillStyle = color; ctx.beginPath(); ctx.arc(545 + index * 78, 389, 24, 0, Math.PI * 2); ctx.fill(); }
-      ctx.fillStyle = '#314d5a'; ctx.fillRect(522, 466, 425, 65);
-      ctx.fillStyle = '#cbdde1'; ctx.font = '24px Arial'; ctx.fillText('EXPLORE PRODUCT', 597, 508);
+      ctx.fillStyle='#d3dfe5';ctx.font='36px Arial';ctx.fillText('BRAND STORE / D2C',40,195);
+      for(let i=0;i<3;i++){const x=40+i*320;ctx.fillStyle='#203944';ctx.fillRect(x,240,288,265);ctx.fillStyle='#a6bfc8';ctx.fillRect(x+82,292,124,155);ctx.fillStyle='#75a5ae';ctx.fillRect(x,532,288,40);}
     } else {
       ctx.fillStyle = '#263a45'; ctx.fillRect(56, 146, 283, 394);
       ctx.fillStyle = '#b5c2c5'; ctx.fillRect(86, 168, 217, 345);
@@ -586,35 +580,10 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
 
   function commerceScene(parent) {
     platform(parent, 6, 4.5);
-    const stand = new THREE.Group(); stand.position.set(-0.60, 0, 0.2); stand.userData.moving = true; parent.add(stand);
-    cylinder(stand, 1.09, 0.09, [0, 0.015, 0], mats.ink);
-    cylinder(stand, 1.07, 0.095, [0, 0.11, 0], mats.slate);
-    cylinder(stand, 1.04, 0.025, [0, 0.174, 0], mats.navy);
-    cylinder(stand, 0.048, 2.13, [0, 1.25, -0.20], mats.chrome);
-    box(stand, 0.46, 0.08, 0.38, [0, 2.32, -0.20], mats.ink, 0.032);
-    const product = new THREE.Group(); product.position.set(0, 1.65, 0); stand.add(product);
-    const band = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.075, 12, 64, Math.PI), mats.leather); band.scale.z = 1.9; product.add(band);
-    const trim = new THREE.Mesh(new THREE.TorusGeometry(0.738, 0.012, 8, 64, Math.PI), mats.chrome); trim.position.z = 0.14; product.add(trim);
-    for (const x of [-0.715, 0.715]) {
-      box(product, 0.065, 0.48, 0.057, [x, -0.12, 0], mats.chrome, 0.008);
-      const cup = new THREE.Group(); cup.position.set(x, -0.53, 0); cup.rotation.z = Math.sign(x) * -0.10; product.add(cup);
-      box(cup, 0.22, 0.73, 0.58, [Math.sign(x) * 0.09, 0, 0], mats.navy, 0.105);
-      box(cup, 0.09, 0.68, 0.535, [Math.sign(x) * 0.222, 0, 0], mats.slate, 0.095);
-      box(cup, 0.14, 0.63, 0.47, [-Math.sign(x) * 0.09, 0, 0], mats.leather, 0.105);
-      box(cup, 0.06, 0.41, 0.28, [-Math.sign(x) * 0.164, 0, 0], mats.ink, 0.07);
-      led(cup, [Math.sign(x) * 0.09, -0.21, 0.283], 0.032, mats.green);
-      for (let j = 0; j < 3; j++) box(cup, 0.028, 0.004, 0.042, [Math.sign(x) * 0.23, -0.17 + j * 0.059, 0.258], mats.ink, 0.002);
-    }
-    label(stand, 'STUDIO CAPTURE  /  360°', [0, 0.096, 1.088], 1.21, 0.058);
-    // Physical portrait commerce terminal replaces hovering interface cards.
-    const terminal = new THREE.Group(); terminal.position.set(1.78, 0.0, -0.14); terminal.rotation.y = -0.26; parent.add(terminal);
-    box(terminal, 0.78, 0.055, 0.79, [0, 0.005, 0], mats.navy, 0.027);
-    box(terminal, 0.095, 0.83, 0.07, [0, 0.435, -0.19], mats.chrome, 0.008);
-    screen(terminal, [0, 1.39, 0], 1.65, 1.07, 'SPATIAL COMMERCE', false);
-    cameraUnit(parent, [-2.26, 1.13, -0.30], 1.15);
-    cylinder(parent, 0.032, 0.98, [-2.26, 0.54, -0.30], mats.chrome);
-    for (let i = 0; i < 3; i++) rod(parent, [-2.26, 0.49, -0.3], [-2.26 + Math.sin(i * 2.094) * 0.36, 0, -0.30 + Math.cos(i * 2.094) * 0.36], 0.018, mats.navy);
-    animations.push(t => { stand.rotation.y = Math.sin(t * 0.20) * 0.15; });
+    const commerce=createSolutionMiniature('commerce');
+    commerce.root.scale.setScalar(2.8);commerce.root.userData.moving=true;parent.add(commerce.root);
+    label(parent,'M-PULSE / D2C COMMERCE AI',[0,.04,1.64],2.2,.09,'#b4cdd7');
+    animations.push(t=>commerce.update(t));
   }
 
   function documentPage(parent, position, scale = 1) {

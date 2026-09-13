@@ -1,8 +1,8 @@
-import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stories1';
-import { mountScene } from './scene3d.js?v=20260913-stories1';
-import { mountPhotoreal } from './photoreal3d.js?v=20260913-journey1';
-import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-mini1';
-import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-mini1';
+import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-d2c1';
+import { mountScene } from './scene3d.js?v=20260913-d2c1';
+import { mountPhotoreal } from './photoreal3d.js?v=20260913-d2c1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-d2c1';
+import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches;

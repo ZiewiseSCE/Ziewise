@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import { createRackModules } from './rack-modules3d.js?v=20260912-capabilities1';
-import { createBusinessJourney } from './business-journey3d.js?v=20260913-journey1';
+import { createBusinessJourney } from './business-journey3d.js?v=20260913-d2c1';
 
 /** Exact perspective fit for bounds expressed relative to the camera's orbit target. */
 export function fitRackDistance(corners, azimuth, elevation, aspect, verticalFov = 39) {

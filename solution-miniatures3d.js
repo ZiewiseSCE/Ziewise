@@ -3,7 +3,7 @@ import * as THREE from './vendor/three.module.js';
 export const solutionMiniatures = [
   { kind: 'vision', name: 'VISION AI', ko: '카메라로 검사·탐지', en: 'Visual inspection', description: ['카메라가 제품과 현장을 살펴 객체·행동·이상 징후를 탐지합니다. 모호한 사례는 다음 학습으로 연결됩니다.', 'Cameras inspect products and operations to detect objects, behaviour and anomalies. Uncertain cases feed the next learning cycle.'] },
   { kind: 'energy', name: 'NEURO-VPP', ko: '발전·저장·전력 운영', en: 'Energy orchestration', description: ['태양광·풍력·ESS를 연결하고, 수요 예측과 전력 신호를 바탕으로 분산 에너지 자원을 운영합니다.', 'Connect solar, wind and storage, then coordinate distributed energy resources using demand forecasts and power signals.'] },
-  { kind: 'commerce', name: 'M-PULSE', ko: '가상 체험·구매 전환', en: 'Virtual try-on · Commerce', description: ['상품을 가상으로 체험하고 고객 행동을 분석해, 개인화된 추천과 구매 전환으로 연결합니다.', 'Combine virtual product experiences with behaviour analysis to support personalised recommendations and conversion.'] },
+  { kind: 'commerce', name: 'M-PULSE', ko: 'D2C Commerce AI', en: 'D2C Commerce AI', description: ['브랜드의 자사 판매 채널에서 고객 행동을 분석하고, 개인화 추천·캠페인·이탈 대응을 연결하는 커머스 AI입니다.', 'Commerce AI for a brand’s direct-to-consumer channels, connecting customer behaviour analysis with personalised recommendations, campaigns and retention.'] },
   { kind: 'office', name: 'SIGMING', ko: '문서·정산 업무 자동화', en: 'Document automation', description: ['영수증과 업무 문서에서 정보를 읽고 규정을 확인해, 검토·승인·정산 과정을 자동화합니다.', 'Extract information from receipts and documents, check policies and automate review, approval and expense workflows.'] },
   { kind: 'print', name: 'ZIEWPRINT', ko: '인증 후 안전한 출력', en: 'Authenticated printing', description: ['사용자 인증과 출력 승인을 거쳐 문서를 내보내고, 워터마크와 이력 관리로 인쇄 보안을 강화합니다.', 'Release documents after authentication and approval, with watermarks and print history supporting document security.'] },
   { kind: 'observer', name: 'OBSERVER', ko: '서버·서비스 이상 관제', en: 'Service observability', description: ['서버·네트워크·애플리케이션의 상태와 성능을 함께 살펴, 이상 징후와 운영 이슈를 파악합니다.', 'Monitor server, network and application health together to identify anomalies and operational issues.'] },
@@ -25,8 +25,12 @@ export function createSolutionMiniature(kind) {
     const c=document.createElement('canvas');c.width=512;c.height=320;const ctx=c.getContext('2d');
     ctx.fillStyle='#10232e';ctx.fillRect(0,0,512,320);ctx.fillStyle='#75a3b4';ctx.fillRect(24,23,132,9);ctx.fillStyle='#263f4c';ctx.fillRect(24,50,464,2);
     if(style==='shop'){
-      ctx.fillStyle='#293f4d';ctx.fillRect(24,74,228,221);ctx.strokeStyle='#bfd6df';ctx.lineWidth=16;ctx.beginPath();ctx.arc(140,165,60,Math.PI,0);ctx.stroke();ctx.fillStyle='#7794a4';ctx.fillRect(73,158,28,66);ctx.fillRect(180,158,28,66);
-      ctx.fillStyle='#d2e4e9';ctx.fillRect(280,91,174,11);ctx.fillStyle='#648b9c';for(let i=0;i<3;i++)ctx.fillRect(280,123+i*24,140-i*22,7);ctx.fillStyle='#528d99';ctx.fillRect(280,235,175,40);
+      ctx.fillStyle='#10232e';ctx.fillRect(18,12,476,35);ctx.fillStyle='#d4e5e9';ctx.font='600 22px Arial';ctx.fillText('BRAND STORE',24,36);
+      ctx.fillStyle='#294956';ctx.fillRect(24,67,464,59);ctx.fillStyle='#b9d5db';ctx.font='18px Arial';ctx.fillText('SELECTED FOR YOU',40,103);
+      for(let i=0;i<3;i++){const x=24+i*158;ctx.fillStyle='#263d49';ctx.fillRect(x,143,144,111);ctx.fillStyle=['#a0b5bd','#719b9d','#b9b6a8'][i];ctx.fillRect(x+44,166,56,66);ctx.strokeStyle='#d5e0e2';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x+72,169,16,Math.PI,0);ctx.stroke();ctx.fillStyle='#8faebb';ctx.fillRect(x,267,99,5);ctx.fillStyle='#528d99';ctx.fillRect(x,284,144,19);}
+    }else if(style==='commerce-data'){
+      ctx.fillStyle='#10232e';ctx.fillRect(18,12,476,35);ctx.fillStyle='#c7e0e4';ctx.font='600 21px Arial';ctx.fillText('M-PULSE / D2C AI',24,36);
+      for(let i=0;i<3;i++){ctx.fillStyle='#244451';ctx.fillRect(24,72+i*75,464,59);ctx.fillStyle='#a2c8cc';ctx.font='20px Arial';ctx.fillText(['CUSTOMER SIGNALS','RECOMMENDATIONS','CAMPAIGNS'][i],40,108+i*75);ctx.fillStyle='#66a4af';ctx.fillRect(422,88+i*75,44,25);}
     }else if(style==='document'){
       ctx.fillStyle='#c8d8df';ctx.fillRect(30,73,160,220);ctx.fillStyle='#46606e';for(let i=0;i<7;i++)ctx.fillRect(48,100+i*23,120-(i%3)*22,5);
       for(let i=0;i<3;i++){ctx.fillStyle='#244754';ctx.fillRect(236,85+i*68,233,48);ctx.strokeStyle='#a6d4d7';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(257,108+i*68);ctx.lineTo(266,117+i*68);ctx.lineTo(283,96+i*68);ctx.stroke();}
@@ -58,11 +62,13 @@ export function createSolutionMiniature(kind) {
     for(let i=0;i<3;i++){const blade=new THREE.Group();blade.rotation.z=i*Math.PI*2/3;turbine.add(blade);const fin=box(.045,.36,.014,0,.2,.06,paper,blade);fin.rotation.z=-.15;}animate.push(t=>turbine.rotation.z=t*.65);
     box(.33,.69,.35,.55,.38,-.04,paper);box(.26,.26,.02,.55,.47,.147,dark);for(let i=0;i<4;i++)box(.025,.1,.02,.46+i*.06,.47,.165,light);box(.23,.012,.02,.55,.72,.15,graphite);
   }else if(kind==='commerce'){
-    cyl(.36,.055,-.43,.06,.13,metal);const product=new THREE.Group();product.position.set(-.43,.13,.13);root.add(product);
-    const band=mesh(new THREE.TorusGeometry(.23,.025,10,32,Math.PI),metal,0,.3,0,product);band.rotation.z=0;
-    for(const x of [-.225,.225]){box(.085,.2,.13,x,.23,0,graphite,product);box(.035,.17,.1,x+(x<0?.035:-.035),.23,0,dark,product);}animate.push(t=>product.rotation.y=Math.sin(t*.6)*.55);
-    box(.08,.35,.06,.4,.25,-.16,metal);box(.5,.035,.27,.4,.06,-.12,metal);screen(.73,.59,.4,.7,-.14,'shop');
-    const phone=new THREE.Group();phone.position.set(-.05,.23,.42);phone.rotation.set(-.12,-.2,0);root.add(phone);box(.19,.36,.028,0,0,0,metal,phone);box(.16,.3,.008,0,0,.02,teal,phone);
+    box(.65,.035,.4,-.17,.04,-.06,metal);box(.065,.37,.07,-.17,.23,-.13,metal);const store=screen(.94,.64,-.17,.72,-.13,'shop');box(.63,.025,.2,-.17,.065,.29,graphite);
+    const phone=new THREE.Group();phone.position.set(-.83,.39,.23);phone.rotation.set(-.08,.16,0);root.add(phone);screen(.24,.48,0,0,0,'shop',phone);box(.29,.025,.2,-.83,.06,.23,metal);
+    box(.34,.025,.25,.63,.04,-.17,metal);box(.04,.23,.04,.63,.15,-.2,metal);screen(.39,.57,.63,.56,-.2,'commerce-data');
+    const bag=box(.23,.27,.14,.39,.2,.37,paper);mesh(new THREE.TorusGeometry(.065,.009,8,24,Math.PI),metal,0,.135,0,bag);box(.14,.025,.005,0,0,.075,teal,bag);
+    const route=[[-.83,.12,.32],[-.42,.12,.5],[.15,.12,.5],[.64,.27,-.15]];path(route);const pulse=mesh(new THREE.SphereGeometry(.021,10,8),light,0,.12,.5);
+    const base=store.ctx.getImageData(0,0,512,320);let selected=-1;
+    animate.push(t=>{const phase=Math.floor(t/3)%3;if(phase!==selected){selected=phase;store.ctx.putImageData(base,0,0);store.ctx.strokeStyle='#b2e0e4';store.ctx.lineWidth=4;store.ctx.strokeRect(26+selected*158,145,140,107);store.texture.needsUpdate=true;}const x=(t*.3)%1;pulse.position.set(-.83+x*1.47,.12,.4);});
   }else if(kind==='office'){
     box(1.6,.07,.7,0,.42,0,metal);for(const x of [-.67,.67])for(const z of [-.25,.25])box(.045,.4,.045,x,.2,z,graphite);
     box(.53,.16,.39,-.46,.53,.05,paper);const lid=box(.54,.035,.39,-.46,.66,-.04,graphite);lid.rotation.x=-.36;
