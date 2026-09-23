@@ -15,8 +15,8 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
-  const scene=new T.Scene();scene.background=new T.Color('#0b1115');
-  scene.fog=new T.Fog('#0b1115',18,40);
+  const scene=new T.Scene();scene.background=new T.Color('#f2f6f9');
+  scene.fog=new T.Fog('#f2f6f9',14,32);
   const camera=new T.PerspectiveCamera(35,1,.08,80);
   const resources=new Set(),keep=r=>(resources.add(r),r);
   const g=r=>keep(r), m=r=>keep(r);
@@ -61,17 +61,27 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   let environment;
   function makeEnvironment(){environment?.dispose();const generator=new T.PMREMGenerator(renderer);environment=generator.fromScene(environmentScene,.06,.1,50);scene.environment=environment.texture;generator.dispose();}
   makeEnvironment();
-  scene.add(new T.HemisphereLight('#fff1da','#142038',1.0));
+  scene.add(new T.HemisphereLight('#f4faff','#879da9',1.2));
   const key=new T.DirectionalLight('#fff1d9',2.8);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.015;key.shadow.radius=3;scene.add(key);
   const rim=new T.DirectionalLight('#9fc8ff',2.1);rim.position.set(4,4,-5);scene.add(rim);
   const warm=new T.DirectionalLight('#ffb76a',1.05);warm.position.set(-6,2,-2);scene.add(warm);
-  const floor=mesh(scene,g(new T.PlaneGeometry(100,100)),standard('#303239',.08,.57),[0,-.31,0]);floor.rotation.x=-Math.PI/2;
-  const wall=standard('#1a2130',.18,.65),wallEdge=standard('#364666',.28,.48);
-  // Architectural scale and long softbox reflections anchor every shot in the same studio.
-  for(let i=-5;i<=5;i++){
-    box(scene,[.018,9,.035],[i*2.1,4,-6],wallEdge);
-    box(scene,[2.04,9,.07],[i*2.1+1.05,4,-6.08],wall);
-  }
+  const daylight=standard('#d9e4eb',.02,.62);
+  const prismTime={value:0},prismFocus={value:0};
+  // Slow spectral caustics follow the film clock, including pause and reduced motion.
+  daylight.onBeforeCompile=shader=>{
+    shader.uniforms.prismTime=prismTime;shader.uniforms.prismFocus=prismFocus;
+    shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 atriumPosition;').replace('#include <begin_vertex>','#include <begin_vertex>\natriumPosition=(modelMatrix*vec4(position,1.0)).xyz;');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 atriumPosition;\nuniform float prismTime;\nuniform float prismFocus;').replace('#include <color_fragment>',`#include <color_fragment>
+      vec2 q=atriumPosition.xz*vec2(.37,.63)+vec2(.8+sin(prismTime*.06)*.22,.9);
+      float r=length(q),w=mix(.23,.12,prismFocus);
+      float a=exp(-pow((r-1.7)/w,2.0)),b=exp(-pow((r-1.91)/w,2.0)),c=exp(-pow((r-2.1)/w,2.0));
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.35,.79,.9),a*.20);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.64,.50,.87),b*.16);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.98,.76,.39),c*.13);
+    `);
+  };
+  daylight.customProgramCacheKey=()=> 'atrium-caustics-v1';
+  const floor=mesh(scene,g(new T.PlaneGeometry(100,100)),daylight,[0,-.31,0]);floor.rotation.x=-Math.PI/2;
   const acts=Array.from({length:7},()=>group());
   const boltGeo=g(new T.CylinderGeometry(.055,.055,.025,6));
   function bolts(parent,x,z,y){for(const sx of [-1,1])for(const sz of [-1,1])mesh(parent,boltGeo,brushed,[x*sx,y,z*sz]);}
@@ -272,6 +282,7 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   ];
   function updateScene(){
     const f=storyFrame(time),p=f.progress,stage=f.chapter;
+    prismTime.value=time;prismFocus.value=(stage+p)/7;
     acts.forEach((act,i)=>{act.visible=i===stage;});
     // Brief camera moves between composed shots; never a fast spin or flashing transition.
     const shot=shots[stage],e=T.MathUtils.smoothstep(p,0,1);

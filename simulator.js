@@ -183,7 +183,7 @@
         const session=++twinSession;
         const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
         twinPaused=document.documentElement.classList.contains('motion-paused')||motionPreference.matches;
-        import('./simulator3d.js?v=20260912-studio1').then(({mountSimulation})=>{
+        import('./simulator3d.js?v=20260924-atrium1').then(({mountSimulation})=>{
             if(!isOpen||session!==twinSession||!host.isConnected)return;
             digitalTwin=mountSimulation(host,{industry:state.industry,systems:state.systems,phase:state.step,reducedMotion:twinPaused});
             digitalTwin.setPaused(twinPaused,{manual:false});syncTwin();

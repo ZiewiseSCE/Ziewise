@@ -1,7 +1,7 @@
-import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stage1';
-import { mountScene } from './scene3d.js?v=20260913-stage1';
-import { mountLearningHero } from './learning-hero.js?v=20260924-color1';
-import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-d2c1';
+import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260924-atrium1';
+import { mountScene } from './scene3d.js?v=20260924-atrium1';
+import { mountLearningHero } from './learning-hero.js?v=20260924-atrium1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-atrium1';
 import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -127,7 +127,9 @@ function updateMotion(){
 document.addEventListener('click',e=>{if(e.target.closest('.motion-toggle')){paused=!paused;motionChosen=true;updateMotion();}});
 reduced.addEventListener('change',e=>{paused=e.matches;motionChosen=false;updateMotion();});
 window.addEventListener('ziewise:language',()=>{updateMotion();brand.setLanguage();refreshHeroView();refreshNeuralPhase();refreshNeuralSolution();});
-window.addEventListener('ziewise:dialog',event=>{dialogOpen=event.detail;mounted.forEach(scene=>scene.setPaused(paused||dialogOpen,{manual:motionChosen}));});
+function syncAtrium(){document.documentElement.classList.toggle('atrium-still',document.hidden||dialogOpen);}
+document.addEventListener('visibilitychange',syncAtrium);syncAtrium();
+window.addEventListener('ziewise:dialog',event=>{dialogOpen=event.detail;syncAtrium();mounted.forEach(scene=>scene.setPaused(paused||dialogOpen,{manual:motionChosen}));});
 updateMotion();
 let cameraUpdatePending=false;
 function updateCameras(){

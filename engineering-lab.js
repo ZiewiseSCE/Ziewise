@@ -1,5 +1,5 @@
-import {mountScene} from './scene3d.js?v=20260913-lab1';
-import {createEngineeringModel} from './engineering-models3d.js?v=20260913-lab1';
+import {mountScene} from './scene3d.js?v=20260924-atrium1';
+import {createEngineeringModel} from './engineering-models3d.js?v=20260924-atrium1';
 
 const catalog=[
  {id:'verify',name:['배포 전 검증','Validate before release'],value:['문제가 있는 모델은 운영에 들어오지 않도록.','Keep an unready model out of production.'],tag:'01 / RELEASE CONFIDENCE',source:'sAI',

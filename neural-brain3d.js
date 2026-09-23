@@ -17,7 +17,7 @@ export function mountNeuralBrain(element, { onReady, onError, onContextLost, onP
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.15;
-  const scene = new THREE.Scene(); scene.background = new THREE.Color('#0d171e');
+  const scene = new THREE.Scene(); scene.background = new THREE.Color('#edf3f7');
   const camera = new THREE.PerspectiveCamera(36, 1, .1, 70);
   const brain = new THREE.Group(); scene.add(brain);
   brain.scale.setScalar(.7);

@@ -1,5 +1,5 @@
-import { mountScene } from './scene3d.js?v=20260913-stage1';
-import { industryScenarios, createApplicationModel } from './industry-scenarios3d.js?v=20260913-stage1';
+import { mountScene } from './scene3d.js?v=20260924-atrium1';
+import { industryScenarios, createApplicationModel } from './industry-scenarios3d.js?v=20260924-atrium1';
 
 function initialize() {
  if(!window.ZiewisePages){window.addEventListener('ziewise:pagechange',initialize,{once:true});return;}

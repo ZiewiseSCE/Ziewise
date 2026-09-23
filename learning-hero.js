@@ -1,4 +1,4 @@
-import {mountLearningCinema} from './deep-learning-cinema.js?v=20260924-color1';
+import {mountLearningCinema} from './deep-learning-cinema.js?v=20260924-atrium1';
 import {STORY_CHAPTERS,STORY_DURATION,storyFrame} from './deep-learning-story.js?v=20260923-dl1';
 import {mountHeroROI} from './hero-roi.js?v=20260923-dl1';
 
@@ -12,7 +12,7 @@ export function mountLearningHero({getMotion}){
   function refreshStage(index=stage){
     const changed=index!==stage;
     stage=index;const i=en()?1:0,c=STORY_CHAPTERS[stage];
-    if(changed&&!externalPaused&&!matchMedia('(prefers-reduced-motion: reduce)').matches)host.animate([{filter:'brightness(.5) blur(2px)'},{filter:'brightness(1) blur(0px)'}],{duration:650,easing:'ease-out'});
+    if(changed&&!externalPaused&&!matchMedia('(prefers-reduced-motion: reduce)').matches)host.animate([{opacity:.6,filter:'blur(2px)'},{opacity:1,filter:'blur(0px)'}],{duration:650,easing:'ease-out'});
     section.dataset.journeyStage=stage;
     document.querySelector('#learning-chapter').textContent=c.tag;
     document.querySelector('#learning-title').textContent=c.title[i];

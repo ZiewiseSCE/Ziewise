@@ -206,7 +206,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     photovoltaic: new THREE.MeshPhysicalMaterial({ color: '#14222e', metalness: 0.65, roughness: 0.21, clearcoat: 0.9 }),
   };
   const sharedMaterials = new Set(Object.values(mats));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), studioFloor ? new THREE.ShadowMaterial({color:'#00050a',opacity:.32}) : new THREE.MeshStandardMaterial({ color: '#090d12', roughness: 0.84, metalness: 0.05 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), studioFloor ? new THREE.ShadowMaterial({color:'#294a62',opacity:.19}) : new THREE.MeshStandardMaterial({ color: sceneBackground, roughness: 0.84, metalness: 0.02 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.075;
   floor.receiveShadow = false;
