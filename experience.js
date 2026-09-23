@@ -1,7 +1,7 @@
 import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260924-titanium1';
 import { mountScene } from './scene3d.js?v=20260924-titanium1';
-import { mountLearningHero } from './learning-hero.js?v=20260924-softmetal1';
-import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-titanium1';
+import { mountLearningHero } from './learning-hero.js?v=20260924-petrol1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-petrol1';
 import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
