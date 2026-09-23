@@ -1,6 +1,6 @@
 import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260913-stage1';
 import { mountScene } from './scene3d.js?v=20260913-stage1';
-import { mountPhotoreal } from './photoreal3d.js?v=20260913-d2c1';
+import { mountLearningHero } from './learning-hero.js?v=20260923-dl1';
 import { mountNeuralBrain } from './neural-brain3d.js?v=20260913-d2c1';
 import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
 
@@ -98,53 +98,8 @@ mounted.push(hero);
 const heroLoader=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting)){startHero();heroLoader.disconnect();}});
 heroLoader.observe(heroEl);
 
-const brandElement=document.querySelector('#brand-webgl');
-const brandSection=document.querySelector('#home');
-let brandScene=null;
-const brandIntroDuration=2000;
-let brandReady=false,brandIntroTimer=0,brandEnteredAt=performance.now();
-const brandActive=()=>window.ZiewisePages?window.ZiewisePages.getCurrent()?.page==='home':['','#home','#main'].includes(location.hash);
-function scheduleBrandReveal(){
- clearTimeout(brandIntroTimer);
- if(!brandReady||!brandActive())return;
- brandIntroTimer=setTimeout(()=>{
-  if(!brandReady||!brandActive())return;
-  brandSection.dataset.sceneState='ready';
-  brand.setPaused(paused||dialogOpen,{manual:motionChosen});
- },Math.max(0,brandIntroDuration-(performance.now()-brandEnteredAt)));
-}
-function startBrandEntrance(){
- clearTimeout(brandIntroTimer);
- if(brandActive()){
-  brandEnteredAt=performance.now();brandSection.dataset.sceneState='preview';
-  brandScene?.setStage(0);refreshJourney(0);scheduleBrandReveal();
- }
- brand.setPaused(paused||dialogOpen,{manual:motionChosen});
-}
-let journeyStage=0;
-const journeyCopy={
- ko:['검사 카메라가 제품을 살피고 영상·센서 데이터를 만듭니다.','현장의 데이터를 ZiewCore로 전달해, 분석에 사용할 흐름으로 연결합니다.','AI가 영상의 특징과 이상 징후를 분석해 검토할 대상을 판단합니다.','판단을 관제 알림과 업무 흐름에 반영하고, 현장 피드백을 다음 학습으로 연결합니다.'],
- en:['An inspection camera observes products and captures video and sensor data.','Operational data travels to ZiewCore, connecting the field to the analysis pipeline.','AI analyses visual features and anomalies to identify items that need review.','Decisions inform monitoring and workflows. Operational feedback feeds the next learning cycle.']
-};
-function refreshJourney(stage=journeyStage){journeyStage=stage;brandSection.dataset.journeyStage=stage;document.querySelectorAll('[data-journey-stage]').forEach(button=>{if(button.matches('button'))button.setAttribute('aria-pressed',String(Number(button.dataset.journeyStage)===stage));});document.querySelector('#brand-journey-copy').textContent=journeyCopy[document.documentElement.lang==='en'?'en':'ko'][stage];}
-document.querySelectorAll('button[data-journey-stage]').forEach(button=>button.addEventListener('click',()=>{const stage=Number(button.dataset.journeyStage);brandScene?.setStage?.(stage);refreshJourney(stage);}));refreshJourney();
-const journeyLabel=()=>document.documentElement.lang==='en'?'A 3D journey from camera inspection through ZiewCore analysis to operational monitoring and feedback. Drag or use the arrow keys to explore.':'카메라 검사에서 ZiewCore 분석, 관제와 현장 피드백으로 이어지는 3D 과정. 드래그 또는 방향키로 시점을 조절합니다.';
-const brand={setPaused(value,options){brandScene?.setPaused(value||!brandActive()||brandSection.dataset.sceneState!=='ready',options);},dispose(){clearTimeout(brandIntroTimer);window.removeEventListener('ziewise:pagechange',startBrandEntrance);brandLoader.disconnect();brandScene?.dispose();}};
-const brandLoader=new IntersectionObserver(entries=>{
- if(!entries.some(entry=>entry.isIntersecting)||brandScene)return;
- brandScene=mountPhotoreal(brandElement,{
-  cinematic:true,
-  onStage:refreshJourney,
-  label:journeyLabel(),
-  onReady:()=>{brandReady=true;scheduleBrandReveal();},
-  onContextLost:()=>{brandReady=false;clearTimeout(brandIntroTimer);brandSection.dataset.sceneState='preview';},
-  onError:()=>{queueMicrotask(()=>{brandReady=false;clearTimeout(brandIntroTimer);brandScene?.dispose();brandScene=null;brandSection.dataset.sceneState='preview';});}
- });
- brand.setPaused(paused||dialogOpen,{manual:motionChosen});brandLoader.disconnect();
-});
-brandLoader.observe(brandElement);mounted.push(brand);
-window.addEventListener('ziewise:pagechange',startBrandEntrance);
-startBrandEntrance();
+const brand=mountLearningHero({getMotion:()=>({paused,manual:motionChosen})});
+mounted.push(brand);
 let solution=null;
 let technology=null;
 let selected='vision';
@@ -163,6 +118,7 @@ function updateMotion(){
  mounted.forEach(s=>s.setPaused(paused||dialogOpen,{manual:motionChosen}));
  document.querySelectorAll('.motion-toggle').forEach(button=>{
    button.setAttribute('aria-pressed',String(paused));
+   const glyph=button.querySelector('.learning-motion-symbol');if(glyph)glyph.textContent=paused?'▶':'Ⅱ';
    const label=button.querySelector('[data-i18n]');
    if(label){label.dataset.i18n=paused?'resume-motion':'pause-motion';label.textContent=window.ziewiseTranslate?.(label.dataset.i18n)||(paused?'모션 재생':'모션 일시정지');}
  });
@@ -170,7 +126,7 @@ function updateMotion(){
 }
 document.addEventListener('click',e=>{if(e.target.closest('.motion-toggle')){paused=!paused;motionChosen=true;updateMotion();}});
 reduced.addEventListener('change',e=>{paused=e.matches;motionChosen=false;updateMotion();});
-window.addEventListener('ziewise:language',()=>{updateMotion();brandScene?.setLabel(journeyLabel());refreshJourney();refreshHeroView();refreshNeuralPhase();refreshNeuralSolution();});
+window.addEventListener('ziewise:language',()=>{updateMotion();brand.setLanguage();refreshHeroView();refreshNeuralPhase();refreshNeuralSolution();});
 window.addEventListener('ziewise:dialog',event=>{dialogOpen=event.detail;mounted.forEach(scene=>scene.setPaused(paused||dialogOpen,{manual:motionChosen}));});
 updateMotion();
 let cameraUpdatePending=false;
