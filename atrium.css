@@ -1,14 +1,13 @@
-/* Satin titanium: brushed metal, restrained champagne edges and broad specular light. */
+/* Soft titanium: quiet satin surfaces keep attention on the content. */
 :root{--ink:#173149;--navy:#173149;--muted:#293e4b;--blue:#2264b7;--line:#bdcedb;--surface:#c5c9cf;--scene-background:#b5bdc6;--atrium-paper:#bbc0c7;color-scheme:light;background:var(--atrium-paper)}
 body{background:var(--atrium-paper);color:var(--ink)}
-html.section-pages .section-page[data-page]{--metal-warm:#cbb9902b;--metal-cool:#809bb226;background:linear-gradient(116deg,#bec2c8 0%,#c8cbd0 31%,#aeb6c0 57%,#c3c4c5 78%,#b2bac3 100%);isolation:isolate;overflow:clip}
-html.section-pages .section-page[data-page=about],html.section-pages .section-page[data-page=contact]{--metal-warm:#c2a9783d}
-html.section-pages .section-page[data-page=technology]{--metal-cool:#7f90b13b}
+html.section-pages .section-page[data-page]{--metal-warm:#cbb99012;--metal-cool:#809bb212;background:linear-gradient(116deg,#bec3ca 0%,#c3c8ce 35%,#bcc3cb 68%,#c0c5ca 100%);isolation:isolate;overflow:clip}
+html.section-pages .section-page[data-page=about],html.section-pages .section-page[data-page=contact]{--metal-warm:#c2a97818}
+html.section-pages .section-page[data-page=technology]{--metal-cool:#7f90b118}
 .section-page::before,.section-page::after{content:"";position:absolute;pointer-events:none;z-index:-1}
-/* Fine brushing stays still; only the broad reflection moves. */
-.section-page::before{inset:0;background:repeating-linear-gradient(0deg,#fff0 0px,#fff0 2px,#ffffff0c 2px,#ffffff0c 3px,#17243206 3px,#17243206 4px),radial-gradient(ellipse at 94% 12%,var(--metal-warm),transparent 55%),linear-gradient(120deg,transparent 36%,var(--metal-cool) 80%);opacity:.85}
-.section-page::after{inset:-18% -35%;background:linear-gradient(113deg,transparent 40%,#ffffff08 44%,#eff2f63d 48%,#ffffff73 49.5%,#fff9 50%,#e5cda642 50.6%,#ffffff06 52%,#36445320 57%,transparent 64%);transform:translate3d(-9%,0,0);opacity:.72;mask-image:linear-gradient(90deg,transparent 19%,#000 52%);animation:titanium-light-pass 26s ease-in-out infinite alternate}
-@keyframes titanium-light-pass{to{transform:translate3d(8%,3%,0)}}
+/* Fine brushing and a broad, stationary sheen stay behind the reading surface. */
+.section-page::before{inset:0;background:repeating-linear-gradient(0deg,#fff0 0px,#fff0 2px,#ffffff0c 2px,#ffffff0c 3px,#17243206 3px,#17243206 4px),radial-gradient(ellipse at 94% 12%,var(--metal-warm),transparent 65%),linear-gradient(120deg,transparent 36%,var(--metal-cool) 80%);opacity:.2}
+.section-page::after{inset:0;background:linear-gradient(113deg,transparent 20%,#ffffff10 38%,#f3f3ee36 54%,#ffffff10 72%,transparent 90%);opacity:.28;mask-image:linear-gradient(90deg,transparent 15%,#000 60%)}
 html.motion-paused .section-page::before,html.motion-paused .section-page::after,html.atrium-still .section-page::before,html.atrium-still .section-page::after{animation-play-state:paused}
 html.section-pages .page-source,html.section-pages #home.page-source{background:transparent;color:var(--ink);--muted:#293e4b;--line:#bdcedb;--ink:#173149;--navy:#173149}
 .section-pages .page-view-bar{background:#cbd0d6b8;box-shadow:inset 0 -1px #c6d5e0;backdrop-filter:blur(20px)}
@@ -139,9 +138,9 @@ html.section-pages .page-source,html.section-pages #home.page-source{background:
 #sim-root .sim-layout .sim-body{background:#c5cbd3}#sim-root .sim-industry-card,#sim-root .sim-system-card{background:#cbd0d6c9;border-color:#bed3df}#sim-root .sim-industry-card.active,#sim-root .sim-system-card.active{background:#b9c5cb;border-color:#689db4}
 #sim-root .sim-footer{background:#c3c9d0;border-color:#c1d6e1}#sim-root .sim-footer-hint{color:#2d434f}#sim-root .sim-footer .sim-prev{color:#264452;border-color:#a5c6d6;background:#cbd0d6c9}
 #sim-root .sim-3d-panel{background:#b5bdc6;border-color:#bfd3df}#sim-root .sim-twin-heading>span,#sim-root .sim-twin-note,#sim-root .sim-twin-bottom{color:#2f434f}#sim-root .sim-twin-heading>strong{color:#234358}#sim-root .sim-twin-pause{background:#d1d5da;color:#244456;border-color:#a6c7d7}
-@media(max-width:1100px){#home .brand-scene::after{background:linear-gradient(180deg,#bbc0c7,transparent 12%,transparent 85%,#bbc0c7)}.section-page::after{inset:-10% -60%;mask-image:none;opacity:.28}}
+@media(max-width:1100px){#home .brand-scene::after{background:linear-gradient(180deg,#bbc0c7,transparent 12%,transparent 85%,#bbc0c7)}.section-page::after{mask-image:none;opacity:.16}}
 @media(max-width:1000px){.navbar .nav-links{background:#c3c8cffa;backdrop-filter:blur(24px);box-shadow:0 16px 30px #29475f12}}
-@media(max-width:600px){.performance-comparison td:nth-child(3){background:#bfcac8!important}.performance-comparison tbody th{color:#244357}.performance-comparison td:before{color:#30434d}.section-page::after{animation-duration:32s;opacity:.28}}
+@media(max-width:600px){.performance-comparison td:nth-child(3){background:#bfcac8!important}.performance-comparison tbody th{color:#244357}.performance-comparison td:before{color:#30434d}}
 @media(prefers-reduced-motion:reduce){.section-page::before,.section-page::after{animation:none!important}}
 @media print{.section-page::before,.section-page::after{display:none}}
 
@@ -157,13 +156,13 @@ html.section-pages .page-source,html.section-pages #home.page-source{background:
 .mobile-toggle span,.mobile-toggle span:before,.mobile-toggle span:after{background:#d9e9ef}
 @media(max-width:1000px){.navbar .nav-links{background:#244a5dfa}}
 
-/* Polished edges and satin faces: highlights have a direction, not a glow. */
-.section-pages .navbar{background:linear-gradient(112deg,#242c34 0%,#424c55 43%,#29333d 78%,#38414a 100%);border-bottom:1px solid #b6a78199;box-shadow:inset 0 1px #e1e7ee40,0 4px 20px #17222e26}
+/* Subtle satin edges; contrast is reserved for text and selected controls. */
+.section-pages .navbar{background:linear-gradient(112deg,#2b333c,#35404a 50%,#2d3741);border-bottom:1px solid #93989666;box-shadow:inset 0 1px #e1e7ee1c,0 3px 14px #17222e18}
 .navbar .nav-links{background:transparent}
 .navbar .logo-text{background-image:linear-gradient(110deg,#d9dfe4 0%,#f3eee0 26%,#9baab8 46%,#e5e8ea 57%,#d1c09b 82%,#e8edf0);color:#e5e9ed}
 .navbar .nav-links a:hover,.navbar .nav-links a.active-nav{color:#ead7b3}
-.navbar .nav-links #nav-try{background:linear-gradient(120deg,#56616b,#34414c 75%);border-color:#b1b8ba88;box-shadow:inset 0 1px #f7f5eb40;color:#f0f2f4}
-.section-pages .page-view-bar{background:linear-gradient(180deg,#d6d9dddc,#b4bcc5ed);box-shadow:inset 0 1px #f5f6f6aa,inset 0 -1px #737e8d66}
+.navbar .nav-links #nav-try{background:linear-gradient(120deg,#424e59,#394650);border-color:#a2acb366;box-shadow:inset 0 1px #f7f5eb20;color:#f0f2f4}
+.section-pages .page-view-bar{background:linear-gradient(180deg,#c6cbd1f5,#bfc6cef5);box-shadow:inset 0 1px #f5f6f638,inset 0 -1px #737e8d40}
 .section-pages .page-view-tab[aria-selected=true]{color:#3c3730;border-bottom-color:#8a7250}
 html.section-pages .page-source,html.section-pages #home.page-source{--line:#8995a4;--ink:#1e303f;--navy:#1e303f;--muted:#293e4b}
 .section-pages .page-pane{scrollbar-color:#778491 transparent}
@@ -172,26 +171,60 @@ html.section-pages .page-source,html.section-pages #home.page-source{--line:#899
 #home .brand-kicker>span{background:linear-gradient(90deg,#566574,#b39b6b)}
 #home .brand-primary,.button.primary,.hero-section .button.primary{background:linear-gradient(115deg,#223744,#4b6575 48%,#2b4253 86%);border-color:#697f8d;box-shadow:inset 0 1px #eef3f666,0 5px 16px #22394b2b;color:#fff}
 #home .brand-primary:hover,.button.primary:hover,.hero-section .button.primary:hover{background:linear-gradient(115deg,#2d4657,#586e7b 50%,#354f62)}
-.learning-player{background:linear-gradient(105deg,#b6bdc7cf,#d2d5d8bc 49%,#aeb8c4b8);box-shadow:inset 0 1px #f7f8f985,inset 0 -1px #53657533}
-.learning-player-controls button,.section-pages .solution-detail-tabs button,.industry-steps button,.eng-topic{background:linear-gradient(135deg,#d8dce0cc,#b7c0cbdd);border-color:#82909f80;box-shadow:inset 0 1px #f3f5f877}
-.learning-player-controls button:hover{background:linear-gradient(135deg,#e1e4e6,#c3cbd2)}
+.learning-player{background:linear-gradient(105deg,#c2c8d0ed,#c8cdd3ed);box-shadow:inset 0 1px #f7f8f940,inset 0 -1px #53657526}
+.learning-player-controls button,.section-pages .solution-detail-tabs button,.industry-steps button,.eng-topic{background:linear-gradient(135deg,#ccd2d8,#c3cbd3);border-color:#82909f66;box-shadow:inset 0 1px #f3f5f838}
+.learning-player-controls button:hover{background:linear-gradient(135deg,#d2d7dc,#c9d0d7)}
 :is(.solution-card,.value-grid .value-card,.certification-badges .badge,.experience-cta),.section-pages .engineering-page .tech-card,.compare-card{
- background:linear-gradient(130deg,#cfd3d8e8 0%,#bdc5cfed 43%,#d9dbdcd9 53%,#c0c6ceeb 75%) padding-box,linear-gradient(125deg,#f8f7f1,#7c8a9b 36%,#ddc9a2 53%,#e8eff2 73%,#69798b) border-box;
- border:1px solid transparent;box-shadow:inset 0 1px #fafbfc73,inset 0 -1px #475c7040,0 10px 26px #2434471c;
+ background:linear-gradient(130deg,#cdd2d8f5,#c7cdd5f5);
+ border:1px solid #a4afbacc;box-shadow:inset 0 1px #fafbfc40,0 6px 18px #2434470d;
 }
-.solution-card:hover{background:linear-gradient(130deg,#d8dce1e8,#c7cdd5eb 43%,#e0e1e2d9 53%,#c4ccd4eb) padding-box,linear-gradient(125deg,#fcfaf4,#90a0b4 36%,#dbc9a5 53%,#f0f5f7 73%,#8394a5) border-box;box-shadow:inset 0 1px #fff9,0 14px 30px #223b5226}
-.about-brand-visual{background:linear-gradient(123deg,#a3aeb9 0%,#c2c8ce 28%,#e0dfda 51%,#b5b3ad 55%,#adb5bf 78%,#c2c6cd 100%);border-color:#e2e5e6ad;box-shadow:inset 0 1px #fff9,inset 0 -1px #5d687888,0 14px 32px #202e421f}
-.certification-badges .badge-icon,.value-motion{background:linear-gradient(135deg,#aeb8c4,#cdd2d9 51%,#b9c0c9);border-color:#8f9cad}
-.secondary-copy,.technology-explanation,.eng-narrative{background:linear-gradient(118deg,#cbd0d6f2,#bcc5d0e8 65%,#d1d3d6ed);border-color:#8594a580;box-shadow:inset 1px 0 #f7f8fa99}
-.hero-visual,.sim-stage,.secondary-stage,.eng-theater,.section-pages .tech-section .technology-architecture.technology-story{border:1px solid #eff1f37a;box-shadow:inset 0 1px #fff7,0 14px 32px #23354b20,0 1px 0 #5c708687}
+.solution-card:hover{background:linear-gradient(130deg,#d2d7dc,#cbd2da);border-color:#8e9da9;box-shadow:inset 0 1px #fff5,0 8px 22px #223b5214}
+.about-brand-visual{background:linear-gradient(123deg,#bbc4ce,#ccd0d3 52%,#bfc7d0);border-color:#a6b0bccc;box-shadow:inset 0 1px #fff4,0 8px 22px #202e4212}
+.certification-badges .badge-icon,.value-motion{background:linear-gradient(135deg,#bec7d1,#c8ced6);border-color:#a2aebc}
+.secondary-copy,.technology-explanation,.eng-narrative{background:linear-gradient(118deg,#cbd1d8,#c5cdd6);border-color:#8594a566;box-shadow:inset 1px 0 #f7f8fa40}
+.hero-visual,.sim-stage,.secondary-stage,.eng-theater,.section-pages .tech-section .technology-architecture.technology-story{border:1px solid #a4afbb99;box-shadow:inset 0 1px #fff3,0 8px 22px #23354b12}
 .section-pages .solution-detail-tabs button[aria-selected=true],.secondary-selectors button[aria-pressed=true],.technology-topics button[aria-selected=true],.eng-topic[aria-selected=true]{background:linear-gradient(120deg,#344956,#566570);color:#f1f3f4;border-color:#b1a17e;box-shadow:inset 0 -2px #c3ab79,inset 0 1px #e8eef340}
 .eng-topic[aria-selected=true]>span,.eng-topic[aria-selected=true] small{color:#dde2e5}
-.learning-roi-summary,.roi-dialog{background:linear-gradient(125deg,#d3d6daeF,#bfc8d2f5 60%,#d0cdc7f5);border:1px solid #ecedf0a6;box-shadow:inset 0 1px #fff8,0 14px 40px #2032482b}
+.learning-roi-summary,.roi-dialog{background:linear-gradient(125deg,#cdd3daf8,#c5cdd6fa);border:1px solid #a6b2c0;box-shadow:inset 0 1px #fff4,0 12px 32px #20324820}
 .story-outcome{background:linear-gradient(120deg,#bfc6cb,#cfccc3);border-color:#929b9f}
 .performance-comparison table{background:#c9d0d8d9}.performance-comparison thead{background:linear-gradient(120deg,#b5bec9,#ccd1d7)}.performance-comparison td:nth-child(3){background:#b8c6c6}
-.contact-form input,.contact-form select,.contact-form textarea,.roi-inputs input{background:linear-gradient(140deg,#b9c3cfd9,#d5d9dfdd);border-color:#8f9dac;box-shadow:inset 0 2px 5px #384e6420,0 1px #eef1f399}
-#sim-root .sim-header{background:linear-gradient(115deg,#bdc6cf,#dadbd8 60%,#beb7a8)}#sim-root .sim-modal{border-color:#c9ced3;box-shadow:0 30px 100px #17273755}
-#sim-root .sim-layout .sim-body{background:linear-gradient(135deg,#c8cfd7,#bbc4d0)}#sim-root .sim-footer{background:linear-gradient(120deg,#b4bfcb,#d2d7dc)}
+.contact-form input,.contact-form select,.contact-form textarea,.roi-inputs input{background:linear-gradient(140deg,#c5cdd6,#cdd4dc);border-color:#8f9dac;box-shadow:inset 0 1px 3px #384e6412,0 1px #eef1f340}
+#sim-root .sim-header{background:linear-gradient(115deg,#c4ccd4,#cdd2d7)}#sim-root .sim-modal{border-color:#a6b2c0;box-shadow:0 24px 80px #17273740}
+#sim-root .sim-layout .sim-body{background:linear-gradient(135deg,#c8cfd7,#c3ccd6)}#sim-root .sim-footer{background:linear-gradient(120deg,#c1cad4,#c8d0d8)}
 @media(max-width:1100px){#home .brand-scene::after{background:linear-gradient(180deg,#bbc0c7,transparent 12%,transparent 85%,#bbc0c7)}}
 @media(max-width:1000px){.navbar .nav-links{background:linear-gradient(120deg,#29343eee,#424d57f5);border-color:#b6a78180;backdrop-filter:blur(22px)}}
 @media(max-width:600px){.performance-comparison td:nth-child(3){background:#b8c6c6!important}}
+
+/* Dark content islands establish hierarchy against the quiet metal backdrop. */
+:root{--content-ink:#edf1f4;--content-muted:#c2ccd3;--content-line:#52616e;--content-accent:#abd2de}
+html.section-pages .page-source,html.section-pages #home.page-source{--ink:#1c2b36;--navy:#1c2b36;--muted:#35434d}
+#home .brand-copy h1{color:#182a36}#home .brand-copy h1 em{color:#2a3d4b}
+#home .brand-lead,#home #brand-journey-copy{color:#293b48}
+.section-pages .section-page .page-source :is(.solution-card,.tech-card,.value-card,.certification-badges .badge,.experience-cta,.compare-card,.secondary-copy,.technology-explanation,.eng-narrative,.sim-scene,.story-outcome,.learning-roi-summary){
+ --ink:var(--content-ink);--navy:var(--content-ink);--muted:var(--content-muted);--line:var(--content-line);--blue:var(--content-accent);
+ color:var(--content-ink);background:linear-gradient(135deg,#2b3945,#25323d);border-color:var(--content-line);box-shadow:inset 0 1px #ffffff0a,0 8px 24px #23354b12;
+}
+.section-pages .section-page .page-source :is(.solution-card,.tech-card,.value-card,.certification-badges .badge,.experience-cta,.compare-card,.secondary-copy,.technology-explanation,.eng-narrative,.sim-scene,.story-outcome,.learning-roi-summary) :is(h2,h3,h4,h5,strong,b){color:var(--content-ink)}
+.section-pages .section-page .page-source :is(.solution-card,.tech-card,.value-card,.certification-badges .badge,.experience-cta,.compare-card,.secondary-copy,.technology-explanation,.eng-narrative,.sim-scene,.story-outcome,.learning-roi-summary) :is(p,small,li,.sub,.differentiator,.card-detail-list,.certificate-description,.certificate-meta,.compare-result>span,.comparison-bars>div,.packet-comparison span,.continuity-track span,.secondary-flow,.industry-step-copy>span,.eng-phase>span,.eng-why,.eng-steps button,.ss-lbl,.operation-notes,.learning-roi-summary span){color:var(--content-muted)}
+.section-pages .section-page .page-source :is(.solution-card,.tech-card,.value-card,.certification-badges .badge,.experience-cta,.compare-card,.secondary-copy,.technology-explanation,.eng-narrative,.sim-scene,.story-outcome) :is(a,.card-index,.value-tag,.certificate-category,.compare-overline,.eng-kicker,.scene-tag,.story-overline){color:var(--content-accent)}
+.section-pages .section-page .page-source :is(.solution-card,.tech-card,.value-card,.certification-badges .badge,.experience-cta,.compare-card,.secondary-copy,.technology-explanation,.eng-narrative,.sim-scene,.story-outcome) :is(.scene-stats,.eng-outcome,.eng-steps button,.eng-bottom,.secondary-flow,.industry-outcome,.technology-step-buttons button){border-color:var(--content-line)}
+.section-pages .section-page .page-source .solution-card:hover{background:linear-gradient(135deg,#314350,#293945);border-color:#809aaa;box-shadow:inset 0 1px #ffffff16,0 10px 28px #23354b1c}
+.section-pages .section-page .page-source :is(.compare-result strong,.learning-roi-summary strong){color:#c0e5df}
+.section-pages .section-page .page-source :is(.secondary-copy,.technology-explanation,.eng-narrative) :is(.technology-step-buttons button,.eng-steps button){color:var(--content-muted)}
+.section-pages .section-page .page-source :is(.secondary-copy,.technology-explanation,.eng-narrative) :is(.technology-step-buttons button[aria-current=true],.eng-steps button[aria-pressed=true]){color:#e2f1f4;border-color:#91becb}
+.section-pages .section-page .page-source :is(.secondary-copy,.technology-explanation,.eng-narrative) :is(.industry-steps button,.motion-toggle){background:#354856;color:#e3ebf0;border-color:#697f8d}
+.section-pages .section-page .page-source .industry-steps button[aria-pressed=true]{background:#42606f;color:#f3f7f8;border-color:#a0bbc6}
+.section-pages .section-page .page-source .experience-cta .button{background:#c1d1da;color:#203644;border-color:#c1d1da}
+.section-pages .section-page .page-source .sim-scene .operation-labels>span{background:#3c5262;color:#e2ecf1}
+.section-pages .section-page .page-source .sim-scene{border-color:#536572;align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.section-pages .section-page .page-source :is(.secondary-copy,.technology-explanation,.eng-narrative) :is(.story-replay,.industry-replay,.eng-replay){color:var(--content-accent);border-color:#728c9a}
+.section-pages .section-page .page-source .certification-badges .certificate-title{color:var(--content-ink)}
+.section-pages .section-page .page-source .story-outcome>span{color:var(--content-accent)}
+#home .learning-player{background:linear-gradient(110deg,#2b3a46,#26333e);padding:16px 18px 18px;box-shadow:inset 0 1px #ffffff12,0 8px 24px #23354b12}
+#home .learning-player-top,#home .learning-player-title{color:#ced9e0}
+#home .learning-player-controls button{color:#e1eaf0;background:#354754;border-color:#617888;box-shadow:inset 0 1px #ffffff12}
+#home .learning-player-controls button:hover{background:#405868}
+#home .brand-journey-steps button{color:#c2ccd4;border-color:#5a6b79}
+#home .brand-journey-steps button[aria-pressed=true]{color:#edf6fa;border-color:#b0d3e1}
+#home .learning-player #learning-timeline{accent-color:#a6cddb}
+@media(max-width:600px){#home .learning-player{padding:12px}}

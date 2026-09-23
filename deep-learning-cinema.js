@@ -65,7 +65,7 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   const key=new T.DirectionalLight('#fff1d9',2.8);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.015;key.shadow.radius=3;scene.add(key);
   const rim=new T.DirectionalLight('#9fc8ff',2.1);rim.position.set(4,4,-5);scene.add(rim);
   const warm=new T.DirectionalLight('#ffb76a',1.05);warm.position.set(-6,2,-2);scene.add(warm);
-  const daylight=m(new T.MeshPhysicalMaterial({color:'#9299a4',metalness:.72,roughness:.32,clearcoat:.45,clearcoatRoughness:.24,normalMap:grain,normalScale:new T.Vector2(.06,.06)}));
+  const daylight=m(new T.MeshPhysicalMaterial({color:'#9299a4',metalness:.48,roughness:.56,clearcoat:.16,clearcoatRoughness:.48,normalMap:grain,normalScale:new T.Vector2(.025,.025)}));
   const prismTime={value:0},prismFocus={value:0};
   // Broad softbox reflections follow the film clock, including pause and reduced motion.
   daylight.onBeforeCompile=shader=>{
@@ -74,11 +74,11 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 atriumPosition;\nuniform float prismTime;\nuniform float prismFocus;').replace('#include <color_fragment>',`#include <color_fragment>
       float q=atriumPosition.x*.22+atriumPosition.z*.37+sin(prismTime*.045)*.35;
       float w=mix(.32,.18,prismFocus),a=exp(-pow((q-.8)/w,2.0)),b=exp(-pow((q-1.18)/.16,2.0));
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.80,.84,.88),a*.28);
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.70,.61,.44),b*.13);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.80,.84,.88),a*.09);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.70,.61,.44),b*.035);
     `);
   };
-  daylight.customProgramCacheKey=()=> 'titanium-reflections-v1';
+  daylight.customProgramCacheKey=()=> 'titanium-soft-reflections-v2';
   const floor=mesh(scene,g(new T.PlaneGeometry(100,100)),daylight,[0,-.31,0]);floor.rotation.x=-Math.PI/2;
   const acts=Array.from({length:7},()=>group());
   const boltGeo=g(new T.CylinderGeometry(.055,.055,.025,6));
