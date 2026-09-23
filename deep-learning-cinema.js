@@ -15,8 +15,8 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
-  const scene=new T.Scene();scene.background=new T.Color('#abc4d2');
-  scene.fog=new T.Fog('#abc4d2',14,32);
+  const scene=new T.Scene();scene.background=new T.Color('#bbc0c7');
+  scene.fog=new T.Fog('#bbc0c7',14,32);
   const camera=new T.PerspectiveCamera(35,1,.08,80);
   const resources=new Set(),keep=r=>(resources.add(r),r);
   const g=r=>keep(r), m=r=>keep(r);
@@ -65,22 +65,20 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   const key=new T.DirectionalLight('#fff1d9',2.8);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.015;key.shadow.radius=3;scene.add(key);
   const rim=new T.DirectionalLight('#9fc8ff',2.1);rim.position.set(4,4,-5);scene.add(rim);
   const warm=new T.DirectionalLight('#ffb76a',1.05);warm.position.set(-6,2,-2);scene.add(warm);
-  const daylight=standard('#748f9f',.02,.68);
+  const daylight=m(new T.MeshPhysicalMaterial({color:'#9299a4',metalness:.72,roughness:.32,clearcoat:.45,clearcoatRoughness:.24,normalMap:grain,normalScale:new T.Vector2(.06,.06)}));
   const prismTime={value:0},prismFocus={value:0};
-  // Slow spectral caustics follow the film clock, including pause and reduced motion.
+  // Broad softbox reflections follow the film clock, including pause and reduced motion.
   daylight.onBeforeCompile=shader=>{
     shader.uniforms.prismTime=prismTime;shader.uniforms.prismFocus=prismFocus;
     shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 atriumPosition;').replace('#include <begin_vertex>','#include <begin_vertex>\natriumPosition=(modelMatrix*vec4(position,1.0)).xyz;');
     shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 atriumPosition;\nuniform float prismTime;\nuniform float prismFocus;').replace('#include <color_fragment>',`#include <color_fragment>
-      vec2 q=atriumPosition.xz*vec2(.37,.63)+vec2(.8+sin(prismTime*.06)*.22,.9);
-      float r=length(q),w=mix(.23,.12,prismFocus);
-      float a=exp(-pow((r-1.7)/w,2.0)),b=exp(-pow((r-1.91)/w,2.0)),c=exp(-pow((r-2.1)/w,2.0));
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.35,.79,.9),a*.20);
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.64,.50,.87),b*.16);
-      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.98,.76,.39),c*.13);
+      float q=atriumPosition.x*.22+atriumPosition.z*.37+sin(prismTime*.045)*.35;
+      float w=mix(.32,.18,prismFocus),a=exp(-pow((q-.8)/w,2.0)),b=exp(-pow((q-1.18)/.16,2.0));
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.80,.84,.88),a*.28);
+      diffuseColor.rgb=mix(diffuseColor.rgb,vec3(.70,.61,.44),b*.13);
     `);
   };
-  daylight.customProgramCacheKey=()=> 'atrium-caustics-v1';
+  daylight.customProgramCacheKey=()=> 'titanium-reflections-v1';
   const floor=mesh(scene,g(new T.PlaneGeometry(100,100)),daylight,[0,-.31,0]);floor.rotation.x=-Math.PI/2;
   const acts=Array.from({length:7},()=>group());
   const boltGeo=g(new T.CylinderGeometry(.055,.055,.025,6));

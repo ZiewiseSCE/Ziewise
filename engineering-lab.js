@@ -1,4 +1,4 @@
-import {mountScene} from './scene3d.js?v=20260924-mineral1';
+import {mountScene} from './scene3d.js?v=20260924-titanium1';
 import {createEngineeringModel} from './engineering-models3d.js?v=20260924-atrium1';
 
 const catalog=[

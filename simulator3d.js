@@ -25,19 +25,19 @@ export function mountSimulation(host, { industry = null, systems = [], phase = 0
   const own = (resource) => { owned.add(resource); return resource; };
   const wrap = doc.createElement('div');
   wrap.className = 'sim-three-view';
-  Object.assign(wrap.style, { position: 'relative', width: '100%', height: '100%', minHeight: '180px', overflow: 'hidden', background: '#a9c2d0', borderRadius: 'inherit' });
+  Object.assign(wrap.style, { position: 'relative', width: '100%', height: '100%', minHeight: '180px', overflow: 'hidden', background: '#b5bdc6', borderRadius: 'inherit' });
   wrap.setAttribute('role', 'img');
   host.appendChild(wrap);
   const labelLayer = doc.createElement('div');
   Object.assign(labelLayer.style, { position: 'absolute', inset: '0', pointerEvents: 'none', overflow: 'hidden' });
   labelLayer.setAttribute('aria-hidden', 'true');
   const fallback = doc.createElement('div');
-  Object.assign(fallback.style, { position: 'absolute', inset: '0', display: 'none', alignItems: 'center', justifyContent: 'center', padding: '28px', color: '#335b72', background: '#a9c2d0', font: '14px/1.65 Arial,sans-serif', textAlign: 'center', whiteSpace: 'pre-line' });
+  Object.assign(fallback.style, { position: 'absolute', inset: '0', display: 'none', alignItems: 'center', justifyContent: 'center', padding: '28px', color: '#335b72', background: '#b5bdc6', font: '14px/1.65 Arial,sans-serif', textAlign: 'center', whiteSpace: 'pre-line' });
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
-    renderer.setClearColor(0xa9c2d0, 1);
+    renderer.setClearColor(0xb5bdc6, 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.18;
@@ -59,7 +59,7 @@ export function mountSimulation(host, { industry = null, systems = [], phase = 0
   }
   wrap.append(labelLayer, fallback);
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xa9c2d0, 13, 28);
+  scene.fog = new THREE.Fog(0xb5bdc6, 13, 28);
   const camera = new THREE.PerspectiveCamera(29, 1, 0.1, 80);
   const graph = new THREE.Group();
   graph.rotation.y = -0.25;
@@ -196,7 +196,7 @@ export function mountSimulation(host, { industry = null, systems = [], phase = 0
 
   function makeLabel(text, central = false) {
     const label = doc.createElement('span'); label.textContent = text;
-    Object.assign(label.style, { position: 'absolute', top: '0', left: '0', whiteSpace: 'nowrap', color: '#567489', font: `${central ? '500 11px' : '500 11px'}/1.3 Arial,"Noto Sans KR",sans-serif`, letterSpacing: central ? '.07em' : '.035em', padding: central ? '4px 7px' : '3px 5px', background: 'rgba(194,213,224,.95)', border: '1px solid transparent', borderRadius: '2px', transform: 'translate(-50%,-50%)' });
+    Object.assign(label.style, { position: 'absolute', top: '0', left: '0', whiteSpace: 'nowrap', color: '#567489', font: `${central ? '500 11px' : '500 11px'}/1.3 Arial,"Noto Sans KR",sans-serif`, letterSpacing: central ? '.07em' : '.035em', padding: central ? '4px 7px' : '3px 5px', background: 'rgba(203,208,214,.96)', border: '1px solid transparent', borderRadius: '2px', transform: 'translate(-50%,-50%)' });
     labelLayer.appendChild(label); return label;
   }
   const centralLabel = makeLabel('ZiewCore', true);
@@ -244,7 +244,7 @@ export function mountSimulation(host, { industry = null, systems = [], phase = 0
     mesh.receiveShadow = true; graph.add(mesh);
   }
   batches.clear();
-  const floor = new THREE.Mesh(own(new THREE.PlaneGeometry(60, 60)), own(new THREE.MeshBasicMaterial({ color: 0xa3bdca, toneMapped: false })));
+  const floor = new THREE.Mesh(own(new THREE.PlaneGeometry(60, 60)), own(new THREE.MeshBasicMaterial({ color: 0xb0b8c1, toneMapped: false })));
   floor.rotation.x = -Math.PI / 2; floor.position.y = -2.026; scene.add(floor);
   const contact = textureCanvas(256, 256, (ctx) => {
     const gradient = ctx.createRadialGradient(128, 128, 28, 128, 128, 122);
@@ -275,7 +275,7 @@ export function mountSimulation(host, { industry = null, systems = [], phase = 0
       node.label.textContent = english() ? node.en : node.ko;
       node.label.style.color = node.selected ? '#235f77' : state.phase === 0 ? '#4f6f83' : '#657e8f';
       node.label.style.borderColor = node.selected ? '#61777b' : 'transparent';
-      node.label.style.background = node.selected ? 'rgba(170,203,211,.96)' : 'rgba(194,213,224,.95)';
+      node.label.style.background = node.selected ? 'rgba(189,199,206,.96)' : 'rgba(203,208,214,.96)';
       node.leader.style.opacity = node.selected ? '.75' : '.23';
       node.leader.style.background = node.selected ? '#829b9f' : '#5d696f';
       node.packet.visible = state.phase === 2 && node.selected;
@@ -359,7 +359,7 @@ export function mountSimulation(host, { industry = null, systems = [], phase = 0
     // Render-target pixels are not retained through context loss. Re-create the
     // studio reflections before the first restored frame can sample them.
     scene.environment = environment();
-    renderer.setClearColor(0xa9c2d0, 1);
+    renderer.setClearColor(0xb5bdc6, 1);
     fallback.style.display = 'none'; labelLayer.style.display = 'block';
     layout(); refresh(); resume();
   }
