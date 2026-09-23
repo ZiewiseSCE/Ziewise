@@ -1,7 +1,7 @@
 import * as T from './vendor/three.module.js';
 import { STORY_DURATION, storyFrame } from './deep-learning-story.js?v=20260923-dl1';
 
-/** A deterministic, six-shot, physically lit explanation of the learning lifecycle. */
+/** A deterministic, seven-shot, physically lit explanation of the learning lifecycle. */
 export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage,onProgress,label}={}) {
   const noop={setPaused(){},setStage(){},setTime(){},setLabel(){},dispose(){}};
   let renderer;
@@ -13,46 +13,64 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   host.append(canvas);
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6));
   renderer.outputColorSpace=T.SRGBColorSpace;
-  renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
+  renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
   const scene=new T.Scene();scene.background=new T.Color('#0b1115');
   scene.fog=new T.Fog('#0b1115',18,40);
   const camera=new T.PerspectiveCamera(35,1,.08,80);
   const resources=new Set(),keep=r=>(resources.add(r),r);
   const g=r=>keep(r), m=r=>keep(r);
   const standard=(color,metalness=.5,roughness=.3,extra={})=>m(new T.MeshStandardMaterial({color,metalness,roughness,...extra}));
-  const silver=standard('#aebdc4',.92,.23),brushed=standard('#71838d',.86,.35),dark=standard('#17262e',.75,.3);
+  const silver=standard('#d8d4c9',.93,.22),brushed=standard('#9babb4',.88,.32),dark=standard('#182537',.35,.38);
+  const paint=(color)=>m(new T.MeshPhysicalMaterial({color,metalness:.16,roughness:.29,clearcoat:.38,clearcoatRoughness:.23}));
+  const cobalt=paint('#124fc2'),orange=paint('#f26b13'),ivory=paint('#d9ded4'),violet=paint('#6740bd');
+  const copper=standard('#c17836',.88,.27);
+  const layerColors=['#27bbed','#4477f3','#9c5ae5','#f49736','#31c685'];
+  const layerSignals=layerColors.map(color=>standard(color,.24,.24,{emissive:color,emissiveIntensity:.65}));
   // Fine directional machining marks: geometry remains fully volumetric at every angle.
   const grainData=new Uint8Array(128*128*4);
   for(let y=0;y<128;y++)for(let x=0;x<128;x++){const i=(y*128+x)*4;grainData[i]=128+Math.round(Math.sin(x*17.1+y*.3)*3);grainData[i+1]=128+Math.round(Math.sin(y*21.7)*12);grainData[i+2]=255;grainData[i+3]=255;}
   const grain=keep(new T.DataTexture(grainData,128,128,T.RGBAFormat));grain.wrapS=grain.wrapT=T.RepeatWrapping;grain.repeat.set(4,4);grain.needsUpdate=true;
   for(const material of [silver,brushed]){material.normalMap=grain;material.normalScale=new T.Vector2(.14,.14);}
-  const graphite=standard('#080f14',.4,.4), gold=standard('#b69c66',.85,.28),pcb=standard('#103e42',.65,.38);
-  const cyan=standard('#a6ecf2',.4,.2,{emissive:'#5ec2d0',emissiveIntensity:.55});
-  const amber=standard('#e3aa63',.5,.25,{emissive:'#cf8133',emissiveIntensity:.55});
-  const glass=standard('#538d9b',.25,.16,{transparent:true,opacity:.13,depthWrite:false,side:T.DoubleSide});
-  function mesh(parent,geometry,material,pos=[0,0,0]) {const o=new T.Mesh(geometry,material);o.position.set(...pos);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o;}
-  function box(parent,size,pos,mat=dark){return mesh(parent,g(new T.BoxGeometry(...size)),mat,pos);}
+  const graphite=standard('#0d1118',.18,.5), gold=standard('#dba447',.88,.25),pcb=standard('#08703d',.12,.42);
+  const cyan=standard('#18b8f5',.15,.23,{emissive:'#068bd3',emissiveIntensity:.48});
+  const amber=standard('#ff9b24',.14,.3,{emissive:'#ff730a',emissiveIntensity:.4});
+  const green=standard('#23d68d',.18,.25,{emissive:'#08a566',emissiveIntensity:.5});
+  function mesh(parent,geometry,material,pos=[0,0,0]) {const o=new T.Mesh(geometry,material);o.position.set(...pos);o.castShadow=!material.transparent;o.receiveShadow=true;parent.add(o);return o;}
+  const boxGeometries=new Map();
+  function box(parent,size,pos,mat=dark){
+    const key=size.join('/');let geometry=boxGeometries.get(key);
+    if(!geometry){
+      const [w,h,d]=size,b=Math.min(.035,w*.08,h*.08,d*.08);
+      if(Math.min(...size)>.09){
+        const shape=new T.Shape();shape.moveTo(-w/2+b,-h/2+b);shape.lineTo(w/2-b,-h/2+b);shape.lineTo(w/2-b,h/2-b);shape.lineTo(-w/2+b,h/2-b);shape.closePath();
+        geometry=g(new T.ExtrudeGeometry(shape,{depth:d-2*b,bevelEnabled:true,bevelSize:b,bevelThickness:b,bevelSegments:2,steps:1,curveSegments:1}));geometry.translate(0,0,-d/2+b);
+      }else geometry=g(new T.BoxGeometry(...size));
+      boxGeometries.set(key,geometry);
+    }
+    return mesh(parent,geometry,mat,pos);
+  }
   function cylinder(parent,radius,height,pos,mat=silver){return mesh(parent,g(new T.CylinderGeometry(radius,radius,height,64)),mat,pos);}
   function tube(parent,points,radius,mat){const path=new T.CatmullRomCurve3(points.map(p=>new T.Vector3(...p)));mesh(parent,g(new T.TubeGeometry(path,48,radius,6,false)),mat);return path;}
   function line(parent,points,color,opacity=.35){const geo=g(new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p))));const mat=m(new T.LineBasicMaterial({color,transparent:true,opacity}));const o=new T.Line(geo,mat);parent.add(o);return o;}
   function group(parent=scene){const o=new T.Group();parent.add(o);return o;}
-  const environmentScene=new T.Scene();environmentScene.background=new T.Color('#263540');
-  for(const [w,h,pos,strength] of [[8,3,[-4,7,2],5],[2,7,[6,4,-2],4],[6,2,[0,5,-6],3],[3,2,[-5,1,4],1]]){
-    const p=mesh(environmentScene,g(new T.PlaneGeometry(w,h)),m(new T.MeshBasicMaterial({color:new T.Color('white').multiplyScalar(strength),side:T.DoubleSide})),pos);p.lookAt(0,1,0);
+  const environmentScene=new T.Scene();environmentScene.background=new T.Color('#313539');
+  for(const [w,h,pos,strength,color] of [[8,3,[-4,7,2],4.2,'#fff2dc'],[2,7,[6,4,-2],3.2,'#b1d8ff'],[6,2,[0,5,-6],2.8,'#ffffff'],[3,2,[-5,1,4],1.3,'#ffc17c']]){
+    const p=mesh(environmentScene,g(new T.PlaneGeometry(w,h)),m(new T.MeshBasicMaterial({color:new T.Color(color).multiplyScalar(strength),side:T.DoubleSide})),pos);p.lookAt(0,1,0);
   }
   let environment;
   function makeEnvironment(){environment?.dispose();const generator=new T.PMREMGenerator(renderer);environment=generator.fromScene(environmentScene,.06,.1,50);scene.environment=environment.texture;generator.dispose();}
   makeEnvironment();
-  scene.add(new T.HemisphereLight('#d8efff','#16212b',1.5));
-  const key=new T.DirectionalLight('#f2f7ff',3.5);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.025;scene.add(key);
-  const rim=new T.DirectionalLight('#93d9ed',2.5);rim.position.set(4,4,-5);scene.add(rim);
-  const warm=new T.DirectionalLight('#e4cba6',1.2);warm.position.set(-6,2,-2);scene.add(warm);
-  const floor=mesh(scene,g(new T.PlaneGeometry(100,100)),standard('#12212a',.65,.35),[0,-.31,0]);floor.rotation.x=-Math.PI/2;
+  scene.add(new T.HemisphereLight('#fff1da','#142038',1.0));
+  const key=new T.DirectionalLight('#fff1d9',2.8);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.015;key.shadow.radius=3;scene.add(key);
+  const rim=new T.DirectionalLight('#9fc8ff',2.1);rim.position.set(4,4,-5);scene.add(rim);
+  const warm=new T.DirectionalLight('#ffb76a',1.05);warm.position.set(-6,2,-2);scene.add(warm);
+  const floor=mesh(scene,g(new T.PlaneGeometry(100,100)),standard('#303239',.08,.57),[0,-.31,0]);floor.rotation.x=-Math.PI/2;
+  const wall=standard('#1a2130',.18,.65),wallEdge=standard('#364666',.28,.48);
   // Architectural scale and long softbox reflections anchor every shot in the same studio.
   for(let i=-5;i<=5;i++){
-    box(scene,[.018,9,.035],[i*2.1,4,-6],brushed);
-    box(scene,[2.04,9,.07],[i*2.1+1.05,4,-6.08],graphite);
+    box(scene,[.018,9,.035],[i*2.1,4,-6],wallEdge);
+    box(scene,[2.04,9,.07],[i*2.1+1.05,4,-6.08],wall);
   }
   const acts=Array.from({length:7},()=>group());
   const boltGeo=g(new T.CylinderGeometry(.055,.055,.025,6));
@@ -71,34 +89,39 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   }
   function factory(parent,output=false){
     const root=group(parent);
-    box(root,[5.5,.18,2.55],[0,.45,0],dark);
-    for(const x of [-2.4,2.4])for(const z of [-1,1])box(root,[.16,.75,.16],[x,.08,z],brushed);
+    box(root,[5.5,.18,2.55],[0,.45,0],cobalt);
+    for(const x of [-2.4,2.4])for(const z of [-1,1]){box(root,[.16,.75,.16],[x,.08,z],ivory);cylinder(root,.15,.06,[x,-.27,z],graphite);}
     const rollerGeo=g(new T.CylinderGeometry(.1,.1,2.28,24));
     const rollers=[];for(let i=0;i<23;i++){const roller=mesh(root,rollerGeo,silver,[-2.5+i*.228,.59,0]);roller.rotation.x=Math.PI/2;rollers.push(roller);}
-    for(const z of [-1.26,1.26])box(root,[5.65,.25,.13],[0,.63,z],brushed);
+    for(const z of [-1.26,1.26]){
+      box(root,[5.65,.25,.13],[0,.63,z],cobalt);
+      box(root,[4.95,.016,.016],[0,.69,z+Math.sign(z)*.074],silver);
+      for(const x of [-2.58,2.58])box(root,[.33,.27,.155],[x,.63,z],orange);
+    }
     const product=part(root,[0,.71,0]);
     // Extruded aluminium gantry, optical lens, ring light and connected camera housing.
-    for(const x of [-1.8,1.8]){box(root,[.16,2.8,.2],[x,1.75,-.96],brushed);box(root,[.025,2.6,.025],[x,1.8,-.847],graphite);}
-    box(root,[3.9,.16,.22],[0,3.13,-.96],brushed);box(root,[.5,.16,1.3],[0,3.05,-.44],dark);
-    box(root,[.57,.48,.55],[0,2.81,.03],dark);bolts(root,.2,.19,3.06);
+    for(const x of [-1.8,1.8]){box(root,[.16,2.8,.2],[x,1.75,-.96],ivory);box(root,[.025,2.6,.025],[x,1.8,-.847],brushed);box(root,[.27,.38,.29],[x,.63,-.96],orange);}
+    box(root,[3.9,.16,.22],[0,3.13,-.96],ivory);box(root,[.5,.16,1.3],[0,3.05,-.44],cobalt);
+    box(root,[.57,.48,.55],[0,2.81,.03],orange);bolts(root,.2,.19,3.06);
     cylinder(root,.24,.17,[0,2.51,.03],graphite);cylinder(root,.20,.035,[0,2.409,.03],cyan);
     cylinder(root,.12,.04,[0,2.38,.03],graphite);
     for(let i=0;i<5;i++)cylinder(root,.247,.012,[0,2.46+i*.03,.03],brushed);
     const lens=standard('#244d69',.55,.075,{emissive:'#163b51',emissiveIntensity:.25});
     cylinder(root,.106,.008,[0,2.355,.03],lens);
-    for(let i=0;i<7;i++)box(root,[.59,.018,.575],[0,2.66+i*.044,.03],brushed);
+    for(let i=0;i<7;i++)box(root,[.44,.014,.58],[0,2.67+i*.038,.03],graphite);
+    box(root,[.32,.085,.012],[0,2.93,.312],ivory);
     for(const x of [-1.8,1.8])for(const y of [1.1,2.9]){const fastener=mesh(root,boltGeo,silver,[x,y,-.83]);fastener.rotation.x=Math.PI/2;}
-    tube(root,[[0,3.09,-.1],[.2,3.5,-.3],[1.5,3.55,-.7],[1.8,2.6,-1.1]],.035,graphite);
+    tube(root,[[0,3.09,-.1],[.2,3.5,-.3],[1.5,3.55,-.7],[1.8,2.6,-1.1]],.035,orange);
     const beam=mesh(root,g(new T.ConeGeometry(.88,1.34,4,1,true)),m(new T.MeshBasicMaterial({color:'#a0e0ef',transparent:true,opacity:.045,depthWrite:false,side:T.DoubleSide})),[0,1.67,.03]);beam.rotation.y=Math.PI/4;
     const scan=box(root,[1.85,.005,.018],[0,1.04,-.7],cyan);
     const outline=group(root);outline.position.set(.62,1.035,.3);
     for(const z of [-.18,.18])box(outline,[.46,.008,.012],[0,0,z],amber);
     for(const x of [-.23,.23])box(outline,[.012,.008,.36],[x,0,0],amber);
     outline.visible=output;
-    const gate=group(root);gate.position.set(2,1.05,1.1);box(gate,[.15,.42,.15],[0,0,0],dark);box(gate,[.95,.09,.1],[-.42,.16,0],amber);
+    const gate=group(root);gate.position.set(2,1.05,1.1);box(gate,[.15,.42,.15],[0,0,0],cobalt);box(gate,[.95,.09,.1],[-.42,.16,0],orange);
     gate.visible=output;
-    const lamp=cylinder(root,.06,.17,[-1.8,3.34,-.96],output?amber:cyan);
-    if(output){const edgeUnit=group(root);edgeUnit.position.set(2.05,1.5,-.7);box(edgeUnit,[.7,.9,.42],[0,0,0],dark);for(let i=0;i<10;i++)box(edgeUnit,[.75,.035,.45],[0,-.35+i*.073,0],brushed);}
+    const lamp=cylinder(root,.06,.17,[-1.8,3.34,-.96],output?amber:green);
+    if(output){const edgeUnit=group(root);edgeUnit.position.set(2.05,1.5,-.7);box(edgeUnit,[.7,.9,.42],[0,0,0],cobalt);for(let i=0;i<10;i++)box(edgeUnit,[.75,.035,.45],[0,-.35+i*.073,0],brushed);box(edgeUnit,[.14,.04,.016],[.19,.35,.242],green);}
     return {root,product,scan,beam,outline,rollers,gate,lamp};
   }
   const capture=factory(acts[0]);
@@ -113,7 +136,8 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
       const scratch=ring&&Math.abs(ny-(nx*.78-.06))<.075&&nx>.46;
       let v=index===0?(ring?.48+Math.sin(a*2)*.23:0):index===1?(edge?.75:.025):index===2?(ring?.23+.23*Math.sin(r*84):.01):(scratch?1:edge?.08:0);
       if(scratch&&index===0)v=.09;
-      ctx.fillStyle=index===3&&scratch?`rgb(244,177,91)`:`rgb(${Math.round(45+v*134)},${Math.round(70+v*154)},${Math.round(81+v*162)})`;
+      const tint=[[180,185,178],[34,165,255],[162,83,242],[255,131,30]][index];
+      ctx.fillStyle=index===3&&scratch?'rgb(255,145,38)':`rgb(${tint.map(channel=>Math.round(10+Math.min(1,v*1.25)*channel)).join(',')})`;
       if(v>.015)ctx.fillRect(x*cell+1,y*cell+1,cell-2,cell-2);
     }
     const map=keep(new T.CanvasTexture(c));map.colorSpace=T.SRGBColorSpace;return map;
@@ -125,7 +149,7 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
     mesh(panel,g(new T.PlaneGeometry(1.59,1.59)),m(new T.MeshBasicMaterial({map:sharedFeatures[i]})),[0,0,.041]);
     for(const y of [-.89,.89])box(panel,[1.86,.025,.09],[0,y,0],brushed);
     for(const x of [-.92,.92])box(panel,[.025,1.8,.09],[x,0,0],brushed);
-    box(panel,[.2,.025,.02],[-.67,-1.02,.01],i===3?amber:cyan);featureMaps.push(panel);
+    box(panel,[1.6,.024,.02],[0,-.82,.05],layerSignals[i]);featureMaps.push(panel);
   }
   const featurePart=part(acts[1],[-2.2,.08,1]);featurePart.root.scale.setScalar(.72);
   const featurePackets=[];
@@ -136,20 +160,22 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   const nodeGeo=g(new T.SphereGeometry(.067,14,10));
   for(let l=0;l<5;l++){
     const layer=group(net);layer.position.x=-2.4+l*1.2;layers.push(layer);
-    box(layer,[.025,2.85,2.22],[0,0,0],glass);
+    const layerGlass=standard(layerColors[l],.1,.18,{transparent:true,opacity:.085,depthWrite:false,side:T.DoubleSide});
+    box(layer,[.025,2.85,2.22],[0,0,0],layerGlass);
     for(const y of [-1.43,1.43])box(layer,[.03,.025,2.25],[0,y,0],brushed);
     for(const z of [-1.12,1.12])box(layer,[.03,2.85,.025],[0,0,z],brushed);
+    box(layer,[.035,.035,2.21],[0,-1.38,0],layerSignals[l]);
     const count=l===4?2:12;
     const groupNodes=[];
     for(let n=0;n<count;n++){
       const position=new T.Vector3(layer.position.x, count===2?(n-.5)*1.1:(Math.floor(n/3)-1.5)*.62,(n%3-1)*.66);
-      const mat=standard('#70b4c1',.55,.22,{emissive:'#6ed9ea',emissiveIntensity:.2});
+      const mat=standard(layerColors[l],.3,.23,{emissive:layerColors[l],emissiveIntensity:.18});
       const dot=mesh(net,nodeGeo,mat,position.toArray());nodes.push({dot,layer:l,n});groupNodes.push(position);
     }
     if(l)for(let a=0;a<layers[l-1].userData.points.length;a++)for(let b=0;b<groupNodes.length;b++){
       if((a+b)%3!==0&&l!==4)continue;
       const p=layers[l-1].userData.points[a],q=groupNodes[b];
-      const link=line(net,[p.toArray(),q.toArray()],'#7bb9c8',.16);edges.push({link,p,q,layer:l-1,index:a+b});
+      const link=line(net,[p.toArray(),q.toArray()],layerColors[l-1],.25);edges.push({link,p,q,layer:l-1,index:a+b});
     }
     layer.userData.points=groupNodes;
   }
@@ -163,20 +189,20 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
     mesh(card,g(new T.PlaneGeometry(.63,.72)),m(new T.MeshBasicMaterial({map:sharedFeatures[i%2?3:0]})),[0,.03,.04]);
     validationCards.push(card);
   }
-  const modelBlock=box(gateRoot,[1.08,1.08,1.08],[.3,1.5,0],dark);bolts(gateRoot,.4,.4,2.055);
+  const modelBlock=box(gateRoot,[1.08,1.08,1.08],[.3,1.5,0],violet);bolts(gateRoot,.4,.4,2.055);
   const modelBadge=box(gateRoot,[.62,.62,.025],[.3,1.5,.555],cyan);
   const validationGate=group(gateRoot);validationGate.position.set(2.13,1.3,0);
-  box(validationGate,[.12,2.5,.4],[-.75,0,0],brushed);box(validationGate,[.12,2.5,.4],[.75,0,0],brushed);
-  box(validationGate,[1.65,.12,.4],[0,1.28,0],brushed);
+  box(validationGate,[.12,2.5,.4],[-.75,0,0],ivory);box(validationGate,[.12,2.5,.4],[.75,0,0],ivory);
+  box(validationGate,[1.65,.12,.4],[0,1.28,0],cobalt);
   const gateBar=box(validationGate,[1.4,.07,.09],[0,.15,0],amber);
-  const validationPass=box(validationGate,[.52,.04,.42],[0,-1.1,.0],cyan);
-  const validationPaths=[];for(let i=0;i<6;i++)validationPaths.push(line(gateRoot,[validationCards[i].position.toArray(),[.3,1.5,.1]],'#8fbfc9',.3));
+  const validationPass=box(validationGate,[.52,.04,.42],[0,-1.1,.0],green);
+  const validationPaths=[];for(let i=0;i<6;i++)validationPaths.push(line(gateRoot,[validationCards[i].position.toArray(),[.3,1.5,.1]],layerColors[i%4],.4));
   function circuit(parent){
     const root=group(parent);root.position.y=.75;
     box(root,[4.75,.13,3.5],[0,0,0],pcb);bolts(root,2.17,1.55,.095);
     box(root,[1.84,.14,1.84],[0,.13,0],graphite);
     const chip=box(root,[1.51,.11,1.51],[0,.26,0],silver);
-    box(root,[1.13,.017,1.13],[0,.324,0],dark);
+    box(root,[1.13,.017,1.13],[0,.324,0],cobalt);
     for(let i=0;i<22;i++)for(const side of [-1,1]){
       box(root,[.025,.03,.16],[-.83+i*.079,.16,side*1.0],gold);
       box(root,[.16,.03,.025],[side*1.0,.16,-.83+i*.079],gold);
@@ -184,18 +210,25 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
     for(let i=0;i<10;i++){
       const z=-1.3+i*.28;
       for(const side of [-1,1]){
-        line(root,[[side*.96,.083,z*.55],[side*1.34,.083,z*.55],[side*1.53,.083,z],[side*2.1,.083,z]],'#82bdba',.7);
+        line(root,[[side*.96,.083,z*.55],[side*1.34,.083,z*.55],[side*1.53,.083,z],[side*2.1,.083,z]],'#deb267',.75);
         box(root,[.27,.13,.11],[side*1.94,.17,z],graphite);
-        box(root,[.05,.14,.12],[side*1.79,.17,z],gold);
+        box(root,[.05,.14,.12],[side*1.79,.17,z],copper);
       }
     }
-    for(const z of [-1.36,1.36])for(let i=0;i<5;i++)box(root,[.28,.18,.24],[-.8+i*.4,.17,z],dark);
+    for(const z of [-1.36,1.36])for(let i=0;i<5;i++){
+      box(root,[.28,.18,.24],[-.8+i*.4,.17,z],i%2?ivory:graphite);
+      for(const x of [-.17,.17])box(root,[.05,.03,.22],[-.8+i*.4+x,.095,z],copper);
+    }
+    const printCanvas=document.createElement('canvas');printCanvas.width=512;printCanvas.height=256;
+    const printCtx=printCanvas.getContext('2d');printCtx.textAlign='center';printCtx.fillStyle='#dcebf9';printCtx.font='600 70px Arial';printCtx.fillText('ZiewCore',256,122);printCtx.font='30px Arial';printCtx.fillText('EDGE INTELLIGENCE',256,175);
+    const printMap=keep(new T.CanvasTexture(printCanvas));printMap.colorSpace=T.SRGBColorSpace;
+    const silk=mesh(root,g(new T.PlaneGeometry(.95,.47)),m(new T.MeshBasicMaterial({map:printMap,transparent:true,depthWrite:false})),[0,.336,0]);silk.rotation.x=-Math.PI/2;silk.castShadow=false;
     return {root,chip};
   }
   const deployment=circuit(acts[4]);
   const packageRoot=group(acts[4]);
-  const modelPackage=box(packageRoot,[.82,.19,.82],[0,2.6,0],cyan);
-  for(let i=0;i<4;i++)box(packageRoot,[.86,.012,.86],[0,2.5+i*.06,0],brushed);
+  const modelPackage=box(packageRoot,[.82,.19,.82],[0,2.6,0],violet);
+  for(let i=0;i<4;i++)box(packageRoot,[.86,.012,.86],[0,2.5+i*.06,0],layerSignals[i]);
   const deploymentPath=tube(acts[4],[[0,3.8,0],[0,2.5,0],[0,1.1,0]],.012,cyan);
   const transferDots=Array.from({length:8},()=>mesh(acts[4],g(new T.SphereGeometry(.035,8,6)),cyan));
   const rackMat=standard('#c4d5da',.15,.58);
@@ -212,7 +245,7 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   const valueBars=[];
   for(let i=0;i<2;i++){
     const old=box(acts[6],[1.5,.06,.055],[-1.95,.08,1.65+i*.16],amber);
-    const next=box(acts[6],[1.5,.06,.055],[1.95,.08,.4+i*.16],cyan);
+    const next=box(acts[6],[1.5,.06,.055],[1.95,.08,.4+i*.16],green);
     valueBars.push({old,next});
   }
   let valueRatios=[.5,.8];
@@ -254,15 +287,15 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
     featurePackets.forEach((o,i)=>{const u=(p*1.6+i/18)%1;o.position.set(-2.1+u*4.14,1.8+Math.sin(i*2.4)*.45,.64-u*1.56);});
     const cycle=(p*3)%1,backward=cycle>.55,pass=backward?(1-cycle)/.45:cycle/.55;
     const cursor=pass*4;
-    nodes.forEach(({dot,layer,n})=>{const active=Math.max(0,1-Math.abs(layer-cursor)*1.4);dot.material.emissive.set(backward?'#efa653':'#78deee');dot.material.emissiveIntensity=.08+active*1.8;dot.scale.setScalar(1+active*.4);});
-    edges.forEach(({link,layer,index})=>{link.material.color.set(backward?'#c99657':'#80c9dc');link.material.opacity=.07+.32*Math.max(0,1-Math.abs(layer+.5-cursor))+(Math.sin(index*3+p*8)+1)*.012;});
-    neuralPulses.forEach(({edge,dot},i)=>{dot.visible=Math.abs(edge.layer+.5-cursor)<1;const u=(time*.75+i*.21)%1;dot.position.lerpVectors(edge.p,edge.q,backward?1-u:u);dot.material=backward?amber:cyan;});
+    nodes.forEach(({dot,layer,n})=>{const active=Math.max(0,1-Math.abs(layer-cursor)*1.4);dot.material.emissive.set(backward?'#ff6b35':layerColors[layer]);dot.material.emissiveIntensity=.15+active*.95;dot.scale.setScalar(1+active*.4);});
+    edges.forEach(({link,layer,index})=>{link.material.color.set(backward?'#ff9453':layerColors[layer]);link.material.opacity=.14+.36*Math.max(0,1-Math.abs(layer+.5-cursor))+(Math.sin(index*3+p*8)+1)*.012;});
+    neuralPulses.forEach(({edge,dot},i)=>{dot.visible=Math.abs(edge.layer+.5-cursor)<1;const u=(time*.75+i*.21)%1;dot.position.lerpVectors(edge.p,edge.q,backward?1-u:u);dot.material=backward?amber:layerSignals[edge.layer];});
     validationCards.forEach((card,i)=>{card.position.z=Math.sin(time+i*.5)*.04;});
-    const passed=p>.55;modelBadge.material=passed?cyan:amber;gateBar.position.y=passed?.95:.15;validationPass.visible=passed;
+    const passed=p>.55;modelBadge.material=passed?green:amber;gateBar.material=passed?green:amber;gateBar.position.y=passed?.95:.15;validationPass.visible=passed;
     modelBlock.position.x=passed?.3+T.MathUtils.smoothstep(p,.55,.94)*1.8:.3;
     modelBadge.position.x=modelBlock.position.x;
     packageRoot.position.y=-1.45*T.MathUtils.smoothstep(p,.12,.72);
-    modelPackage.material=cyan;deployment.chip.material=p>.7?cyan:silver;
+    deployment.chip.material=p>.7?green:silver;
     transferDots.forEach((dot,i)=>{dot.position.copy(deploymentPath.getPoint((p*1.3+i/8)%1));dot.visible=p<.8;});
     inference.scan.position.z=Math.sin(p*Math.PI*4)*.7;
     inference.outline.visible=p>.17;
