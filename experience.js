@@ -3,7 +3,7 @@ import { mountScene } from './scene3d.js?v=20260924-space1';
 import { mountLearningHero } from './learning-hero.js?v=20260924-space1';
 import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-space1';
 import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
-import { mountSpaceBackground } from './space-background.js?v=20260924-space1';
+import { mountSpaceBackground } from './space-background.js?v=20260924-space2';
 
 const spaceBackground=mountSpaceBackground();
 window.addEventListener('pagehide',event=>{if(!event.persisted)spaceBackground.dispose();});

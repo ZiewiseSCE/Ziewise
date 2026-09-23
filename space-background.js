@@ -1,4 +1,4 @@
-import {emitStars, pruneStars, starOpacity} from './starfield-particles.js?v=20260924-space1';
+import {createStarAppearance, emitStars, pruneStars, starOpacity} from './starfield-particles.js?v=20260924-space2';
 
 /** One decorative canvas, idle when the pointer is idle. All hit testing stays on the page. */
 export function mountSpaceBackground() {
@@ -13,27 +13,20 @@ export function mountSpaceBackground() {
   let paused = document.documentElement.classList.contains('motion-paused'), dialog = false;
   let seed = 307;
   const random = () => {seed = (seed * 1664525 + 1013904223) >>> 0;return seed / 4294967296;};
-  for (let i = 0; i < 220; i++) field.push({x:random(),y:random(),r:.4 + random() * .65,a:.15 + random() * .34});
+  for (let i = 0; i < 220; i++) field.push({x:random(),y:random(),...createStarAppearance(random)});
   const active = () => !paused && !reduce.matches && !dialog && !document.hidden;
+  function dot(x,y,size,brightness) {
+    context.globalAlpha = brightness;
+    context.beginPath();context.arc(x,y,size,0,Math.PI * 2);context.fill();
+  }
   function paint(now) {
     context.clearRect(0,0,width,height);
     context.fillStyle = '#d9e9ff';
     for (const star of field) {
-      context.globalAlpha = star.a;
-      context.beginPath();context.arc(star.x * width,star.y * height,star.r,0,Math.PI * 2);context.fill();
+      dot(star.x * width,star.y * height,star.size,star.brightness);
     }
     for (const star of stars) {
-      const age = (now - star.born) / 1000, alpha = starOpacity(star,now);
-      const x = star.x + star.vx * age, y = star.y + star.vy * age;
-      context.globalAlpha = alpha * .12;
-      context.beginPath();context.arc(x,y,star.size * 3,0,Math.PI * 2);context.fill();
-      context.globalAlpha = alpha;
-      context.beginPath();context.arc(x,y,star.size,0,Math.PI * 2);context.fill();
-      if (star.sparkle) {
-        const r = star.size * 3.2;
-        context.globalAlpha = alpha * .6;context.lineWidth = .6;context.strokeStyle = '#e4efff';
-        context.beginPath();context.moveTo(x-r,y);context.lineTo(x+r,y);context.moveTo(x,y-r);context.lineTo(x,y+r);context.stroke();
-      }
+      dot(star.x,star.y,star.size,starOpacity(star,now));
     }
     context.globalAlpha = 1;
   }
@@ -53,7 +46,8 @@ export function mountSpaceBackground() {
   function move(event) {
     if (event.pointerType !== 'mouse' || !active()) {previous = null;return;}
     const now = performance.now(), point = {x:event.clientX,y:event.clientY};
-    if (previous && now - previous.time < 16) return;
+    // At most 28 stars per 32 ms: the bounded buffer holds every star for its full lifetime.
+    if (previous && now - previous.time < 32) return;
     if (previous && now - previous.time > 100) previous = null;
     emitStars(stars,previous,point,now);previous = {...point,time:now};
     if (!frame) frame = requestAnimationFrame(tick);
