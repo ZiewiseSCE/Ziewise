@@ -24,7 +24,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
   let processOverview = false, focusRadius = null;
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
   } catch (error) {
     const fallback = document.createElement('div');
     fallback.className = 'webgl-fallback';
@@ -66,7 +66,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
   renderer.shadowMap.autoUpdate = false;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(sceneBackground);
+  scene.background = null;
   scene.fog = new THREE.Fog(sceneBackground, 17, 29);
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 60);
   const target = new THREE.Vector3(0, 1.05, 0);
@@ -206,7 +206,7 @@ export function mountScene(element, { kind = 'core', onReady, modelFactory = nul
     photovoltaic: new THREE.MeshPhysicalMaterial({ color: '#14222e', metalness: 0.65, roughness: 0.21, clearcoat: 0.9 }),
   };
   const sharedMaterials = new Set(Object.values(mats));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), studioFloor ? new THREE.ShadowMaterial({color:'#344455',opacity:.19}) : new THREE.MeshStandardMaterial({ color: new THREE.Color(sceneBackground).multiplyScalar(.5), roughness: 0.4, metalness: 0.48 }));
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), studioFloor ? new THREE.ShadowMaterial({color:'#344455',opacity:.19}) : new THREE.MeshStandardMaterial({ color: new THREE.Color(sceneBackground), transparent: true, opacity: .22, depthWrite: false, roughness: 0.5, metalness: 0.3 }));
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.075;
   floor.receiveShadow = false;

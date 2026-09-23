@@ -1,8 +1,12 @@
-import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260924-titanium1';
-import { mountScene } from './scene3d.js?v=20260924-titanium1';
-import { mountLearningHero } from './learning-hero.js?v=20260924-petrol1';
-import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-petrol1';
+import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260924-space1';
+import { mountScene } from './scene3d.js?v=20260924-space1';
+import { mountLearningHero } from './learning-hero.js?v=20260924-space1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-space1';
 import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
+import { mountSpaceBackground } from './space-background.js?v=20260924-space1';
+
+const spaceBackground=mountSpaceBackground();
+window.addEventListener('pagehide',event=>{if(!event.persisted)spaceBackground.dispose();});
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let paused=reduced.matches;
@@ -24,7 +28,7 @@ let diagramReady=false;
 let diagramFailed=false;
 let diagramRequest=0;
 let heroDisposed=false;
-const infrastructureLabel=()=>document.documentElement.lang==='en'?'ZiewCore neural brain connected to six specialist AIs. Drag or use arrow keys to rotate. Press Home to reset.':'6개 전문 AI를 연결하는 ZiewCore 신경망 뇌. 드래그 또는 방향키로 회전하고 Home 키로 처음 시점으로 돌아갑니다.';
+const infrastructureLabel=()=>document.documentElement.lang==='en'?'ZiewCore artificial brain with exposed neural fibers and a central compute core, connected to six specialist AIs. Drag or use arrow keys to rotate. Press Home to reset.':'신경 섬유와 중앙 연산 코어가 드러나는 ZiewCore 인공뇌, 6개 전문 AI와 연결됩니다. 드래그 또는 방향키로 회전하고 Home 키로 처음 시점으로 돌아갑니다.';
 const neuralPhaseCopy={
  ko:['현장의 영상·센서·업무 데이터를 모아, 중앙 신경망의 입력으로 연결합니다.','모호한 사례와 현장 피드백을 선별해 학습하고, 다음 모델을 검증합니다.','검증한 모델을 전문 AI에 전달하고, 서비스 중단을 줄이는 배포 흐름으로 연결합니다.','현장 가까이에서 판단하고, 결과를 다음 학습의 피드백으로 되돌립니다.'],
  en:['Connect video, sensor and business data from operations to the central neural core.','Select uncertain cases and operational feedback for learning, then validate the next model.','Distribute validated models to specialist AIs through a deployment flow designed for service continuity.','Run inference close to operations and return results as feedback for the next learning cycle.']

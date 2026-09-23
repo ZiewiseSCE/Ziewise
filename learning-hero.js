@@ -1,4 +1,4 @@
-import {mountLearningCinema} from './deep-learning-cinema.js?v=20260924-petrol1';
+import {mountLearningCinema} from './deep-learning-cinema.js?v=20260924-space1';
 import {STORY_CHAPTERS,STORY_DURATION,storyFrame} from './deep-learning-story.js?v=20260923-dl1';
 import {mountHeroROI} from './hero-roi.js?v=20260923-dl1';
 

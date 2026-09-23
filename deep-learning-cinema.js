@@ -5,7 +5,7 @@ import { STORY_DURATION, storyFrame } from './deep-learning-story.js?v=20260923-
 export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage,onProgress,label}={}) {
   const noop={setPaused(){},setStage(){},setTime(){},setLabel(){},dispose(){}};
   let renderer;
-  try { renderer=new T.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'}); }
+  try { renderer=new T.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'}); }
   catch(error){queueMicrotask(()=>onError?.(error));return noop;}
   const canvas=renderer.domElement;
   canvas.className='ziewise-webgl learning-cinema';
@@ -15,8 +15,8 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
-  const scene=new T.Scene();scene.background=new T.Color('#96bdc4');
-  scene.fog=new T.Fog('#96bdc4',14,32);
+  const scene=new T.Scene();scene.background=null;
+  scene.fog=new T.Fog('#050914',14,32);
   const camera=new T.PerspectiveCamera(35,1,.08,80);
   const resources=new Set(),keep=r=>(resources.add(r),r);
   const g=r=>keep(r), m=r=>keep(r);
@@ -65,7 +65,7 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   const key=new T.DirectionalLight('#fff1d9',2.8);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.015;key.shadow.radius=3;scene.add(key);
   const rim=new T.DirectionalLight('#9fc8ff',2.1);rim.position.set(4,4,-5);scene.add(rim);
   const warm=new T.DirectionalLight('#ffb76a',1.05);warm.position.set(-6,2,-2);scene.add(warm);
-  const daylight=m(new T.MeshPhysicalMaterial({color:'#527f91',metalness:.48,roughness:.56,clearcoat:.16,clearcoatRoughness:.48,normalMap:grain,normalScale:new T.Vector2(.025,.025)}));
+  const daylight=m(new T.MeshPhysicalMaterial({color:'#162333',transparent:true,opacity:.2,depthWrite:false,metalness:.48,roughness:.56,clearcoat:.16,clearcoatRoughness:.48,normalMap:grain,normalScale:new T.Vector2(.025,.025)}));
   const prismTime={value:0},prismFocus={value:0};
   // Broad softbox reflections follow the film clock, including pause and reduced motion.
   daylight.onBeforeCompile=shader=>{
