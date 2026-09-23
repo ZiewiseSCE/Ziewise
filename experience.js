@@ -1,7 +1,7 @@
-import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260924-atrium1';
-import { mountScene } from './scene3d.js?v=20260924-atrium1';
-import { mountLearningHero } from './learning-hero.js?v=20260924-atrium1';
-import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-atrium1';
+import { mountTechnologyStory as mountTechnology } from './technology-story.js?v=20260924-mineral1';
+import { mountScene } from './scene3d.js?v=20260924-mineral1';
+import { mountLearningHero } from './learning-hero.js?v=20260924-mineral1';
+import { mountNeuralBrain } from './neural-brain3d.js?v=20260924-mineral1';
 import { solutionMiniatures } from './solution-miniatures3d.js?v=20260913-d2c1';
 
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');

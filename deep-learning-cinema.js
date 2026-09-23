@@ -15,8 +15,8 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   renderer.outputColorSpace=T.SRGBColorSpace;
   renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;
-  const scene=new T.Scene();scene.background=new T.Color('#f2f6f9');
-  scene.fog=new T.Fog('#f2f6f9',14,32);
+  const scene=new T.Scene();scene.background=new T.Color('#abc4d2');
+  scene.fog=new T.Fog('#abc4d2',14,32);
   const camera=new T.PerspectiveCamera(35,1,.08,80);
   const resources=new Set(),keep=r=>(resources.add(r),r);
   const g=r=>keep(r), m=r=>keep(r);
@@ -65,7 +65,7 @@ export function mountLearningCinema(host, {onReady,onError,onContextLost,onStage
   const key=new T.DirectionalLight('#fff1d9',2.8);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-7;key.shadow.camera.right=7;key.shadow.camera.top=7;key.shadow.camera.bottom=-7;key.shadow.normalBias=.015;key.shadow.radius=3;scene.add(key);
   const rim=new T.DirectionalLight('#9fc8ff',2.1);rim.position.set(4,4,-5);scene.add(rim);
   const warm=new T.DirectionalLight('#ffb76a',1.05);warm.position.set(-6,2,-2);scene.add(warm);
-  const daylight=standard('#d9e4eb',.02,.62);
+  const daylight=standard('#748f9f',.02,.68);
   const prismTime={value:0},prismFocus={value:0};
   // Slow spectral caustics follow the film clock, including pause and reduced motion.
   daylight.onBeforeCompile=shader=>{

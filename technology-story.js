@@ -1,4 +1,4 @@
-import { mountScene } from './scene3d.js?v=20260924-atrium1';
+import { mountScene } from './scene3d.js?v=20260924-mineral1';
 import { processCatalog } from './ai-briefing/process-catalog.js';
 import { createSystemsModel } from './ai-briefing/assets/process-systems.js';
 import { createIndustryModel } from './ai-briefing/assets/process-industry.js';
