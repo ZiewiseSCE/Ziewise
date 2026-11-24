@@ -1,17 +1,8 @@
-const BUILD_VERSION="20260907-narrated-demos-v1";
-
-self.addEventListener("install",()=>self.skipWaiting());
-
-self.addEventListener("activate",event=>{
-  event.waitUntil((async()=>{
-    const keys=await caches.keys();
-    await Promise.all(keys.map(key=>caches.delete(key)));
-    await self.clients.claim();
-  })());
+// Retire the worker registered by earlier versions of the technical briefing.
+self.addEventListener("install", event => {
+  event.waitUntil(self.skipWaiting());
 });
 
-self.addEventListener("fetch",event=>{
-  const url=new URL(event.request.url);
-  if(url.origin!==self.location.origin||!url.pathname.startsWith("/ai-briefing/"))return;
-  event.respondWith(fetch(event.request,{cache:"no-store"}));
+self.addEventListener("activate", event => {
+  event.waitUntil(self.registration.unregister());
 });

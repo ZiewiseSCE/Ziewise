@@ -1,0 +1,19 @@
+/* Photograph-led art direction for the complete reference presenter. */
+:root{--acc:#c4e888;--acc2:#d9f3af;--accSoft:rgba(184,216,134,.15);--gold:#eccb90;--line:rgba(196,216,190,.20);--line2:rgba(196,216,190,.36)}
+#bgfx .beam,#bgfx .mesh,#bgMark{opacity:.12}
+.scene{--brief-photo:url('../assets/field-01.webp');background-image:linear-gradient(90deg,rgba(6,13,14,.95) 0%,rgba(6,13,14,.88) 40%,rgba(6,13,14,.64)),var(--brief-photo);background-size:cover;background-position:center}
+#s01{background-image:linear-gradient(90deg,#071111ef,#071111bd 51%,#07111145),var(--brief-photo)}
+#s02,#s03,#s18,#s19,#s20{--brief-photo:url('./assets/poc-review.webp')}
+#s04,#s05,#s07,#s10{--brief-photo:url('./assets/safety-floor.webp')}
+#s06,#s13,#s14,#s15,#sAI{--brief-photo:url('../assets/field-04.webp')}
+#s08,#s09{--brief-photo:url('../assets/field-03.webp')}
+#s11,#sVALVE{--brief-photo:url('./assets/case-valve.webp')}
+#s12,#sCOUNT{--brief-photo:url('./assets/warehouse.webp')}
+#sCUST{--brief-photo:url('../assets/field-02.webp')}
+#sBEAUTY{--brief-photo:url('./assets/beauty-line.webp')}
+#sEN{--brief-photo:url('./assets/solar.webp')}
+#sSEC{--brief-photo:url('../assets/print.webp')}
+#sLLM,#sPROD{--brief-photo:url('./assets/knowledge-desk.webp')}
+#s16,#s17,#sSCN,#sESG{--brief-photo:url('./assets/dept-finance.webp')}
+.scene .panel{background-color:rgba(13,24,24,.88)}
+@media(prefers-reduced-motion:reduce){.scene,.scene *,.scene *::before,.scene *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
