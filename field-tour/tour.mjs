@@ -16,7 +16,7 @@ const starts=[];let total=0;
 for(const stop of route){starts.push(total);total+=stop.duration;}
 const timecode=seconds=>{const s=Math.floor(Math.max(0,seconds)+.001);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
 const set=(id,text)=>{const e=$(id);if(e&&e.textContent!==text)e.textContent=text;};
-const edition='visit4';
+const edition='visit5';
 const posterUrl=id=>new URL('./views/'+id+(brief?'-brief':'')+'.webp?v='+edition,import.meta.url).href;
 const audio=$('narration'),canvas=$('walk-world'),map=$('walk-plan'),routeDialog=$('walk-route');
 let index=-1,t=0,playing=!reduced.matches,ended=false,voiceOn=false,hasListened=false,audioRequest=0;
@@ -325,7 +325,7 @@ async function bootWorld() {
   let candidate=null;
   try{
     const equipmentView=chosen.get('view')==='model'&&brief;
-    const {createWorld}=equipmentView?await import('./world.mjs?v=visit4'):await import('./photo-world.mjs?v=visit4');
+    const {createWorld}=equipmentView?await import('./world.mjs?v=visit4'):await import('./photo-world.mjs?v=visit5');
     candidate=createWorld(canvas,{onLoss:noHardware});
     let active;
     do{active=current().id;await candidate.readyFor(active);}while(active!==current().id);

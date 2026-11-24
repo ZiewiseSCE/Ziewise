@@ -86,10 +86,8 @@ export function createWorld(canvas,{capture=false,onLoss}={}){
   const renderer=new T.WebGLRenderer({canvas,alpha:false,antialias:false,preserveDrawingBuffer:capture,powerPreference:'high-performance'});
   renderer.outputColorSpace=T.SRGBColorSpace;renderer.setClearColor(0x414c4b);
   const scene=new T.Scene(),camera=new T.PerspectiveCamera(46,1,.04,100),keys=new Set();
-  const roomMesh=new T.Mesh(new T.SphereGeometry(26,80,48),new T.MeshBasicMaterial({side:T.BackSide,toneMapped:false}));
-  roomMesh.scale.x=-1;roomMesh.material.side=T.FrontSide;roomMesh.frustumCulled=false;scene.add(roomMesh);
-  // Looking from inside requires inward winding even after the UV-orientation flip.
-  roomMesh.material.side=T.DoubleSide;
+  const roomMesh=new T.Mesh(new T.SphereGeometry(26,80,48),new T.MeshBasicMaterial({side:T.DoubleSide,toneMapped:false}));
+  roomMesh.scale.x=-1;roomMesh.frustumCulled=false;scene.add(roomMesh);
   const prepared=new Map(),inflight=new Map(),roomMaps=new Map();
   const walkOrder=[...stops].sort((a,b)=>b.z-a.z);
   let active=null,disposed=false,width=0,height=0,ratio=capture?1:Math.min(devicePixelRatio||1,1.8);
@@ -130,6 +128,30 @@ export function createWorld(canvas,{capture=false,onLoss}={}){
     const fit=Math.min(1,shot.aspect/camera.aspect);
     camera.fov=T.MathUtils.radToDeg(2*Math.atan(halfY*fit*zoom));camera.updateProjectionMatrix();
   }
+  const cornerRay=new T.Vector3(),limits=[range(1),range(0),9],signs=[-1,1];
+  function fitsPhotograph(shot,tangent){
+    // The near subjects and far backfill were photographed through the same lens.
+    // Check both ends of the depth interval with the current camera translation.
+    for(const x of signs)for(const y of signs){
+      cornerRay.set(x*tangent*camera.aspect,y*tangent,-1).applyQuaternion(camera.quaternion);
+      if(cornerRay.z>-.001)return false;
+      for(const depth of limits){
+        const t=(-depth-camera.position.z)/cornerRay.z;
+        if(Math.abs(camera.position.x+t*cornerRay.x)>depth*halfY*shot.aspect*.992||
+           Math.abs(camera.position.y+t*cornerRay.y)>depth*halfY*.992)return false;
+      }
+    }
+    return true;
+  }
+  function keepFrameInside(shot){
+    let upper=Math.tan(radians(camera.fov*.5));
+    if(fitsPhotograph(shot,upper))return;
+    let lower=0;
+    for(let j=0;j<10;j++){
+      const test=(lower+upper)*.5;if(fitsPhotograph(shot,test))lower=test;else upper=test;
+    }
+    camera.fov=T.MathUtils.radToDeg(2*Math.atan(Math.max(.02,lower)));camera.updateProjectionMatrix();
+  }
   function draw({id,p=0,phase=0,entryOnly=true,close=false,reduced=false,lean=false,peek=[0,0]}){
     const alternative=id==='safety'&&phase>0?['safety','safety-mounted','safety-control'][phase]:id;
     const s=activate(prepared.has(alternative)?alternative:id);if(!s)return null;
@@ -147,7 +169,7 @@ export function createWorld(canvas,{capture=false,onLoss}={}){
     lookAt.y+=.095*Math.cos(q*Math.PI)+(peek[1]||0)*1.1;
     if(lean){lookAt.x=mix(lookAt.x,focus.x*.70,.21);lookAt.y=mix(lookAt.y,focus.y*.62,.21);}
     setLens(s,(close?.81:.865)-sweep*.07-(lean?.055:0));
-    camera.lookAt(lookAt);if(inRoom)camera.rotateY(inRoom*reverse*.64);
+    camera.lookAt(lookAt);keepFrameInside(s);if(inRoom)camera.rotateY(inRoom*reverse*.64);
     opacity(s,1-inRoom);renderer.render(scene,camera);prevPoint.copy(camera.position);
     const marker=focus.clone().project(camera);
     return {x:(1+marker.x)/2,y:(1-marker.y)/2,z:byId.get(id)?.z??0,visible:inRoom<.12&&marker.z>0&&marker.z<1};

@@ -66,7 +66,7 @@ async function activate(f){
   current=f;last=0;if(!f)return;f.world=null;f.el.classList.remove('live');wake();
   const type=f.type=physical.has(f.id)?'physical':'photo',canvas=canvasFor(type);
   if(!modules[type])modules[type]=(type==='physical'?import('./chapter-world.mjs?v=visit4').then(m=>m.createChapterWorld(canvas)):
-    import('./photo-world.mjs?v=visit4').then(m=>m.createWorld(canvas))).catch(()=>null);
+    import('./photo-world.mjs?v=visit5').then(m=>m.createWorld(canvas))).catch(()=>null);
   const world=await modules[type];if(!world||token!==serial)return;
   try{
     const asset=await (type==='physical'?world.prepare(f.id):world.readyFor(f.id));
