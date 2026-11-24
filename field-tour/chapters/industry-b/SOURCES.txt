@@ -1,0 +1,52 @@
+Industry vignettes for ZiewPrint and ZiewObserver
+
+Local assets
+
+The A3 duplex multifunction printer, laptop, terminal, authenticated sheet,
+operations desk, articulated displays, rack enclosures and all room geometry
+were modeled for this experience. The interface graphics and paper document
+are original illustrative compositions. The sample service, staff ID, events,
+addresses and measurements were written specifically for the walkthrough.
+
+server-faces.webp is a resized derivative of the existing Ziewise site asset
+assets/rack-front-photo-v1.webp. Each physical server module receives its own
+corresponding portion of the photograph. The surrounding chassis, rails, power
+lamps, connectors, patch leads and diagnostic console are individual meshes.
+https://ziewise.com/assets/rack-front-photo-v1.webp
+
+oak.webp and oak-normal.webp are resized maps from Mocha Oak Veneer, photographed
+by Jenelle van Heerden for Poly Haven. The material is used on the desks and
+joinery. CC0 1.0.
+https://polyhaven.com/a/mocha_oak_veneer
+
+weave.webp is a resized, neutral-colour derivative of Poly Wool Herringbone
+by colormass and Rico Cilliers. It supplies the fine floor fabric. CC0 1.0.
+https://polyhaven.com/a/poly_wool_herringbone
+
+paper-normal.webp derives from Paper 001 by Lennart Demes at ambientCG. It
+supplies the fine relief of the paper sheet and paper stock. CC0 1.0.
+https://ambientcg.com/view?id=Paper001
+
+window-daylight.webp is cropped from the project's derivative of Derelict
+Airfield 02 by Alexander Scholten for Poly Haven. It appears behind the
+printer-room glazing. CC0 1.0.
+https://polyhaven.com/a/derelict_airfield_02
+
+License references
+https://polyhaven.com/license
+https://docs.ambientcg.com/license/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Delivery
+
+Keep the MJS and six WebP images together. Call buildIndustryB(T,'print') or
+buildIndustryB(T,'observer'), add its group and call update(p) with 0–1
+progress. The three local-space anchors correspond to source, assessment and
+operator result. Await ready for an offline capture. Each scene can be batched
+with the existing batchStatic helper before awaiting ready. The host supplies
+environment lighting and the camera. To place only the equipment inside an
+existing factory bay, add the returned equipment objects to another group
+before batching. They retain all product animation references. The print
+equipment contains the source laptop and multifunction printer. The monitoring
+equipment contains the working server rack and operations desk. The review
+folder holds rendered proof images and is optional at runtime.

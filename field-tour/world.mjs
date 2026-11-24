@@ -1,6 +1,6 @@
 import * as T from '../ai-briefing/vendor/three.module.min.js';
 import {buildArchitecture} from './architecture.mjs?v=cad1';
-import {buildFactory} from './factory.mjs?v=cad1';
+import {buildFactory} from './factory.mjs?v=visit4';
 import {buildOffice} from './office.mjs?v=cad1';
 import {dressInspection} from './cell-details.mjs';
 import {applyFinishes} from './finishes.mjs?v=cad1';
@@ -12,7 +12,8 @@ import {dressOffice,officeSurfacesReady} from './office-materials/office-dress.m
 import {replaceSafetyWorker} from './safety/safety-worker.mjs';
 import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
 import {batchStatic} from './batch.mjs';
-import {byId,stops} from './route.mjs';
+import {byId,stops} from './route.mjs?v=visit4';
+import {buildIndustryB} from './chapters/industry-b/industry-b.mjs';
 
 const clamp=T.MathUtils.clamp, lerp=T.MathUtils.lerp;
 const v=(x,y,z)=>new T.Vector3(x,y,z);
@@ -117,8 +118,12 @@ export function createWorld(canvas,{capture=false,onLoss=()=>{}}={}) {
   const pool=new Map(),shadowMat=contactShade(),shadowGeo=new T.PlaneGeometry(4.5,3.8);
   function station(id) {
     if(pool.has(id))return pool.get(id);
-    const spec=byId.get(id),asset=spec.index<7?buildFactory(T,id):buildOffice(T,id);
+    const spec=byId.get(id),facility=id==='observer'||id==='print';
+    const asset=facility?buildIndustryB(T,id):spec.index<7?buildFactory(T,id):buildOffice(T,id);
     const resources=[];
+    if(facility){
+      const fixture=new T.Group();fixture.add(...asset.equipment);asset.group=fixture;resources.push(asset.ready);
+    }
     if(id==='design'){
       dressInspection(T,asset.group);
       const robot=replaceInspectionRobot(T,asset.group,{batchStatic}),run=asset.update;
@@ -130,7 +135,7 @@ export function createWorld(canvas,{capture=false,onLoss=()=>{}}={}) {
       const operator=replaceSafetyWorker(T,asset.group,new GLTFLoader()),run=asset.update;
       asset.update=(p,time)=>{run(p,time);operator.update(p);};resources.push(operator.ready);
     }
-    if(spec.index>=7){dressOffice(T,asset.group,id);resources.push(officeSurfacesReady(T));}
+    if(spec.index>=7&&!facility){dressOffice(T,asset.group,id);resources.push(officeSurfacesReady(T));}
     asset.detailed=false;
     asset.ready=Promise.all([lighting,equipment.near(spec.z),...resources]).then(results=>{
       if(results.includes(false))return false;

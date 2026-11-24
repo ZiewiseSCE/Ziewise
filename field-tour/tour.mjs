@@ -1,4 +1,4 @@
-import {stops,byId,homeRoute,referenceMap} from './route.mjs';
+import {stops,byId,homeRoute,homeStory,referenceMap} from './route.mjs?v=visit4';
 
 const $=id=>document.getElementById(id);
 const stage=document.querySelector('[data-tour]');
@@ -7,16 +7,16 @@ const chosen=new URLSearchParams(location.search);
 const sourceId=chosen.get('reference')||chosen.get('scene');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const cueTurns={design:[2,3],systems:[2,3],vision:[1,3],safety:[1,3],maintenance:[2,3],count:[2,3],edge:[1,3],
-  knowledge:[1,2],hr:[1,3],finance:[1,2],purchase:[1,3],sales:[1,3],roi:[1,2],poc:[2,3]};
+  knowledge:[1,2],hr:[1,3],finance:[1,2],purchase:[1,3],sales:[1,3],roi:[1,2],poc:[2,3],observer:[1,3],print:[1,3]};
 const route=brief?content.map(topic=>{
   const voice=voices[topic.file], spec=byId.get(topic.id);
   return {...spec,topic,voice,duration:voice.duration,cuts:cueTurns[topic.id].map(i=>voice.cues[i].start/voice.duration)};
-}):homeRoute.map(([id,duration])=>({...byId.get(id),duration,cuts:[.42,.73]}));
+}):homeRoute.map(([id,duration])=>({...byId.get(id),...homeStory[id],duration,cuts:[.42,.73]}));
 const starts=[];let total=0;
 for(const stop of route){starts.push(total);total+=stop.duration;}
 const timecode=seconds=>{const s=Math.floor(Math.max(0,seconds)+.001);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
 const set=(id,text)=>{const e=$(id);if(e&&e.textContent!==text)e.textContent=text;};
-const edition='cad1';
+const edition='visit4';
 const posterUrl=id=>new URL('./views/'+id+(brief?'-brief':'')+'.webp?v='+edition,import.meta.url).href;
 const audio=$('narration'),canvas=$('walk-world'),map=$('walk-plan'),routeDialog=$('walk-route');
 let index=-1,t=0,playing=!reduced.matches,ended=false,voiceOn=false,hasListened=false,audioRequest=0;
@@ -51,6 +51,12 @@ function showNotes(stop){
   if(!brief)return;
   set('note-title',stop.label+' 작업 흐름');set('voice-transcript',stop.voice.script);
   $('walk-ref').href='./reference.html#'+stop.topic.original;
+  if($('walk-model')){
+    const model=$('walk-model'),mode=chosen.get('view')==='model';
+    model.href='./?chapter='+stop.id+(mode?'':'&view=model')+'#chapters';
+    model.textContent=mode?'현장 투어로 돌아가기':'설비 구조 3D로 보기';
+    model.hidden=['safety','hr','finance','knowledge','purchase','sales','roi','poc'].includes(stop.id)&&!mode;
+  }
   $('walk-steps').replaceChildren();
   stepButtons=stop.marks.map((name,i)=>{
     const b=document.createElement('button'),label=document.createElement('small'),h=document.createElement('strong'),desc=document.createElement('span');
@@ -122,8 +128,8 @@ function select(i,seconds=0,instant=true,updateUrl=false) {
   set('walk-count',String(i+1).padStart(2,'0')+' / '+String(route.length).padStart(2,'0'));
   mapButtons.forEach((button,j)=>{if(i===j)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
   if(brief){
-    if(changed){++audioRequest;audio.pause();pendingSeek=t;audio.src='./narration/'+stop.topic.file;
-      $('korean-captions').src='./narration/captions/'+stop.topic.file.replace(/\.mp3$/,'.vtt');audio.load();
+    if(changed){++audioRequest;audio.pause();pendingSeek=t;audio.src='./narration/'+stop.topic.file+'?v='+edition;
+      $('korean-captions').src='./narration/captions/'+stop.topic.file.replace(/\.mp3$/,'.vtt')+'?v='+edition;audio.load();
     }else syncAudioTime(t);
     showNotes(stop);
     if(voiceOn&&playing)playAudio();
@@ -172,7 +178,7 @@ function drawMap(){
   const w=map.width,h=map.height,x=z=>10+(8.5-z)/57*(w-20),mid=h*.51;
   ctx.clearRect(0,0,w,h);ctx.strokeStyle='#9aa99d';ctx.lineWidth=1.5;ctx.setLineDash([3,5]);
   ctx.beginPath();ctx.moveTo(6,mid);ctx.lineTo(w-6,mid);ctx.stroke();ctx.setLineDash([]);
-  for(const s of stops){
+  for(const s of (brief?stops:route)){
     const a=x(s.z),active=s.id===(manual?nearest:current().id),edge=mid-s.side*24;
     ctx.strokeStyle=active?'#def795':'#819087';ctx.lineWidth=active?3:1.5;
     ctx.beginPath();ctx.moveTo(a,mid-s.side*4);ctx.lineTo(a,edge);ctx.stroke();
@@ -246,7 +252,7 @@ $('walk-seek').addEventListener('input',event=>{
 $('walk-explore').addEventListener('click',enableManual);
 $('walk-near').addEventListener('click',()=>{
   const found=route.findIndex(s=>s.id===nearest);
-  if(found<0&&nearest){location.href='./ai-briefing/?chapter='+nearest+'#chapters';return;}
+  if(found<0&&nearest){location.href=new URL('../ai-briefing/?chapter='+nearest+'#chapters',import.meta.url).href;return;}
   if(found>=0){leaveManual(false);select(found,0,true,true);setPlaying(true);}
 });
 $('walk-object').addEventListener('click',()=>{
@@ -318,7 +324,8 @@ function noHardware(){
 async function bootWorld() {
   let candidate=null;
   try{
-    const {createWorld}=await import('./world.mjs?v=cad1');
+    const equipmentView=chosen.get('view')==='model'&&brief;
+    const {createWorld}=equipmentView?await import('./world.mjs?v=visit4'):await import('./photo-world.mjs?v=visit4');
     candidate=createWorld(canvas,{onLoss:noHardware});
     let active;
     do{active=current().id;await candidate.readyFor(active);}while(active!==current().id);
@@ -330,7 +337,9 @@ async function bootWorld() {
   }catch(error){candidate?.release();console.warn('3D tour:',error.message);noHardware();}
 }
 new ResizeObserver(wake).observe($('walk-view'));
-new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;lastTick=0;syncBackup();if(visible)wake();},{threshold:0}).observe(stage);
+let worldStarted=false;
+function ensureWorld(){if(!worldStarted){worldStarted=true;bootWorld();}}
+new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;lastTick=0;syncBackup();if(visible){ensureWorld();wake();}},{threshold:0}).observe(stage);
 document.addEventListener('visibilitychange',()=>{
   lastTick=0;
   if(document.hidden){world?.keys.clear();docPaused=!!audio&&!audio.paused;if(docPaused)audio.pause();backup?.pause();}
@@ -338,8 +347,36 @@ document.addEventListener('visibilitychange',()=>{
 });
 reduced.addEventListener('change',()=>{if(backupReady)stage.dataset.renderer=reduced.matches?'stills':'video';if(reduced.matches)setPlaying(false);wake();});
 buildMap();set('walk-total',timecode(Math.round(total)));
-const initial=brief?route.findIndex(s=>s.id===(chosen.get('chapter')||referenceMap[sourceId])):0;
-select(initial>=0?initial:0,0,true,false);
+const aliases={zieview:'safety',ziewobserver:'observer',ziewprint:'print'};
+const requested=chosen.get('chapter');
+const initial=brief?route.findIndex(s=>s.id===(aliases[requested?.toLowerCase()]||requested||referenceMap[sourceId])):0;
+select(initial>=0?initial:Math.max(0,route.findIndex(s=>s.id==='systems')),0,true,false);
+if(brief){
+  const direct=initial>=0||location.hash==='#chapters';
+  document.documentElement.classList.toggle('direct-chapter',direct);
+  if(!direct){
+    setPlaying(false);
+    const auto=new IntersectionObserver(([entry])=>{
+      if(entry.intersectionRatio<.45)return;
+      auto.disconnect();if(!reduced.matches&&!playing&&!manual&&!inspecting)setPlaying(true);
+    },{threshold:[.45]});auto.observe($('walk-view'));
+    stage.addEventListener('pointerdown',()=>auto.disconnect(),{once:true});
+  }
+  $('walk-desk')?.addEventListener('click',()=>{
+    setPlaying(false);document.documentElement.classList.remove('direct-chapter');
+    const u=new URL(location.href);u.search='';u.hash='brief-desk';history.replaceState(null,'',u);
+    requestAnimationFrame(()=>$('brief-desk').scrollIntoView({behavior:'instant'}));
+  });
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[data-open-chapter]');if(!a||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+    const n=route.findIndex(s=>s.id===a.dataset.openChapter);if(n<0)return;
+    e.preventDefault();document.documentElement.classList.add('direct-chapter');
+    select(n,0,true,true);ensureWorld();
+    if(a.dataset.speak==='true'&&!voiceOn)$('listen-start').click();else setPlaying(true);
+    requestAnimationFrame(()=>{stage.scrollIntoView({behavior:'instant'});$('walk-title').focus({preventScroll:true});});
+  });
+  if(direct)ensureWorld();
+}else ensureWorld();
 if(brief&&sourceId&&Object.hasOwn(referenceMap,sourceId)){
   fetch('./references.json').then(r=>r.json()).then(data=>{
     if(!data[sourceId]||current().id!==referenceMap[sourceId])return;
@@ -347,4 +384,3 @@ if(brief&&sourceId&&Object.hasOwn(referenceMap,sourceId)){
     box.querySelector('p').textContent=data[sourceId][1];box.querySelector('a').href='./reference.html#'+sourceId;
   }).catch(()=>{});
 }
-bootWorld();

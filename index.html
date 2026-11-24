@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0a1011">
   <title>Ziewise | 고객의 현장에서 만나는 LLM 기반 딥러닝 설계</title>
-  <meta name="description" content="고객사 품질 담당자의 시선으로 체험하는 지와이즈의 딥러닝 설계. LLM을 활용한 요구 분석부터 샘플 검증과 ZiewCore 엣지 운영까지 따라가 보세요.">
+  <meta name="description" content="고객사 품질 담당자의 시선으로 체험하는 지와이즈의 딥러닝 설계. 품질 검사와 사무 자동화, Zieview 이동형·고정형 CCTV, ZiewObserver 모니터링·DDI, ZiewPrint 보안 출력을 만나보세요.">
   <meta property="og:title" content="Ziewise | 고객의 현장에서 만나는 LLM 기반 딥러닝 설계">
   <meta property="og:description" content="생산 현장의 질문이 검사 기준과 엣지 AI 운영으로 이어지는 과정을 1인칭으로 따라가 보세요.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <link rel="icon" href="./assets/ziewise-symbol.png" type="image/png">
-  <link rel="preload" href="./field-tour/views/design.webp?v=cad1" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="./field-tour/views/design.webp?v=visit4" as="image" type="image/webp" fetchpriority="high">
   <link rel="preload" href="./assets/noto-kr.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./field.css">
   <link rel="stylesheet" href="./enterprise.css">
-  <script defer src="./enterprise.js"></script>
-  <script defer src="./stories.js"></script>
-  <link rel="stylesheet" href="./field-tour/tour.css">
-  <script defer src="./field-tour/company.js"></script>
-  <script type="module" src="./field-tour/tour.mjs?v=cad1"></script>
+  <script defer src="./enterprise.js?v=visit4"></script>
+  <script defer src="./stories.js?v=visit4"></script>
+  <link rel="stylesheet" href="./field-tour/tour.css"><link rel="stylesheet" href="./field-tour/visit.css?v=visit4"><script type="module" src="./field-tour/visit.mjs?v=visit4"></script>
+  <script defer src="./field-tour/company.js?v=visit4"></script>
+  <script type="module" src="./field-tour/tour.mjs?v=visit4"></script>
 </head>
 <body>
   <svg class="symbol-bank" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -59,39 +59,57 @@
     <div class="frame header-row">
       <a class="brand" href="#walkthrough" aria-label="지와이즈 홈"><img src="./assets/ziewise-symbol.png" width="35" height="35" alt=""><span>ziewise</span></a>
       <nav class="desktop-nav" aria-label="주 메뉴">
-        <a href="#walkthrough" class="active" aria-current="location">고객 경험</a><a href="#solutions">산업별 사례</a><a href="#office">업무 자동화</a><a class="brief-link" href="./ai-briefing/">기술 브리핑</a><a href="#company">회사 소개</a>
+        <a href="#walkthrough" class="active" aria-current="location">고객 경험</a><a href="#factory">공장 제품</a><a href="#solutions">산업별 사례</a><a href="#office">업무 자동화</a><a class="brief-link" href="./ai-briefing/">기술 브리핑</a><a href="#company">회사 소개</a>
       </nav>
       <div class="header-actions">
         <a class="contact-pill" href="#contact"><svg class="icon"><use href="#i-chat"/></svg>도입 문의</a>
         <button type="button" id="menu-button" class="icon-button mobile-only" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu"><svg class="icon"><use href="#i-menu"/></svg></button>
       </div>
     </div>
-    <nav id="mobile-menu" class="mobile-menu" aria-label="모바일 메뉴" hidden><a href="#walkthrough">고객 경험</a><a href="#solutions">산업별 사례</a><a href="#office">업무 자동화</a><a href="./ai-briefing/">기술 브리핑</a><a href="#company">회사 소개</a><a href="#contact">도입 문의</a></nav>
+    <nav id="mobile-menu" class="mobile-menu" aria-label="모바일 메뉴" hidden><a href="#walkthrough">고객 경험</a><a href="#factory">공장 제품</a><a href="#solutions">산업별 사례</a><a href="#office">업무 자동화</a><a href="./ai-briefing/">기술 브리핑</a><a href="#company">회사 소개</a><a href="#contact">도입 문의</a></nav>
   </header>
   <main id="main">
-<section class="walk" id="walkthrough" data-tour="home" aria-label="고객 현장 1인칭 3D 투어">
+<section class="walk" id="walkthrough" data-tour="home" aria-label="품질 담당자의 34초 출하 판정 이야기">
   <div class="walk-view" id="walk-view">
-    <img id="walk-poster" class="walk-poster" src="./field-tour/views/design.webp?v=cad1" fetchpriority="high" alt="">
+    <img id="walk-poster" class="walk-poster" src="./field-tour/views/design.webp?v=visit4" fetchpriority="high" alt="">
     <canvas id="walk-world" tabindex="0" aria-label="1인칭 현장. 직접 걷기에서는 방향키로 이동하고 마우스나 손가락으로 시선을 돌립니다."></canvas>
     <div class="walk-shade" aria-hidden="true"></div>
-    <div class="walk-top"><div class="walk-id"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0z"/><circle cx="12" cy="10" r="2"/></svg><span id="walk-area">제조동</span><span class="walk-sep">/</span><strong id="walk-room">검사 셀</strong></div>
+    <div class="walk-top"><div class="walk-id"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0z"/><circle cx="12" cy="10" r="2"/></svg><span id="walk-area">제조동</span><span class="walk-sep">/</span><strong id="walk-room">검사 라인</strong></div>
       <div class="walk-tools"><button type="button" id="walk-explore" aria-pressed="false" disabled><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><circle cx="14" cy="4" r="1.8"/><path d="m7 12 3-4 4-1 2 5 3 2m-6-5-2 7-4 5m5-7 3 3 1 4"/></svg><span>직접 걷기</span></button><button type="button" id="walk-expand" aria-label="투어 전체 화면" title="전체 화면" hidden><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6"/></svg></button></div></div>
     <button type="button" id="walk-object" aria-expanded="false" hidden><i></i><span></span></button>
     <div id="walk-object-detail" class="object-detail" hidden><strong></strong><p></p><button type="button">관찰 마치기</button></div>
-    <div class="walk-story"><div class="walk-kicker"><i></i><span id="walk-mode">자동 안내</span><span class="walk-sep">/</span><span id="walk-kicker">1인칭 현장 재현</span></div>
-      <h1 id="walk-title">이 부품, 출하해도 될까요?</h1><p id="walk-line">품질 담당자가 보여 준 플랜지에서 시작합니다. 현장의 말을 LLM이 검사 기준으로 정리합니다.</p></div>
-    <div class="walk-navbox"><button type="button" id="walk-map" aria-haspopup="dialog"><canvas id="walk-plan" width="224" height="108" aria-hidden="true"></canvas><span><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2zM9 3v16m6-14v16"/></svg><b>투어 경로</b><small id="walk-count">01 / 06</small></span></button></div>
+    <div class="walk-story"><div class="walk-kicker"><i></i><span id="walk-mode">자동 안내</span><span class="walk-sep">/</span><span id="walk-kicker">품질 담당자의 34초 · 현장 재현</span></div>
+      <h1 id="walk-title">이 부품, 출하해도 될까요?</h1><p id="walk-line">품질 담당자가 가공면에서 낯선 선을 발견합니다. 정상 무늬인지 흠집인지, 먼저 같은 로트의 기록을 엽니다.</p></div>
+    <div class="walk-navbox"><button type="button" id="walk-map" aria-haspopup="dialog"><canvas id="walk-plan" width="224" height="108" aria-hidden="true"></canvas><span><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2zM9 3v16m6-14v16"/></svg><b>투어 경로</b><small id="walk-count">01 / 04</small></span></button></div>
     <div id="walk-manual" hidden><p>드래그로 시선 이동 <span>· WASD 또는 방향키로 걷기</span></p><div class="walk-pad" aria-label="이동 조작"><button data-move="forward" aria-label="앞으로 이동">전진</button><button data-move="left" aria-label="왼쪽 이동">왼쪽</button><button data-move="back" aria-label="뒤로 이동">후진</button><button data-move="right" aria-label="오른쪽 이동">오른쪽</button></div><button type="button" id="walk-near">이 장소 안내</button></div>
   </div>
   <div class="walk-transport"><button type="button" id="walk-play" aria-label="투어 일시정지" title="투어 일시정지"><span class="pause-icon"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M8 5v14m8-14v14" stroke-width="3"/></svg></span><span class="play-icon"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="m8 5 10 7-10 7z" fill="currentColor" stroke-linejoin="round"/></svg></span></button>
-    <div class="walk-scrub"><div><span id="walk-clock">00:00</span><span class="walk-sep">/</span><span id="walk-total">00:56</span><span id="walk-moving">자동 이동</span></div><input id="walk-seek" type="range" min="0" max="1000" value="0" aria-label="투어 전체 재생 위치"></div>
+    <div class="walk-scrub"><div><span id="walk-clock">00:00</span><span class="walk-sep">/</span><span id="walk-total">00:34</span><span id="walk-moving">자동 이동</span></div><input id="walk-seek" type="range" min="0" max="1000" value="0" aria-label="투어 전체 재생 위치"></div>
     <div class="walk-skip"><button type="button" id="walk-prev">이전</button><button type="button" id="walk-next">다음</button></div><a class="voice-start" id="walk-deep" href="./ai-briefing/?chapter=design#chapters"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M3 9h4l5-4v14l-5-4H3zm13-1c2 2 2 6 0 8m3-11c4 3 4 11 0 14"/></svg><span>이 장소 해설 듣기</span></a>
   </div>
 
   <p class="walk-status" id="walk-status" role="status"></p>
   <dialog id="walk-route" aria-labelledby="walk-route-title"><header><div><p>현장 안내</p><h2 id="walk-route-title">어디로 이동할까요?</h2></div><button type="button" id="walk-route-close" aria-label="경로 닫기"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="m5 5 14 14M19 5 5 19"/></svg></button></header><div id="walk-stops"></div></dialog>
-  <noscript><p class="walk-nojs">투어 설명은 <a href="./ai-briefing/ziewise-technical-brief.pdf?v=cad1">한국어 기술 브리핑 PDF</a>에서 확인하세요.</p></noscript>
+  <noscript><p class="walk-nojs">투어 설명은 <a href="./ai-briefing/ziewise-technical-brief.pdf?v=visit4">한국어 기술 브리핑 PDF</a>에서 확인하세요.</p></noscript>
 </section>
+
+<section id="factory" class="product-floor light-section" aria-labelledby="factory-title"><div class="frame">
+ <div class="section-head"><div><p class="eyebrow section-kicker"><span></span>FACTORY OPERATIONS</p><h2 id="factory-title">공장을 지키는 지와이즈 제품</h2></div><p>작업자의 안전, 설비의 연결 상태, 도면을 받는 사람까지.<br>현장 담당자가 무엇을 확인하는지 살펴보세요.</p></div>
+ <article id="zieview" class="product-instrument">
+   <div class="product-portrait" data-product-frame="unit"><img id="unit-photo" src="./field-tour/zieview/zieview-tripod-product.webp" width="462" height="1010" loading="lazy" alt="노란 삼각대 위에 녹색 함체와 흰색 PTZ 카메라를 탑재한 Zieview 이동형 단말"><img id="magnet-closeup" src="./field-tour/zieview/zieview-magnetic-mount.webp" loading="lazy" alt="녹색 단말의 자석 부착면 상세" hidden><span id="unit-caption">Zieview 제품 지명원 · 이동형 단말</span></div>
+   <div class="product-description"><p class="eyebrow">ZIEWISE / SMART CCTV</p><h3>Zieview</h3><p class="product-lead">작업 위치를 따라가는<br>딥러닝 CCTV</p>
+     <div class="product-modes" aria-label="제품 보기"><button type="button" aria-pressed="true" data-unit="unit">제품 전체</button><button type="button" aria-pressed="false" data-unit="tripod">이동형 폴대</button><button type="button" aria-pressed="false" data-unit="magnet">자석 고정형</button><button type="button" aria-pressed="false" data-unit="control">AI 관제</button></div>
+     <p id="unit-explain" aria-live="polite">흰색 PTZ 카메라와 녹색 통신 함체가 한 단말입니다. 폴대·삼각대를 옮겨 세우거나 철제 기둥에 자석으로 부착해 같은 단말을 운용합니다.</p>
+     <dl class="product-specs"><div><dt>카메라</dt><dd>5MP PTZ</dd></div><div><dt>내장 배터리</dt><dd>222 Wh</dd></div><div><dt>현장 연결</dt><dd>LTE 사설망</dd></div></dl>
+     <a class="patent-link" href="https://patents.google.com/patent/KR102966788B1/ko" target="_blank" rel="noopener">등록특허 제10-2966788호 <span>LTE 타입의 이동형 스마트 CCTV 관제 시스템 ↗</span></a>
+     <div class="product-resources"><a class="product-deep" href="./ai-briefing/?chapter=safety#chapters">Zieview 현장 해설 <b aria-hidden="true">→</b></a><a href="./field-tour/zieview/zieview-product-guide.jpg" target="_blank" rel="noopener">제품 이미지 크게 보기 ↗</a></div>
+   </div>
+ </article>
+ <div class="factory-pair">
+   <article id="ziewobserver"><div class="facility-photo"><img src="./field-tour/photography/observer.webp" width="1672" height="941" loading="lazy" alt="설비 상태와 네트워크 주소 기록을 함께 살피는 업무 재현"></div><div><p class="eyebrow">MONITORING + DDI</p><h3>ZiewObserver</h3><p>설비·서버·네트워크 상태를 감시합니다. 장비가 응답하지 않으면 DNS 이름, DHCP 임대 이력, IPAM 자산 기록으로 당시 그 주소를 사용한 장비를 찾습니다.</p><a class="product-deep" href="./ai-briefing/?chapter=observer#chapters">네트워크 관제석으로 <b aria-hidden="true">→</b></a></div></article>
+   <article id="ziewprint"><div class="facility-photo"><img src="./field-tour/photography/print.webp" width="1672" height="941" loading="lazy" alt="사원증으로 인증한 뒤 공장 도면을 수령하는 업무 재현"></div><div><p class="eyebrow">SECURE PRINT</p><h3>ZiewPrint</h3><p>공유 프린터로 보낸 도면을 대기시킵니다. 설계자가 장비 앞에서 인증하고 고른 도면만 출력합니다. 관리자는 누가 어느 프린터에서 언제 출력했는지 확인합니다.</p><a class="product-deep" href="./ai-briefing/?chapter=print#chapters">도면 출력실로 <b aria-hidden="true">→</b></a></div></article>
+ </div>
+</div></section>
     <section class="systems-section light-section" id="systems" aria-labelledby="systems-title"><div class="frame">
       <div class="section-head"><div><p class="eyebrow section-kicker"><span></span>INDUSTRIAL INTELLIGENCE</p><h2 id="systems-title">MES와 DCS에<br>딥러닝 두뇌를 더합니다.</h2></div><p>MES의 생산 이력과 DCS의 공정 신호를 함께 보면, 어느 로트에서 어떤 설비 변화가 품질 이상에 앞섰는지 추적할 수 있습니다.</p></div>
       <div class="systems-flow">
@@ -106,18 +124,18 @@
         <div class="atlas">
           <div class="case-list" id="case-list" role="tablist" aria-label="솔루션별 설계 사례" aria-orientation="vertical"></div>
           <article class="case-card" id="case-detail" role="tabpanel" aria-labelledby="case-tab-vision">
-            <img id="case-image" src="./assets/vision.webp" width="960" height="640" loading="lazy" alt="">
-            <div class="case-scrim"></div>
-            <div class="case-overlay"><span class="case-tag" id="case-tag">VISION AI</span><h3 id="case-title">생산 라인에서 표면 결함 찾기</h3><p id="case-about">카메라 영상으로 부품의 표면을 검사하는 딥러닝 설계를 살펴보세요.</p><button type="button" id="launch-case" class="button case-cta"><svg class="icon"><use href="#i-list"/></svg>고객 업무 흐름 보기</button></div>
+            <img id="case-image" src="./field-tour/photography/safety.webp" width="960" height="640" loading="lazy" alt="">
+            <div class="visit-frame visit-case" data-visit="case" data-scene="safety"><div class="visit-screen"><canvas aria-hidden="true"></canvas></div><div class="visit-controls" aria-label="장면 탐색"><button class="visit-play" type="button" aria-label="장면 일시정지" aria-pressed="true">Ⅱ</button><div class="visit-stages"><button type="button" data-phase="0" aria-pressed="true">설치 위치</button><button type="button" data-phase="1" aria-pressed="false">위험 장면</button><button type="button" data-phase="2" aria-pressed="false">관제 확인</button></div></div></div><div class="case-scrim"></div>
+            <div class="case-overlay"><span class="case-tag" id="case-tag">DEEP LEARNING CCTV</span><h3 id="case-title">오늘 작업하는 구역에 Zieview를 설치합니다.</h3><p id="case-about">폴대형과 자석 고정형을 현장에 맞춰 배치하고 딥러닝으로 위험 장면을 확인합니다.</p><button type="button" id="launch-case" class="button case-cta"><svg class="icon"><use href="#i-list"/></svg>고객 업무 흐름 보기</button></div>
           </article>
         </div>
-        <noscript><p>Zieview · Neuro-VPP · ZiewCore M-Pulse · SIGMING · ZiewPrint · ZiewCore Observer. 인터랙티브 설계 체험은 자바스크립트를 켜면 이용할 수 있습니다.</p></noscript>
+        <noscript><p>Zieview · Neuro-VPP · ZiewCore M-Pulse · SIGMING · ZiewPrint · ZiewObserver. 인터랙티브 설계 체험은 자바스크립트를 켜면 이용할 수 있습니다.</p></noscript>
       </div>
     </section>
     <section id="office" class="office-section" aria-labelledby="office-title"><div class="frame">
       <div class="section-head"><div><p class="eyebrow section-kicker"><span></span>ENTERPRISE AUTOMATION</p><h2 id="office-title">읽고 판단하는 로컬 LLM,<br>승인된 일을 실행하는 RPA.</h2></div><p>고객사 사내 서버의 로컬 LLM이 권한 있는 업무 자료를 읽고 초안을 만듭니다. 담당자가 승인하면 RPA가 ERP·CRM·그룹웨어에 입력합니다.</p></div>
       <div id="department-examples"><div class="department-tabs" role="tablist" aria-label="부서별 자동화 사례"></div>
-        <div id="department-panel" class="department-panel" role="tabpanel"><div class="dept-photo"><img src="./ai-briefing/assets/dept-finance.webp" loading="lazy" alt="재무 업무 재현 이미지"></div><div class="department-copy"><h3></h3><dl><dt>업무 자료</dt><dd data-part="input"></dd><dt>로컬 LLM</dt><dd data-part="llm"></dd><dt>담당자 승인</dt><dd data-part="approval"></dd><dt>RPA 실행</dt><dd data-part="rpa"></dd></dl><p class="measure">효과 측정 · <span data-part="measure"></span></p><a class="department-audio" href="./ai-briefing/?chapter=finance#chapters">이 업무의 기술 해설 듣기</a></div></div>
+        <div id="department-panel" class="department-panel" role="tabpanel"><div class="dept-photo"><div class="visit-frame visit-office" data-visit="office" data-scene="finance"><div class="visit-screen"><canvas aria-hidden="true"></canvas></div><div class="visit-controls" aria-label="장면 탐색"><button class="visit-play" type="button" aria-label="장면 일시정지" aria-pressed="true">Ⅱ</button><div class="visit-stages"><button type="button" data-phase="0" aria-pressed="true">증빙 서류</button><button type="button" data-phase="1" aria-pressed="false">규정 대조</button><button type="button" data-phase="2" aria-pressed="false">승인·등록</button></div></div></div><img data-dept-still src="./field-tour/photography/finance.webp" loading="lazy" alt="재무 업무 재현 이미지"></div><div class="department-copy"><h3></h3><dl><dt>업무 자료</dt><dd data-part="input"></dd><dt>로컬 LLM</dt><dd data-part="llm"></dd><dt>담당자 승인</dt><dd data-part="approval"></dd><dt>RPA 실행</dt><dd data-part="rpa"></dd></dl><p class="measure">효과 측정 · <span data-part="measure"></span></p><a class="department-audio" href="./ai-briefing/?chapter=finance#chapters">이 업무의 기술 해설 듣기</a></div></div>
       </div>
     </div></section>
     <section class="roi-section" id="roi" data-roi-calculator aria-labelledby="roi-title"><div class="frame">
@@ -129,7 +147,7 @@
     <aside class="bridge" aria-label="기술 브리핑"><div class="frame bridge-inner"><div><p class="eyebrow">TECHNICAL BRIEFING</p><strong>현장 장비와 딥러닝 모델은 어떻게 연결될까요?</strong></div><a class="button" href="./ai-briefing/">기술 브리핑 열기</a></div></aside>
     <section class="company light-section" id="company" aria-labelledby="company-title">
       <div class="frame company-grid">
-        <figure class="infra-image"><img src="./assets/company-infrastructure.webp" width="1000" height="800" alt="서버 랙과 네트워크 케이블을 갖춘 인프라 환경" loading="lazy"><figcaption><span class="line-chip"></span>ZIEWISE INFRASTRUCTURE</figcaption></figure>
+        <div class="company-exhibits"><div class="company-choices" aria-label="회사 소개 장면"><button type="button" data-company="infrastructure" aria-pressed="true">인프라 운영</button><button type="button" data-company="research" aria-pressed="false">연구개발</button><button type="button" data-company="credentials" aria-pressed="false">인증서</button></div><figure class="infra-image"><div class="visit-frame visit-company" data-visit="company" data-scene="infrastructure"><div class="visit-screen"><canvas aria-hidden="true"></canvas></div><div class="visit-controls" aria-label="장면 탐색"><button class="visit-play" type="button" aria-label="장면 일시정지" aria-pressed="true">Ⅱ</button><div class="visit-stages"><button type="button" data-phase="0" aria-pressed="true">서버 랙</button><button type="button" data-phase="1" aria-pressed="false">네트워크 연결</button><button type="button" data-phase="2" aria-pressed="false">운영 기록</button></div></div></div><img src="./assets/company-infrastructure.webp" width="1000" height="800" alt="서버 랙과 네트워크 케이블을 갖춘 인프라 환경" loading="lazy"><figcaption><span class="line-chip"></span><span id="company-view-name">서버와 네트워크 운영</span></figcaption></figure></div>
         <div class="company-copy">
           <p class="eyebrow section-kicker"><span></span>ABOUT ZIEWISE</p>
           <h2 id="company-title">현장 운영에서 출발한<br>AI 설계 파트너</h2>
@@ -143,7 +161,7 @@
       </div>
     </section>
     <section class="contact-section" id="contact" aria-labelledby="contact-title">
-      <div class="frame contact-row"><div><p class="eyebrow"><span class="line-chip"></span>CONTACT</p><h2 id="contact-title">어떤 과제를 함께 풀어볼까요?</h2><p>보유한 데이터와 현장 조건을 알려주시면 도입 방향을 함께 검토합니다.</p></div>
+      <div class="frame contact-row"><div><p class="eyebrow"><span class="line-chip"></span>CONTACT</p><h2 id="contact-title">어떤 과제를 함께 풀어볼까요?</h2><p><span id="contact-help">촬영할 작업 구역과 이동형·고정형 설치 위치를 알려주세요.</span></p><div class="contact-options" aria-label="도입 문의 주제"><button type="button" aria-pressed="true" data-contact="현장 안전·관제">현장 안전·관제</button><button type="button" aria-pressed="false" data-contact="사무 자동화">사무 자동화</button><button type="button" aria-pressed="false" data-contact="인프라·출력 보안">인프라·출력 보안</button></div></div>
         <div class="contact-links"><a href="mailto:info@ziewise.com"><svg class="icon"><use href="#i-mail"/></svg><span>info@ziewise.com</span></a><a class="tel" href="tel:+82220880741">02-2088-0741</a></div></div>
     </section>
   </main>

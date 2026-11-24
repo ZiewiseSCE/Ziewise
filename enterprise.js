@@ -19,11 +19,14 @@ window.ZiewiseOffice = [
       selected=index;const item=window.ZiewiseOffice[index];
       buttons.forEach((button,i)=>{button.setAttribute('aria-selected',String(index===i));button.tabIndex=index===i?0:-1;});
       panel.setAttribute('aria-labelledby',buttons[index].id);
-      host.querySelector('img').src='./ai-briefing/assets/dept-'+item.id+'.webp';
-      host.querySelector('img').alt=item.name+' 업무를 설명하는 재현 이미지';
+      const still=host.querySelector('[data-dept-still]')||host.querySelector('img');
+      still.src=['hr','finance'].includes(item.id)?'./field-tour/photography/'+item.id+'.webp':'./ai-briefing/assets/dept-'+item.id+'.webp';
+      still.alt=item.name+' 업무를 설명하는 재현 이미지';
       host.querySelector('h3').textContent=item.title;
       for(const key of ['input','llm','approval','rpa','measure']) host.querySelector('[data-part="'+key+'"]').textContent=item[key];
       host.querySelector('.department-audio').href='./ai-briefing/?chapter='+item.id+'#chapters';
+      const frame=host.querySelector('[data-visit]');if(frame)frame.dataset.scene=item.id;
+      document.dispatchEvent(new CustomEvent('ziewise:visit',{detail:{kind:'office',id:item.id}}));
     }
     tabs.addEventListener('keydown',event=>{
       const keys={ArrowRight:1,ArrowLeft:-1,Home:-selected,End:buttons.length-1-selected};

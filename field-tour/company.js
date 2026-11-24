@@ -23,7 +23,11 @@
     const item=cases[index];atlasIndex=index;
     all('.case-tab').forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
     $('case-detail').setAttribute('aria-labelledby','case-tab-'+item.id);
-    $('case-image').src='./assets/'+item.id+'.webp';setText('case-tag',item.tag);setText('case-title',item.title);setText('case-about',item.about);
+    const scenes={vision:'safety',office:'finance',print:'print',observer:'observer'};
+    $('case-image').src=scenes[item.id]?'./field-tour/photography/'+scenes[item.id]+'.webp':'./assets/'+item.id+'.webp';
+    setText('case-tag',item.tag);setText('case-title',item.title);setText('case-about',item.about);
+    const frame=document.querySelector('[data-visit="case"]');if(frame)frame.dataset.scene=scenes[item.id]||item.id;
+    document.dispatchEvent(new CustomEvent('ziewise:visit',{detail:{kind:'case',id:scenes[item.id]||item.id}}));
   }
   cases.forEach((item,index)=>{
     const tab=document.createElement('button');tab.type='button';tab.id='case-tab-'+item.id;tab.className='case-tab';
@@ -49,7 +53,7 @@
   const nav=all('.desktop-nav a[href^="#"]');
   let scheduled=false;
   function markNav(){
-    let active='';for(const id of ['walkthrough','solutions','office','company','contact'])if($(id).getBoundingClientRect().top<=innerHeight*.3)active=id;
+    let active='';for(const id of ['walkthrough','factory','solutions','office','company','contact'])if($(id).getBoundingClientRect().top<=innerHeight*.3)active=id;
     nav.forEach(a=>{const on=a.hash==='#'+active;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
     scheduled=false;
   }

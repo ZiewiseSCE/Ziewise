@@ -12,9 +12,9 @@ window.BriefTopics = [
     points:[[56,37,'광학 검사 장치','조명과 초점을 고정해야 모델이 촬영 환경의 차이를 결함으로 오인할 가능성을 줄일 수 있습니다.'],[63,76,'금속 표면','부품별 검사 결과를 원본 영상과 연결해 담당자가 다시 확인할 수 있게 합니다.']]
   },
   {
-    id:'safety',label:'안전 관제',tag:'SAFETY MONITORING',title:'수십 개 화면에서 확인할 이벤트만 선별',
-    img:'./assets/safety-floor.webp',alt:'생산동의 고정형 CCTV와 안전 통로를 이용하는 작업자를 보여주는 재현 이미지',original:'s10',file:'03-safety.mp3',
-    rows:['기존 CCTV 영상과 현장별 안전 구역, 보호구 착용 기준을 입력합니다.','Zieview가 의심 이벤트를 선별해 해당 카메라의 위치와 전후 상황을 담은 클립으로 묶습니다.','관제 담당자는 클립을 보고 현장 확인 여부를 결정합니다. 오알림도 기록해 기준을 조정합니다.'],
+    id:'safety',label:'Zieview',tag:'DEEP LEARNING CCTV',title:'Zieview를 오늘 작업하는 곳으로 옮깁니다.',
+    img:'../field-tour/photography/safety.webp',alt:'Zieview 제안 자료에 수록된 이동형 장비와 설치 환경',original:'product-zieview',file:'03-safety.mp3',
+    rows:['정기 보수나 야간 작업에는 폴대·삼각대형을 옮겨 세웁니다. 같은 단말을 철제 기둥에 자석으로 고정하면 주요 설비를 상시 관제할 수 있습니다.','현장 기준에 맞춘 딥러닝이 보호구 미착용이나 제한 구역 진입을 선별합니다. LTE 사설망·VPN으로 관제실에서 여러 구역을 함께 봅니다.','담당자가 전후 영상을 확인하고 양방향 음성으로 현장과 대응합니다. 열람 권한과 영상 조회 이력은 운영 정책에 맞춰 관리합니다.'],
     points:[[27,30,'고정형 카메라','이미 설치한 카메라에서 시야와 사각지대, 야간 화질을 먼저 확인합니다.'],[72,67,'현장 구역','구역별 동선과 보호구 규정을 정한 뒤 담당자가 알림을 검토합니다.']]
   },
   {
@@ -67,9 +67,16 @@ const officeTopics=window.ZiewiseOffice.map((item,index)=>({
   rows:['담당자의 접근 권한으로 사내 서버에서 확인할 자료는 '+item.input+'입니다.',item.llm+' '+item.approval,item.rpa+' 측정 항목은 '+item.measure+'입니다.'],
   points:[[45,58,'업무 자료','이 업무의 기준 자료는 '+item.input+'입니다.'],[index===3?54:72,42,'담당자 확인',item.approval]]
 }));
-const topicMap=new Map([...window.BriefTopics,systemsTopic,roiTopic,...officeTopics].map(topic=>[topic.id,topic]));
+const factoryTools=[
+  {id:'observer',label:'ZiewObserver',tag:'MONITORING + DDI',title:'끊긴 설비의 주소를 장애 시각으로 되짚습니다.',img:'../field-tour/photography/observer.webp',alt:'공장 네트워크 운영자의 모니터링 업무 재현',original:'product-ziewobserver',file:'15-observer.mp3',
+    rows:['서버·네트워크 장비와 설비 연결 상태를 살피고 가용성·응답 시간 같은 지표를 시각별로 모읍니다.','DNS에서 장비 이름, DHCP에서 당시 IP 임대 기록, IPAM에서 주소 대역과 자산 정보를 찾습니다.','담당자는 경보 시각의 주소와 설비 기록을 대조해 먼저 점검할 장비와 담당 부서를 정합니다.'],points:[]},
+  {id:'print',label:'ZiewPrint',tag:'SECURE PRINT',title:'공장 도면은 인증한 직원 앞에서 출력됩니다.',img:'../field-tour/photography/print.webp',alt:'공장 도면을 보안 프린터에서 수령하는 업무 재현',original:'product-ziewprint',file:'16-print.mp3',
+    rows:['설계 담당자가 공용 프린터로 작업 도면을 보내면 문서는 출력 대기 상태가 됩니다.','프린터 앞에서 사원증 또는 PIN 등 현장에 설정한 방법으로 인증하고 본인이 보낸 작업을 선택합니다.','선택한 도면을 받아 갑니다. 관리자는 사용자·장비·시각별 출력 이력을 확인할 수 있습니다.'],points:[]}
+];
+const topicMap=new Map([...window.BriefTopics,systemsTopic,roiTopic,...officeTopics,...factoryTools].map(topic=>[topic.id,topic]));
 window.BriefGroups=[
-  {label:'제조 현장',ids:['design','systems','vision','safety','maintenance','count','edge']},
+  {label:'제조 현장',ids:['design','systems','vision','maintenance','count','edge']},
+  {label:'공장 운영·보안',ids:['safety','observer','print']},
   {label:'사무 자동화',ids:['knowledge','hr','finance','purchase','sales']},
   {label:'도입 효과',ids:['roi','poc']}
 ];

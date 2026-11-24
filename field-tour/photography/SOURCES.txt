@@ -1,0 +1,12 @@
+Ziewise customer experience and technical briefing
+
+The green Zieview enclosure, white PTZ camera and yellow tripod on the product page and the safety chapter come from Ziewise's confirmed product profile, Zieview_지명원_Rev4. Product portrait: slide 1. Magnetic mounting detail: slide 5. Column attachment: physical slide 15. Temporary work area: physical slide 18. Integrated AI monitoring: physical slide 19. The factory illustrations are applications shown in the product profile. They do not identify a deployed customer. The named invention is LTE 타입의 이동형 스마트 CCTV 관제 시스템, Korean registered patent 10-2966788. Publication record https://patents.google.com/patent/KR102966788B1/ko
+
+Poly Haven Studio (indoor photographic panorama) https://polyhaven.com/a/poly_haven_studio
+Machine Shop 02 (workshop photographic panorama) https://polyhaven.com/a/machine_shop_02
+CC0 license https://polyhaven.com/license
+The locally served WebP panoramas are downsampled from the original tone-mapped equirectangular photographs. A lower-resolution studio derivative lights the optional product models.
+
+The HR onboarding desk, accounts-payable workstation, network desk and controlled print scenario are AI-generated editorial reconstructions, not photographs of a customer or screenshots of production software. The remaining process images are the site's existing illustrative artwork. Depth grids derived from the scene imagery provide first-person parallax; the public site does not run an inference model on visitors' devices.
+
+Art direction for the generated desks: first-person 28–30 mm office photography with daylight, continuous glass walls, reflected trees, optical depth and actual-size paperwork. HR foreground: badge, clipped onboarding documents, staff workstation. Finance foreground: curled invoice, scanner and ledger. Network and print scenarios: a factory operator's monitoring desk and a user retrieving a drawing after printer authentication. Product exterior imagery is reproduced directly from the confirmed product profile.
