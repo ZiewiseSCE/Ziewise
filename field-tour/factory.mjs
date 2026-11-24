@@ -1,4 +1,5 @@
 /* Metre-scale industrial equipment. The walk aisle is on local +Z. */
+import {processScreen} from './work-screens.mjs';
 const libraries = new WeakMap();
 const turn = Math.PI * 2;
 const bound = x => Math.min(1, Math.max(0, x));
@@ -178,6 +179,7 @@ function makeLibrary(T) {
     housing(parent,x+w*.34,y-.20,z-d*.39,.28,.15,.22,'graphite');
   }
   function drawSurface(kind,c,w,h) {
+    if(kind==='mes'||kind==='dcs'||kind.startsWith('count')){processScreen(c,kind,w,h);return;}
     c.fillStyle=kind==='dial'?'#e1dfc8':'#152323';c.fillRect(0,0,w,h);
     if(kind==='maker'){
       c.fillStyle='#c2c9bd';c.fillRect(0,0,w,h);c.strokeStyle='#56615a';c.lineWidth=5;c.strokeRect(w*.025,h*.045,w*.95,h*.91);
@@ -197,39 +199,19 @@ function makeLibrary(T) {
       c.font='bold '+Math.round(w*.08)+'px sans-serif';c.textAlign='center';c.fillText('bar',cx,cy+h*.23);return;
     }
     c.fillStyle='#233c39';c.fillRect(0,0,w,h*.16);c.fillStyle='#d7e8d9';
-    c.font='bold '+Math.floor(h*.075)+'px monospace';c.fillText(({mes:'MES  /  LOT TRACK',dcs:'DCS  /  PROCESS TREND',optics:'VISION  /  INSPECT',review:'EDGE  /  REVIEW',count:'PACK  /  COUNT'})[kind]||'CONTROL',w*.045,h*.105);
-    if(kind==='dcs'){
-      c.strokeStyle='#435854';c.lineWidth=1;
-      for(let j=1;j<6;j++){c.beginPath();c.moveTo(w*.07,h*(.18+j*.105));c.lineTo(w*.94,h*(.18+j*.105));c.stroke();}
-      for(let j=0;j<10;j++){c.beginPath();c.moveTo(w*(.07+j*.097),h*.22);c.lineTo(w*(.07+j*.097),h*.82);c.stroke();}
-      for(let k=0;k<2;k++){
-        c.strokeStyle=k?'#ecb269':'#a7d5b5';c.lineWidth=4;c.beginPath();
-        for(let q=0;q<=84;q++){const f=q/84;const py=(k?.57:.48)-.035*Math.sin(29*f)-.018*Math.sin(70*f)-(k?0:.22*Math.exp(-Math.pow((f-.70)*9,2)));const px=w*(.07+.87*f);if(q)c.lineTo(px,h*py);else c.moveTo(px,h*py);}c.stroke();
-      }
-      c.font='bold '+Math.floor(h*.072)+'px monospace';c.fillStyle='#9bcdb5';c.fillText('PV  PRESSURE',w*.07,h*.91);c.fillStyle='#e2ac66';c.fillText('SP  SETPOINT',w*.59,h*.91);
-    } else if(kind==='mes'){
-      c.textAlign='left';
-      ['WO-0214   FLANGE / A','LOT 18A   CELL 04','LOT 18B   CELL 04','LOT 19A   CELL 05'].forEach((text,i)=>{
-        const y=h*(.23+i*.168);c.fillStyle=i===1?'#48634f':'#273735';c.fillRect(w*.047,y,w*.908,h*.127);
-        c.fillStyle=i===1?'#e2eab9':'#bfccc3';c.font='bold '+Math.round(h*.067)+'px monospace';c.fillText(text,w*.075,y+h*.087);
-      });
-    } else if(kind==='count'){
-      c.font='bold '+Math.round(h*.38)+'px monospace';c.fillStyle='#e0c988';c.fillText('50',w*.10,h*.69);
-      c.font='bold '+Math.round(h*.09)+'px monospace';c.fillStyle='#b8c8be';c.fillText('TARGET / EA',w*.09,h*.88);
-      for(let i=0;i<25;i++){c.fillStyle=i===18?'#d19d59':'#729884';c.fillRect(w*(.48+(i%5)*.087),h*(.28+Math.floor(i/5)*.116),w*.05,h*.066);}
-    } else {
-      const cx=w*.34,cy=h*.56,r=h*.33;
-      const g=c.createRadialGradient(cx-r*.45,cy-r*.35,r*.12,cx,cy,r);g.addColorStop(0,'#c4d1c7');g.addColorStop(.45,'#9faea9');g.addColorStop(1,'#6e807c');
-      c.fillStyle=g;c.beginPath();c.arc(cx,cy,r,0,turn);c.fill();c.fillStyle='#1c2928';c.beginPath();c.arc(cx,cy,r*.32,0,turn);c.fill();
-      for(let i=0;i<6;i++){const a=i*turn/6;c.beginPath();c.arc(cx+r*.73*Math.cos(a),cy+r*.73*Math.sin(a),r*.084,0,turn);c.fill();}
-      c.strokeStyle='#dfad70';c.lineWidth=3;c.strokeRect(cx+r*.30,cy-r*.22,r*.48,r*.28);
-      c.fillStyle='#b5c4b8';c.font='bold '+Math.round(h*.057)+'px monospace';c.fillText('PART  F-06',w*.65,h*.39);c.fillText('LOT   18B',w*.65,h*.53);
-      c.fillStyle='#d4b981';c.fillRect(w*.65,h*.64,w*.25,h*.07);c.fillStyle='#83a38b';c.fillRect(w*.65,h*.78,w*.17,h*.05);
-    }
+    c.font='bold '+Math.floor(h*.075)+'px monospace';c.fillText(({optics:'VISION  /  INSPECT',review:'EDGE  /  REVIEW'})[kind]||'CONTROL',w*.045,h*.105);
+    const cx=w*.34,cy=h*.56,r=h*.33;
+    const g=c.createRadialGradient(cx-r*.45,cy-r*.35,r*.12,cx,cy,r);g.addColorStop(0,'#c4d1c7');g.addColorStop(.45,'#9faea9');g.addColorStop(1,'#6e807c');
+    c.fillStyle=g;c.beginPath();c.arc(cx,cy,r,0,turn);c.fill();c.fillStyle='#1c2928';c.beginPath();c.arc(cx,cy,r*.32,0,turn);c.fill();
+    for(let i=0;i<6;i++){const a=i*turn/6;c.beginPath();c.arc(cx+r*.73*Math.cos(a),cy+r*.73*Math.sin(a),r*.084,0,turn);c.fill();}
+    c.strokeStyle='#dfad70';c.lineWidth=3;c.strokeRect(cx+r*.30,cy-r*.22,r*.48,r*.28);
+    c.fillStyle='#b5c4b8';c.font='bold '+Math.round(h*.057)+'px monospace';c.fillText('PART  F-06',w*.65,h*.39);c.fillText('LOT   18B',w*.65,h*.53);
+    c.fillStyle='#d4b981';c.fillRect(w*.65,h*.64,w*.25,h*.07);c.fillStyle='#83a38b';c.fillRect(w*.65,h*.78,w*.17,h*.05);
   }
   function display(kind) {
     if(displayCache.has(kind))return displayCache.get(kind);
-    const isDial=kind==='dial',w=isDial?192:384,h=isDial?192:208;
+    const isDial=kind==='dial',consolePanel=kind==='mes'||kind==='dcs'||kind.startsWith('count');
+    const w=isDial?192:consolePanel?760:384,h=isDial?192:consolePanel?416:208;
     let canvas=null;
     if(typeof OffscreenCanvas==='function')canvas=new OffscreenCanvas(w,h);
     else if(typeof document!=='undefined'){canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;}
@@ -652,7 +634,9 @@ function countStation(L,root) {
   cyl(head,0,-.337,.397,.042,.009,'optic');
   hose(root,[[-1.47,1.94,-.54],[-1.60,1.73,-.61],[-1.58,1.03,-.58],[-1.48,.87,-.51]],.021);
   box(root,.96,1.223,-.56,.104,.73,.102,'iron');
-  monitor(root,.99,1.77,-.56,.70,.418,'count',-.12);
+  const counting=monitor(root,.99,1.77,-.56,.70,.418,'count',-.12);
+  const readout=counting.children.find(node=>node.material===L.display('count'));
+  dynamic(readout);const awaiting=L.display('count'),complete=L.display('count-complete');
   const state=L.lampStack(root,1.5,.895,-.53);
   return {
     points:[[-.72,1.04,.18],[-.55,1.66,-.037],[1.03,1.12,.20]],
@@ -662,6 +646,7 @@ function countStation(L,root) {
       finalPiece.visible=p>=.51;
       finalPiece.position.y=.058+.39*(1-review);
       finalPiece.position.x=holeX+.34*(1-review);
+      readout.material=p>.84?complete:awaiting;
       state(p>.84);
     }
   };

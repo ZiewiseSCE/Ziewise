@@ -213,6 +213,9 @@ export function buildArchitecture(T) {
   };
   M.cladding.name='workshop wall panels';
   M.wainscot.name='workshop lower wall';
+  M.oak.name='oak flooring';M.carpet.name='office carpet';M.pane.name='exterior glazing';
+  M.roof.name='painted roof panels';M.steel.name='painted steel beams';
+  M.walnut.name='walnut linings';M.oakLight.name='oak joinery';
 
   function add(group, geometry, material, casts = false) {
     const mesh = new T.Mesh(geometry, material);

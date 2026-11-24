@@ -1,6 +1,9 @@
 Ziewise first-person facility tour
 
-The factory, office, equipment, camera paths and illustrations are authored for this tour. They represent example customer workflows.
+The factory, office, camera paths, machine tooling and illustrative customer workflows were assembled for this tour. The six-axis arm uses the published metric UR10e visual geometry. Consult robot/CREDITS.txt and robot/LICENSE-UR10E.txt for its source, license and modifications.
+Workshop furniture, tools and safety equipment have individual Poly Haven source credits in equipment/CREDITS.txt. PBR finishes, office materials and workplace objects have individual credits in finishes/SOURCES.txt and office-materials/SOURCES.txt.
+The inspection monitor shows derived crops of the site's illustrative field imagery. Machining geometry, its fitted aperture walls, the surface tool marks and the defect registration have been authored for this demonstration.
+The pedestrian safety sequence uses a licensed synthetic worker with a skeletal walk cycle. The original CC0 dedication, author and modifications are documented in safety/CREDITS.txt and safety/LICENSE-GRAB3D.txt.
 The workshop reflection environment is derived from Machine Shop 02 by Sergej Majboroda, published on Poly Haven under CC0. The local RGBE map is downsampled and used for material lighting.
 https://polyhaven.com/a/machine_shop_02
 https://polyhaven.com/license

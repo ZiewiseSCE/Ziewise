@@ -5,9 +5,9 @@
   <meta name="theme-color" content="#0a1011">
   <meta name="description" content="지와이즈의 한국어 기술 브리핑. MES·DCS와 딥러닝을 연결하는 제조 현장, 로컬 LLM과 RPA로 자동화하는 사무 업무, 투자 효과를 14개 장면에서 살펴보세요.">
   <title>AI 기술 브리핑 | Ziewise</title>
-  <link rel="icon" href="../assets/ziewise-symbol.png"><link rel="preload" href="../field-tour/views/design-brief.webp" as="image" type="image/webp">
+  <link rel="icon" href="../assets/ziewise-symbol.png"><link rel="preload" href="../field-tour/views/design-brief.webp?v=cad1" as="image" type="image/webp">
   <link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../field.css"><link rel="stylesheet" href="../enterprise.css"><link rel="stylesheet" href="./briefing.css">
-  <script defer src="../enterprise.js"></script><script defer src="./topics.js"></script><script defer src="./voice-tracks.js"></script><link rel="stylesheet" href="../field-tour/tour.css"><script type="module" src="../field-tour/tour.mjs"></script>
+  <script defer src="../enterprise.js"></script><script defer src="./topics.js"></script><script defer src="./voice-tracks.js"></script><link rel="stylesheet" href="../field-tour/tour.css"><script type="module" src="../field-tour/tour.mjs?v=cad1"></script>
 </head>
 <body class="briefing-page">
   <a class="skip" href="#chapters">현장 투어 바로가기</a>
@@ -19,7 +19,7 @@
   <main>
 <section class="walk" id="chapters" data-tour="brief" aria-label="고객 현장 1인칭 3D 투어">
   <div class="walk-view" id="walk-view">
-    <img id="walk-poster" class="walk-poster" src="../field-tour/views/design-brief.webp" fetchpriority="high" alt="">
+    <img id="walk-poster" class="walk-poster" src="../field-tour/views/design-brief.webp?v=cad1" fetchpriority="high" alt="">
     <canvas id="walk-world" tabindex="0" aria-label="1인칭 현장. 직접 걷기에서는 방향키로 이동하고 마우스나 손가락으로 시선을 돌립니다."></canvas>
     <div class="walk-shade" aria-hidden="true"></div>
     <div class="walk-top"><div class="walk-id"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0z"/><circle cx="12" cy="10" r="2"/></svg><span id="walk-area">제조동</span><span class="walk-sep">/</span><strong id="walk-room">검사 셀</strong></div>
@@ -38,7 +38,7 @@
   <audio id="narration" preload="metadata"><track id="korean-captions" kind="captions" srclang="ko" label="한국어"></audio>
   <p class="walk-status" id="walk-status" role="status"></p>
   <dialog id="walk-route" aria-labelledby="walk-route-title"><header><div><p>현장 안내</p><h2 id="walk-route-title">어디로 이동할까요?</h2></div><button type="button" id="walk-route-close" aria-label="경로 닫기"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="m5 5 14 14M19 5 5 19"/></svg></button></header><div id="walk-stops"></div></dialog>
-  <noscript><p class="walk-nojs">투어 설명은 <a href="../ai-briefing/ziewise-technical-brief.pdf">한국어 기술 브리핑 PDF</a>에서 확인하세요.</p></noscript>
+  <noscript><p class="walk-nojs">투어 설명은 <a href="../ai-briefing/ziewise-technical-brief.pdf?v=cad1">한국어 기술 브리핑 PDF</a>에서 확인하세요.</p></noscript>
 </section>
 <section id="technical-notes" class="walk-notes light-section"><div class="frame">
     <div class="walk-notes-head"><div><p class="eyebrow section-kicker"><span></span>기술 브리핑</p><h2 id="note-title">현장의 한 문장을 검사 기준표로</h2></div><p>선택한 단계를 누르면 그 장비와 설명으로 이동합니다.</p></div>
@@ -53,7 +53,7 @@
         <div class="roi-output"><div><span>월 확보 업무시간</span><strong data-value="hours">266.7시간</strong></div><div><span>월간 시간 가치</span><strong data-value="gross">800만원</strong></div><div><span>운영비 차감 후 월 가치</span><strong data-value="net">600만원</strong></div><div><span>첫해 순효익</span><strong data-value="annual">4,200만원</strong></div><div class="roi-highlight"><span>첫해 투자수익률</span><strong data-value="roi">77.8%</strong></div><div class="roi-highlight"><span>단순 회수기간</span><strong data-value="payback">5개월</strong></div></div>
       </div><p class="roi-status" role="status"></p><details class="roi-method"><summary>계산식과 가정 보기</summary><div><p>월 확보시간은 월 처리량 × (도입 전 분 − 도입 후 분) ÷ 60입니다. 월간 시간 가치는 이 시간에 시간당 인건비를 곱합니다.</p><p>첫해 순효익은 12 × (월간 시간 가치 − 월 운영비) − 초기 도입비입니다. 첫해 ROI는 순효익 ÷ (초기 도입비 + 12개월 운영비) × 100입니다. 단순 회수기간은 초기 도입비 ÷ 운영비 차감 후 월 가치로 계산합니다.</p><p>정상 운영 개시일부터 12개월간 처리량이 일정하다고 가정합니다. 초기 비용에는 구축·연동비를, 운영비에는 사내 서버·전력·RPA 라이선스·유지보수를 포함하세요.</p></div></details><p class="roi-caveat">위 금액은 확보된 업무시간을 환산한 예시입니다. 실제 현금 절감은 초과근무비·외주비 등에서 확인된 지출 변화를 별도로 측정합니다.</p>
     </div></section>
-    <section class="resource-section" aria-labelledby="resources-title"><div class="frame resource-inner"><div><p class="eyebrow"><span class="line-chip"></span>설계 자료실</p><h2 id="resources-title">현장에서 본 내용을 회의로.</h2><p>31개 기술 항목과 고객 사례를 글로 읽거나 한국어 요약본을 내려받을 수 있습니다.</p></div><div class="resource-links"><a href="./reference.html">기술 자료와 고객 사례</a><a href="./ziewise-technical-brief.pdf" download>기술 브리핑 PDF</a><a href="../#contact">도입 문의</a></div></div></section>
+    <section class="resource-section" aria-labelledby="resources-title"><div class="frame resource-inner"><div><p class="eyebrow"><span class="line-chip"></span>설계 자료실</p><h2 id="resources-title">현장에서 본 내용을 회의로.</h2><p>31개 기술 항목과 고객 사례를 글로 읽거나 한국어 요약본을 내려받을 수 있습니다.</p></div><div class="resource-links"><a href="./reference.html">기술 자료와 고객 사례</a><a href="./ziewise-technical-brief.pdf?v=cad1" download>기술 브리핑 PDF</a><a href="../#contact">도입 문의</a></div></div></section>
   </main>
   <footer><div class="frame footer-inner"><a class="brand footer-brand" href="../" aria-label="지와이즈 홈페이지"><img src="../assets/ziewise-symbol.png" width="30" height="30" alt=""><span>ziewise</span></a><div><p>지와이즈 주식회사 <span>대표이사 이승현</span> <span>사업자등록번호 392-87-02849</span></p><address>서울특별시 금천구 가산디지털2로 165 백상스타타워2차 1206호</address></div><div class="footer-contact"><a href="mailto:info@ziewise.com">info@ziewise.com</a><a href="tel:+82220880741">02-2088-0741</a></div></div></footer>
 </body>

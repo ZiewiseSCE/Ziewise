@@ -1,0 +1,10 @@
+Manufacturing safety walkthrough
+
+The worker, clothing, equipment, textures, rig and source walking clip derive from Grab3D’s Construction Worker, published November 17, 2026. Grab3D dedicates the work to the public domain under CC0 1.0 Universal. Its source record describes an AI-assisted base mesh and textures subsequently finished in Blender. The figure illustrates a safety event in a virtual facility.
+
+- Original model and artist’s published license — https://grab3d.com/models/characters/construction-worker/
+- Original rigged glTF download — https://grab3d.com/dl/construction-worker-rigged/construction-worker-rigged.glb
+- Grab3D asset license and origin disclosure — ./LICENSE-GRAB3D.txt
+- CC0 1.0 Universal legal text — https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+The tour adaptation reduces the rigged surface from 300,000 to 42,000 triangles and preserves the skinning, texture seams, walking motion, reflective vest, helmet and boots. The material uses embedded color, normal and roughness maps. A neutral waiting posture and sole-contact placement adapt the figure to the marked crossing.

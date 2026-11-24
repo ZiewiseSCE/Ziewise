@@ -1,15 +1,30 @@
 // The public site stores the licensed material scans locally, alongside the geometry.
-export async function applyFinishes(T, scene, building, camera) {
+export async function applyFinishes(T, scene, building) {
   const loader=new T.TextureLoader();
   const wall=new Map();
   building.traverse(node=>{if(node.material?.name)wall.set(node.material.name,node.material);});
-  async function texture(name,repeat,color) {
-    const map=await loader.loadAsync(new URL('./finishes/'+name,import.meta.url).href);
+  async function texture(name,repeat,color,folder='./finishes/') {
+    const map=await loader.loadAsync(new URL(folder+name,import.meta.url).href);
     map.colorSpace=color?T.SRGBColorSpace:T.NoColorSpace;map.anisotropy=4;
     if(repeat){map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.setScalar(repeat);}
     return map;
   }
   const promises=[
+    Promise.all(['color','normal','rough'].map((k,i)=>texture('oak-'+k+'.webp',1,i===0,'./office-materials/maps/'))).then(([color,normal,rough])=>{
+      for(const [label,tint] of [['oak flooring',0xccaa87],['oak joinery',0xc8a17e],['walnut linings',0x93775c]]){
+        const mat=wall.get(label);if(!mat)continue;
+        mat.map=color;mat.normalMap=normal;mat.roughnessMap=rough;mat.color.setHex(tint);mat.normalScale.set(.26,.26);mat.roughness=.83;mat.needsUpdate=true;
+      }
+    }),
+    Promise.all(['color','normal','rough'].map((k,i)=>texture('weave-'+k+'.webp',2.9,i===0,'./office-materials/maps/'))).then(([color,normal,rough])=>{
+      const mat=wall.get('office carpet');if(!mat)return;
+      mat.map=color;mat.normalMap=normal;mat.roughnessMap=rough;mat.color.setHex(0x94958e);mat.normalScale.set(.27,.27);mat.roughness=1;mat.needsUpdate=true;
+    }),
+    texture('metal-normal.webp',2,false,'./office-materials/maps/').then(normal=>{
+      for(const [label,amount] of [['painted steel beams',.12],['painted roof panels',.09]]){
+        const mat=wall.get(label);if(!mat)continue;mat.normalMap=normal;mat.normalScale.set(amount,amount);mat.needsUpdate=true;
+      }
+    }),
     Promise.all([texture('hangar-slab-basecolor.webp',1.58,true),texture('hangar-slab-normal-gl.webp',1.58,false)]).then(([base,bump])=>{
       const mat=wall.get('workshop concrete');if(!mat)return;
       mat.map=base;mat.normalMap=bump;mat.normalScale.set(.49,.49);mat.color.setHex(0xb3c0bf);mat.metalness=.095;mat.roughness=.70;
@@ -35,10 +50,17 @@ export async function applyFinishes(T, scene, building, camera) {
       const geom=new T.SphereGeometry(84,72,18,0,2*Math.PI,T.MathUtils.degToRad(48),T.MathUtils.degToRad(56));
       const mat=new T.MeshBasicMaterial({map:photo,side:T.BackSide,fog:false,toneMapped:false,depthWrite:false,color:0xe2eaec});
       const shell=new T.Mesh(geom,mat);shell.rotation.y=.10;shell.renderOrder=-500;shell.frustumCulled=false;
-      shell.onBeforeRender=()=>{shell.position.copy(camera.position);shell.updateMatrixWorld(true);};
+      const eye=new T.Vector3();shell.onBeforeRender=(_r,_s,activeCamera)=>{activeCamera.getWorldPosition(eye);shell.position.copy(eye);shell.updateMatrixWorld(true);};
       scene.add(shell);
       for(const group of building.children)if(group.name.startsWith('Campus exterior')||group.name==='Decision room outlook')group.visible=false;
     })
   ];
+  const glass=wall.get('exterior glazing');
+  if(glass){
+    glass.metalness=0;glass.roughness=.092;glass.envMapIntensity=.76;
+    glass.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',
+      'diffuseColor.a=.085+.34*pow(1.-clamp(abs(dot(normal,normalize(vViewPosition))),0.,1.),4.);\n#include <opaque_fragment>');};
+    glass.needsUpdate=true;
+  }
   await Promise.allSettled(promises);
 }

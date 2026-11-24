@@ -1,0 +1,45 @@
+Office surfaces and furnishings for the Ziewise walkthrough
+
+All source assets are CC0 1.0.
+https://polyhaven.com/license
+https://docs.ambientcg.com/license/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Mocha Oak Veneer · Jenelle van Heerden, Poly Haven. The diffuse, OpenGL normal and roughness were resized and encoded as WebP.
+https://polyhaven.com/a/mocha_oak_veneer
+Poly Wool Herringbone · colormass (photography) and Rico Cilliers (processing), Poly Haven. The three measured maps were resized and encoded as WebP.
+https://polyhaven.com/a/poly_wool_herringbone
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/mocha_oak_veneer/mocha_oak_veneer_diff_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/mocha_oak_veneer/mocha_oak_veneer_nor_gl_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/mocha_oak_veneer/mocha_oak_veneer_rough_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/poly_wool_herringbone/poly_wool_herringbone_diff_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/poly_wool_herringbone/poly_wool_herringbone_nor_gl_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/poly_wool_herringbone/poly_wool_herringbone_rough_1k.jpg
+
+Metal 010 · Lennart Demes, ambientCG. Color, normal and roughness maps, resized and encoded as WebP.
+https://ambientcg.com/view?id=Metal010
+https://ambientcg.com/get?file=Metal010_1K-JPG.zip
+
+Paper 001 · Lennart Demes, ambientCG. White paper microrelief, normal and roughness resized to 384px.
+https://ambientcg.com/view?id=Paper001
+https://ambientcg.com/get?file=Paper001_1K-JPG.zip
+
+Potted Plant 02 · Rico Cilliers, Poly Haven. The ceramic and leaves retain the source model geometry and UVs. The pebble mesh is replaced by a lightweight soil disk.
+https://polyhaven.com/a/potted_plant_02
+Modern Arm Chair 01 · Vibrant Nordic, Poly Haven. Both components retain their geometry and UVs; geometry is stored in a compact binary with quantized vertex positions, normals, and UVs.
+https://polyhaven.com/a/modern_arm_chair_01
+
+Model geometry and texture source files
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/potted_plant_02/potted_plant_02_1k.gltf
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/potted_plant_02/potted_plant_02.bin
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_diff_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_pot_nor_gl_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_diff_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_alpha_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/potted_plant_02/potted_plant_02_leaves_nor_gl_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/modern_arm_chair_01/modern_arm_chair_01_1k.gltf
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/modern_arm_chair_01/modern_arm_chair_01.bin
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_legs_diff_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_legs_nor_gl_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_pillow_diff_1k.jpg
+https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/modern_arm_chair_01/modern_arm_chair_01_pillow_nor_gl_1k.jpg

@@ -1,4 +1,5 @@
 // Local station coordinates: Y is up; the open side faces +Z.
+import {officeScreen} from './work-screens.mjs';
 const libraries = new WeakMap();
 const PI = Math.PI;
 const ink = '#132d2c';
@@ -202,7 +203,8 @@ function makeStation(T, id) {
     return item;
   }
   function textCard(key, title, rows, tag, dark = false, lit = false, width = 512, height = 448) {
-    return print(key, width, height, noteSurface(title, rows, tag, dark), lit);
+    const screen=lit?officeScreen(key):null;
+    return print(key,screen?width*2:width,screen?height*2:height,screen||noteSurface(title,rows,tag,dark),lit);
   }
   function dynamic(item, apply) {
     item.traverse(child => { child.userData.dynamic = true; });
@@ -412,20 +414,22 @@ function accounts(s) {
     box(g, -1.22, y + .032, -.207, .22, .018, .028, M.brass);
   }
   const invoice = print('finance-invoice', 458, 590, (c, w, h) => {
-    c.fillStyle = '#fcf3de'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#f5f3e9'; c.fillRect(0, 0, w, h);
     label(c, '구매 청구서', 34, 81, 51); label(c, '거래처   세광 부품', 35, 144, 28, muted);
     rule(c, 34, 170, w - 68, '#93a49b', 2);
-    for (const [i, a] of ['부품 공급', '공급가액', '세액'].entries()) {
-      label(c, a, 35, 235 + i * 56, 25);
-      rule(c, 200, 232 + i * 56, 196, '#bac1ac', 3);
+    for (const [i, [field,value]] of [['공급 품목','가공 플랜지'],['공급가액','116,364'],['세액','11,636']].entries()) {
+      label(c, field, 35, 235+i*56, 25);label(c,value,182,235+i*56,25,ink,560);
+      rule(c,35,247+i*56,336,'#c7cdc5',1);
     }
     rule(c, 33, 389, w - 66, '#738f83', 2);
     label(c, '합계', 35, 450, 28); label(c, '₩ 128,000', 121, 455, 43, ink, 700, digits);
+    label(c,'문서 번호  AP-0142',36,516,19,muted);label(c,'매입 증빙용',36,548,17,muted);
   });
   const receipt = print('finance-receipt', 234, 483, (c, w, h) => {
-    c.fillStyle = '#f5f0d7'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#f4f3ea'; c.fillRect(0, 0, w, h);
     label(c, '영수증', 22, 62, 35);
-    for (let i = 0; i < 6; i++) rule(c, 21, 100 + i * 38, i % 3 === 0 ? 140 : 182, '#758477', 2);
+    for(const [i,line] of ['세광 부품','전표  AP-0142','가공 플랜지','승인 금액'].entries())label(c,line,22,114+i*53,22,muted,550);
+    rule(c,21,308,187,'#858e85',2);
     label(c, '128,000', 21, 398, 37, ink, 700, digits);
     for (let i = 0; i < 26; i++) rule(c, 22 + i * 7, 422, i % 3 === 0 ? 4 : 2, '#45594f', 32);
   });

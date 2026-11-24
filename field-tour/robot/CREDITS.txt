@@ -1,0 +1,10 @@
+UR10e manufacturing inspection visualization
+
+The six-axis Universal Robots UR10e visual geometry and joint-frame definitions are from the Universal Robots UR10e package in Google DeepMind's MuJoCo Menagerie. The package derives its visual model from the ROS-Industrial Universal Robots description.
+
+- Copyright 2018 ROS Industrial Consortium. Model-specific BSD 3-Clause license. Complete license — ./LICENSE-UR10E.txt
+- MuJoCo Menagerie UR10e model and attribution at the revision used — https://github.com/google-deepmind/mujoco_menagerie/tree/eea4c7431b63da8278b0ff31638e0b0e941cec0e/universal_robots_ur10e
+- Model-specific license at the revision used — https://github.com/google-deepmind/mujoco_menagerie/blob/eea4c7431b63da8278b0ff31638e0b0e941cec0e/universal_robots_ur10e/LICENSE
+- ROS-Industrial original visual meshes — https://github.com/ros-industrial/universal_robot/tree/kinetic-devel/ur_e_description/meshes/ur10e/visual
+
+The web version converts the original twenty OBJ material groups into indexed, quantized geometry. It regenerates crease-aware normals on the cast surfaces. It adds a fabricated pedestal, industrial optical tool and cable, physically based materials, and a six-joint inspection motion for this illustrative cell. The robot geometry is kept at its published metric scale.

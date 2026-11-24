@@ -11,7 +11,7 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
   <link rel="icon" href="./assets/ziewise-symbol.png" type="image/png">
-  <link rel="preload" href="./field-tour/views/design.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="./field-tour/views/design.webp?v=cad1" as="image" type="image/webp" fetchpriority="high">
   <link rel="preload" href="./assets/noto-kr.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./field.css">
@@ -20,7 +20,7 @@
   <script defer src="./stories.js"></script>
   <link rel="stylesheet" href="./field-tour/tour.css">
   <script defer src="./field-tour/company.js"></script>
-  <script type="module" src="./field-tour/tour.mjs"></script>
+  <script type="module" src="./field-tour/tour.mjs?v=cad1"></script>
 </head>
 <body>
   <svg class="symbol-bank" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
@@ -71,7 +71,7 @@
   <main id="main">
 <section class="walk" id="walkthrough" data-tour="home" aria-label="고객 현장 1인칭 3D 투어">
   <div class="walk-view" id="walk-view">
-    <img id="walk-poster" class="walk-poster" src="./field-tour/views/design.webp" fetchpriority="high" alt="">
+    <img id="walk-poster" class="walk-poster" src="./field-tour/views/design.webp?v=cad1" fetchpriority="high" alt="">
     <canvas id="walk-world" tabindex="0" aria-label="1인칭 현장. 직접 걷기에서는 방향키로 이동하고 마우스나 손가락으로 시선을 돌립니다."></canvas>
     <div class="walk-shade" aria-hidden="true"></div>
     <div class="walk-top"><div class="walk-id"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0z"/><circle cx="12" cy="10" r="2"/></svg><span id="walk-area">제조동</span><span class="walk-sep">/</span><strong id="walk-room">검사 셀</strong></div>
@@ -90,7 +90,7 @@
 
   <p class="walk-status" id="walk-status" role="status"></p>
   <dialog id="walk-route" aria-labelledby="walk-route-title"><header><div><p>현장 안내</p><h2 id="walk-route-title">어디로 이동할까요?</h2></div><button type="button" id="walk-route-close" aria-label="경로 닫기"><svg viewBox="0 0 24 24" aria-hidden="true" class="walk-icon"><path d="m5 5 14 14M19 5 5 19"/></svg></button></header><div id="walk-stops"></div></dialog>
-  <noscript><p class="walk-nojs">투어 설명은 <a href="./ai-briefing/ziewise-technical-brief.pdf">한국어 기술 브리핑 PDF</a>에서 확인하세요.</p></noscript>
+  <noscript><p class="walk-nojs">투어 설명은 <a href="./ai-briefing/ziewise-technical-brief.pdf?v=cad1">한국어 기술 브리핑 PDF</a>에서 확인하세요.</p></noscript>
 </section>
     <section class="systems-section light-section" id="systems" aria-labelledby="systems-title"><div class="frame">
       <div class="section-head"><div><p class="eyebrow section-kicker"><span></span>INDUSTRIAL INTELLIGENCE</p><h2 id="systems-title">MES와 DCS에<br>딥러닝 두뇌를 더합니다.</h2></div><p>MES의 생산 이력과 DCS의 공정 신호를 함께 보면, 어느 로트에서 어떤 설비 변화가 품질 이상에 앞섰는지 추적할 수 있습니다.</p></div>
