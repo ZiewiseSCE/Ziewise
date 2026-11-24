@@ -1,0 +1,37 @@
+Facility walkthrough – surface and exterior assets
+
+License for all three source assets
+
+Creative Commons CC0 1.0 Universal public domain dedication. Commercial use, modification and redistribution are permitted. Poly Haven publishes the source license at https://polyhaven.com/license. The dedication and legal text are at https://creativecommons.org/publicdomain/zero/1.0/ and https://creativecommons.org/publicdomain/zero/1.0/legalcode. All maps here were prepared from the downloadable asset files.
+
+Hangar slab
+
+Hangar Concrete Floor by Dimitrios Savva, published by Poly Haven.
+https://polyhaven.com/a/hangar_concrete_floor
+https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/hangar_concrete_floor/hangar_concrete_floor_diff_1k.png
+https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/hangar_concrete_floor/hangar_concrete_floor_nor_gl_1k.png
+
+hangar-slab-basecolor.webp is the seamless 1K scan lifted to a cool neutral coating. It retains the underlying pits, scratches and scuff patterns. hangar-slab-normal-gl.webp is the corresponding tangent-space OpenGL normal, vector-resampled to 768 square and losslessly encoded after tangent quantization. Source scale is 2 by 2 metres per tile.
+
+Set the base color to sRGB and leave the normal at Three.js NoColorSpace, with both axes wrapping in RepeatWrapping. A starting material is white tint, roughness 0.66, metalness 0.035 and normalScale (0.62, 0.62). The architecture module's workshop slab already has world UVs at 3.45 metres per unit. A texture repeat of 1.725 on both axes reproduces the scanned 2 metre scale. Leave the line markings on their own geometry.
+
+Fastened wall liner
+
+Corrugated Iron 03 by Charlotte Baglioni, published by Poly Haven.
+https://polyhaven.com/a/corrugated_iron_03
+https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/corrugated_iron_03/corrugated_iron_03_diff_1k.png
+https://dl.polyhaven.org/file/ph-assets/Textures/png/1k/corrugated_iron_03/corrugated_iron_03_nor_gl_1k.png
+
+fastened-sheet-basecolor.webp is the neutral-light graded sheet with the original fastener rows. fastened-sheet-normal-gl.webp preserves the original OpenGL tangent orientation. Both maps are 1024 square. The liner is vertically fluted when V runs upward. The native sample covers 2 by 2 metres. The module's profiledWall geometry already maps one tile in 2 metres.
+
+Use the same basecolor and normal color-space settings as the slab. Start with white tint, roughness 0.59, metalness 0.34 and normalScale (0.30, 0.30) over the existing coarse rib geometry. Mipmaps and anisotropy 4 to 8 help long grazing views.
+
+Exterior through the glazing
+
+Derelict Airfield 02 by Alexander Scholten, published by Poly Haven.
+https://polyhaven.com/a/derelict_airfield_02
+https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/derelict_airfield_02_4k.hdr
+
+daylight-yard-horizon.webp is a globally tone-mapped, mildly desaturated crop of the photographed 360-degree HDR panorama. The daylight sheds and vegetation form a distant conceptual campus outlook. The original source is 4096 by 2048. This band retains image rows 546 through 1182, or approximately +42 to −14 degrees latitude. The output is 4096 by 637. Horizontal U covers the full circle, with the horizon three quarters of the way down from the upper edge.
+
+Map the strip once around an inward-facing spherical band using thetaStart 48 degrees and thetaLength 56 degrees, centered horizontally on the visitor at eye height. Keep the band within the camera far plane and behind the 3D facility. MeshBasicMaterial with an sRGB map, toneMapped false and fog false preserves the prepared outdoor exposure. Replace the synthetic distant buildings and sky cards to expose the photograph through the windows. The roof, walls, glazing, mullions, equipment and walking surface keep their original 3D geometry.

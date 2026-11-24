@@ -1,0 +1,8 @@
+Ziewise first-person facility tour
+
+The factory, office, equipment, camera paths and illustrations are authored for this tour. They represent example customer workflows.
+The workshop reflection environment is derived from Machine Shop 02 by Sergej Majboroda, published on Poly Haven under CC0. The local RGBE map is downsampled and used for material lighting.
+https://polyhaven.com/a/machine_shop_02
+https://polyhaven.com/license
+
+The renderer uses the site's locally hosted Three.js library in ai-briefing/vendor. Its MIT license is included there.
