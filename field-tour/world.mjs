@@ -139,17 +139,22 @@ export function createWorld(canvas,{capture=false,onLoss=()=>{},onInvalidate=()=
     asset.anchors=asset.anchors.map(a=>asset.group.localToWorld(a.clone()));
     pool.set(id,asset);return asset;
   }
-  let q=0,preparing=false;const workQueue=[];
+  let q=0,preparing=false,priority=null,priorityDue=0;const workQueue=[];
   function clearPreparation(){
-    workQueue.length=0;
+    workQueue.length=0;priority=null;priorityDue=0;
     if(q){if(window.cancelIdleCallback)cancelIdleCallback(q);else clearTimeout(q);q=0;}
   }
-  function prepare(ids) {
+  function prepare(ids,nextId=null) {
     for(const id of ids)if(!pool.has(id)&&!workQueue.includes(id))workQueue.push(id);
+    if(nextId&&workQueue.includes(nextId)&&priority!==nextId){
+      workQueue.splice(workQueue.indexOf(nextId),1);workQueue.unshift(nextId);
+      priority=nextId;priorityDue=performance.now()+500;
+    }
     function next(deadline) {
       q=0;
-      if(workQueue.length && (deadline.didTimeout||deadline.timeRemaining()>5)) {
+      if(workQueue.length&&(deadline.didTimeout||deadline.timeRemaining()>5||(priority&&performance.now()>=priorityDue))) {
         const id=workQueue.shift();
+        if(id===priority){priority=null;priorityDue=0;}
         if(!pool.has(id)){
           preparing=true;
           station(id).ready.finally(()=>{preparing=false;if(ready)schedule();});
@@ -158,7 +163,11 @@ export function createWorld(canvas,{capture=false,onLoss=()=>{},onInvalidate=()=
       }
       if(workQueue.length)schedule();
     }
-    function schedule(){if(q||preparing||!workQueue.length)return;q=window.requestIdleCallback?requestIdleCallback(next,{timeout:750}):setTimeout(()=>next({didTimeout:true}),80);}
+    function schedule(){
+      if(q||preparing||!workQueue.length)return;
+      const timeout=priority?Math.max(1,priorityDue-performance.now()):750;
+      q=window.requestIdleCallback?requestIdleCallback(next,{timeout}):setTimeout(()=>next({didTimeout:true}),80);
+    }
     schedule();
   }
   let width=0,height=0,sizeDirty=true,viewDistance=capture?29:mobile?16:21;
