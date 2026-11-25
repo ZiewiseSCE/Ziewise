@@ -249,7 +249,7 @@
     document.getElementById("certificate-download").href = source;
     openPanel("certificate-view");
   }));
-  document.querySelectorAll("dialog").forEach(dialog => {
+  document.querySelectorAll("dialog.drawer").forEach(dialog => {
     dialog.querySelector("[data-close]")?.addEventListener("click", () => dialog.close());
     dialog.addEventListener("click", e => {
       if (e.target !== dialog) return;
@@ -300,6 +300,13 @@
     openPanel("action-panel");
     detail.open = true;
     detail.scrollIntoView({block:"center"});
+  } else if (document.getElementById("brand-intro")?.open) {
+    function enterMain() {
+      if (reduceMotion.matches || autoplayCancelled || document.querySelector("dialog[open]")) return;
+      if (document.hidden) document.addEventListener("visibilitychange", enterMain, {once:true});
+      else start();
+    }
+    document.getElementById("brand-intro").addEventListener("close", enterMain, {once:true});
   } else if (!reduceMotion.matches && !document.hidden && !autoplayCancelled) {
     start();
   }

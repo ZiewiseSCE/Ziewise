@@ -3,6 +3,7 @@
   --head: 68px;
 }
 .mast .primary .llm-entry, .dir-group .llm-directory { color: var(--accent); font-weight: 680; }
+.mast .wordmark .wordmark-letters { display: block; width: auto; height: .746em; filter: none; }
 body.is-home .film-layout, body.is-detail .film-layout {
   display: grid;
   grid-template-columns: clamp(15.75rem, 22vw, 350px) minmax(0, 1fr);
