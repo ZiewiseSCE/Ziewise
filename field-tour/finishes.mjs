@@ -1,13 +1,33 @@
-// The public site stores the licensed material scans locally, alongside the geometry.
+// Decode scans before a camera turn can expose them. Surfaces with different UV repeats
+// share the decoded source, and the GPU can reuse it for matching sampler parameters.
+const sources=new Map(),samplers=new Map();
+function scannedTexture(T,url,repeat,color){
+  const key=url+'|'+repeat+'|'+color;
+  if(!samplers.has(key)){
+    if(!sources.has(url)){
+      const fallback=()=>new T.TextureLoader().loadAsync(url);
+      const load=typeof createImageBitmap==='function'?new T.ImageBitmapLoader()
+        .setOptions({imageOrientation:'flipY',premultiplyAlpha:'none',colorSpaceConversion:'none'})
+        .loadAsync(url).then(image=>{
+          const map=new T.Texture(image);map.flipY=false;map.needsUpdate=true;return map;
+        }).catch(fallback):fallback();
+      sources.set(url,load.catch(error=>{sources.delete(url);throw error;}));
+    }
+    const configured=sources.get(url).then(base=>{
+      const map=base.clone();
+      map.colorSpace=color?T.SRGBColorSpace:T.NoColorSpace;map.anisotropy=4;
+      if(repeat){map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.setScalar(repeat);}
+      return map;
+    });
+    samplers.set(key,configured.catch(error=>{samplers.delete(key);throw error;}));
+  }
+  return samplers.get(key);
+}
 export async function applyFinishes(T, scene, building) {
-  const loader=new T.TextureLoader();
   const wall=new Map();
   building.traverse(node=>{if(node.material?.name)wall.set(node.material.name,node.material);});
-  async function texture(name,repeat,color,folder='./finishes/') {
-    const map=await loader.loadAsync(new URL(folder+name,import.meta.url).href);
-    map.colorSpace=color?T.SRGBColorSpace:T.NoColorSpace;map.anisotropy=4;
-    if(repeat){map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.setScalar(repeat);}
-    return map;
+  function texture(name,repeat,color,folder='./finishes/') {
+    return scannedTexture(T,new URL(folder+name,import.meta.url).href,repeat,color);
   }
   const promises=[
     ...[['terrazzo passage','terrazzo_tiles',1.75,0xc5c2b8,.39,.78],['interior plaster','plastered_wall_02',1.25,0xd9d8d2,.43,.95],

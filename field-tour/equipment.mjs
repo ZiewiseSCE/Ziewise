@@ -40,11 +40,13 @@ function opticalBench(T,scene,batchStatic){
   }).catch(()=>{});
 }
 
-export function placeEquipment(T,scene,batchStatic) {
-  const assets=new Map(),loader=new GLTFLoader();
+export function placeEquipment(T,scene,batchStatic,{capture=false,onChange=()=>{},prepareModel=()=>{}}={}) {
+  const assets=new Map(),sources=new Map(),placements=new Map(),loader=new GLTFLoader();
   const bench=opticalBench(T,scene,batchStatic);
   async function load(key){
-    const model=await loader.loadAsync(new URL('./equipment/'+key+'.glb',import.meta.url).href);
+    const full=new URL('./equipment/'+key+'.glb',import.meta.url);
+    const preview=new URL('./equipment/preview/'+key+'.glb',import.meta.url);
+    const model=await (capture?loader.loadAsync(full.href):loader.loadAsync(preview.href).catch(()=>loader.loadAsync(full.href)));
     const source=model.scene;
     source.traverse(node=>{
       if(!node.isMesh)return;
@@ -55,21 +57,32 @@ export function placeEquipment(T,scene,batchStatic) {
       }
     });
     const box=new T.Box3().setFromObject(source),center=box.getCenter(new T.Vector3()),size=box.getSize(new T.Vector3());
-    if(!Number.isFinite(size.y)||size.y<=0)return;
-    const copies=[];
-    for(const item of layout[key]){
-      const mount=new T.Group(),model=source.clone(true),s=item.h/size.y;
-      model.position.sub(new T.Vector3(center.x,box.min.y,center.z));
-      mount.name=key;mount.add(model);mount.scale.setScalar(s);mount.rotation.y=item.yaw;
-      mount.position.set(item.x,item.y,item.z);
-      scene.add(mount);copies.push(mount);
-    }
-    assets.set(key,copies);
+    if(!Number.isFinite(size.y)||size.y<=0)throw Error('Invalid equipment dimensions: '+key);
+    await prepareModel(source);
+    return {source,height:size.y,origin:new T.Vector3(center.x,box.min.y,center.z)};
   }
-  const tasks=new Map();
-  function demand(key){if(!tasks.has(key))tasks.set(key,load(key));return tasks.get(key);}
-  function near(z){return Promise.allSettled([bench,...Object.keys(layout).filter(key=>layout[key].some(item=>Math.abs(item.z-z)<7)).map(demand)]);}
-  return {get ready(){return Promise.all([bench,...Object.keys(layout).map(demand)]);},near,assets,visibleFrom(z,maxDistance){
+  function place(key,item){
+    if(placements.has(item))return placements.get(item);
+    if(!sources.has(key))sources.set(key,load(key).catch(error=>{sources.delete(key);throw error;}));
+    const pending=sources.get(key).then(({source,height,origin})=>{
+      const mount=new T.Group(),model=source.clone(true);
+      model.position.sub(origin);mount.name=key;mount.add(model);
+      mount.scale.setScalar(item.h/height);mount.rotation.y=item.yaw;mount.position.set(item.x,item.y,item.z);
+      scene.add(mount);mount.updateMatrixWorld(true);
+      mount.traverse(node=>{node.matrixAutoUpdate=false;node.matrixWorldAutoUpdate=false;});
+      if(!assets.has(key))assets.set(key,[]);
+      assets.get(key).push(mount);onChange();
+    }).catch(error=>{placements.delete(item);throw error;});
+    placements.set(item,pending);return pending;
+  }
+  function nearby(z,radius){
+    const waiting=[bench];
+    for(const [key,items] of Object.entries(layout)){
+      for(const item of items)if(Math.abs(item.z-z)<radius)waiting.push(place(key,item));
+    }
+    return waiting;
+  }
+  return {get ready(){return Promise.all(nearby(0,Infinity));},near(z){return Promise.allSettled(nearby(z,8));},assets,visibleFrom(z,maxDistance){
     for(const groups of assets.values())for(const group of groups)group.visible=Math.abs(group.position.z-z)<maxDistance;
   }};
 }

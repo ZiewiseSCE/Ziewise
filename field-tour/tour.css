@@ -4,7 +4,7 @@
 .walk-view{position:relative;isolation:isolate;overflow:hidden;height:clamp(32rem,73svh,58rem);background:#657071}
 .walk-poster,#walk-world,#walk-film,.walk-shade{position:absolute;inset:0;width:100%;height:100%}
 .walk-poster{object-fit:cover;object-position:58% 51%;z-index:0}
-#walk-world{display:block;z-index:1;opacity:0;touch-action:pan-y;transition:opacity .32s}
+#walk-world{display:block;z-index:1;opacity:0;touch-action:pan-y}
 .walk[data-renderer="webgl"] #walk-world{opacity:1}
 #walk-film{object-fit:cover;z-index:1;opacity:0;pointer-events:none}
 .walk[data-renderer="video"] #walk-film{opacity:1}
@@ -140,7 +140,6 @@
 @media(max-height:510px) and (orientation:landscape){
   .walk-view{height:clamp(15rem,70svh,24rem)}.walk-story{bottom:.75rem}.walk-story h1,.walk[data-tour=brief] .walk-story h1{font-size:1.7rem}.walk-story p{font-size:.82rem;margin-top:.24rem}.walk-kicker{margin-bottom:.18rem}.walk-navbox{bottom:.7rem}.walk-top{top:.5rem}#walk-plan{height:2.1rem}.walk:fullscreen .walk-transport{min-height:3.5rem}
 }
-@media(prefers-reduced-motion:reduce){#walk-world{transition:none}}
 @media(pointer:coarse) and (min-width:621px){
   .walk-pad{display:grid;grid-template-columns:repeat(3,3rem);gap:.25rem;margin:.35rem 0 .5rem;width:max-content}
   .walk-pad button{border:1px solid #d1e2cc88;border-radius:4px;background:#11231ee2;padding:.42rem 0;font-size:.88rem;color:white;touch-action:none}

@@ -1,5 +1,5 @@
 // Work in linear scene radiance before the display transform. All depth tests use metres.
-export function createOptics(T,renderer,{mobile=false}={}) {
+export function createOptics(T,renderer,{mobile=false,capture=false}={}) {
   if(!renderer.extensions.has('EXT_color_buffer_float'))return null;
   const target=new T.WebGLRenderTarget(1,1,{
     type:T.HalfFloatType,format:T.RGBAFormat,minFilter:T.LinearFilter,magFilter:T.LinearFilter,
@@ -13,6 +13,7 @@ export function createOptics(T,renderer,{mobile=false}={}) {
     invProj:{value:new T.Matrix4()},pixels:{value:new T.Vector2(1,1)},projectScale:{value:1},
     focus:{value:3},aperture:{value:0},strength:{value:.74}};
   const material=new T.ShaderMaterial({uniforms,depthWrite:false,depthTest:false,
+    defines:{OCCLUSION_TAPS:capture?12:mobile?6:8,FOCUS_TAPS:capture?12:8},
     vertexShader:`varying vec2 film;
     void main(){film=position.xy*.5+.5;gl_Position=vec4(position.xy,0.,1.);}`,
     fragmentShader:`varying vec2 film;
@@ -34,24 +35,24 @@ export function createOptics(T,renderer,{mobile=false}={}) {
       vec3 color=texture2D(radiance,film).rgb;
       if(metres<34.){
         float scale=min(64.,projectScale/max(.35,metres));
-        for(int i=0;i<12;i++){
+        for(int i=0;i<OCCLUSION_TAPS;i++){
           float n=float(i),angle=n*2.399963+.38;
-          float radius=.058+.37*(n+.5)/12.;
+          float radius=.058+.37*(n+.5)/float(OCCLUSION_TAPS);
           vec2 uv=clamp(film+vec2(cos(angle),sin(angle))*radius*scale*pixels,vec2(.0001),vec2(.9999));
           vec3 delta=viewPoint(uv)-point;
           float distance=length(delta);
           float horizon=max(dot(normal,delta)-(.004+.002*metres),0.)/max(.01,distance);
           occlusion+=horizon*(1.-smoothstep(.11,.55,distance));
         }
-        color*=1.-min(.32,occlusion*.12)*strength*(1.-smoothstep(18.,34.,metres));
+        color*=1.-min(.32,occlusion*(1.44/float(OCCLUSION_TAPS)))*strength*(1.-smoothstep(18.,34.,metres));
       }
       // Keep the working plane sharp. Limit the defocus circle to a narrow optical fringe.
       float coc=min(aperture*abs(1.-focus/max(metres,.12)),5.8);
       if(coc>.22){
         vec3 sum=vec3(0.);float weight=0.;
-        for(int j=0;j<12;j++){
+        for(int j=0;j<FOCUS_TAPS;j++){
           float jn=float(j)+.5,angle=jn*2.3999632+.18;
-          vec2 uv=film+vec2(cos(angle),sin(angle))*sqrt(jn/12.)*coc*pixels;
+          vec2 uv=film+vec2(cos(angle),sin(angle))*sqrt(jn/float(FOCUS_TAPS))*coc*pixels;
           float sampleDepth=-viewPoint(uv).z;
           float k=metres>focus?smoothstep(focus*.95,focus*1.18,sampleDepth):1.-smoothstep(focus*.90,focus*1.05,sampleDepth);
           sum+=texture2D(radiance,uv).rgb*k;weight+=k;
@@ -77,5 +78,11 @@ export function createOptics(T,renderer,{mobile=false}={}) {
     renderer.setRenderTarget(null);renderer.render(screen,camera2d);
     return {calls,triangles};
   }
-  return {render,dispose(){target.dispose();quad.dispose();material.dispose();}};
+  function compile(group,camera,scene){
+    const previous=renderer.getRenderTarget();
+    renderer.setRenderTarget(target);
+    try{return renderer.compileAsync(group,camera,scene);}
+    finally{renderer.setRenderTarget(previous);}
+  }
+  return {render,compile,dispose(){target.dispose();quad.dispose();material.dispose();}};
 }

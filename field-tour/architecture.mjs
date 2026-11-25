@@ -1,5 +1,5 @@
 // Continuous customer facility, in metres. The z axis runs from the receiving hall to the offices.
-export function buildArchitecture(T) {
+export function buildArchitecture(T,{scannedSurfaces=false}={}) {
   const building = new T.Group();
   building.name = 'Manufacturing hall and offices';
   const up = new T.Vector3(0, 1, 0);
@@ -92,7 +92,7 @@ export function buildArchitecture(T) {
     });
   }
 
-  const woodMap = canvasTexture(384, 512, (ctx, w, h) => {
+  const woodMap = scannedSurfaces ? null : canvasTexture(384, 512, (ctx, w, h) => {
     const rand = random(673), grain = noiseGrid(19, rand);
     const img = ctx.createImageData(w, h), pixels = img.data;
     const boards = Array.from({ length: 9 }, () => (rand() - .5) * 15);
@@ -107,7 +107,7 @@ export function buildArchitecture(T) {
     ctx.putImageData(img, 0, 0);
   });
 
-  const carpetMap = canvasTexture(256, 256, (ctx, w, h) => {
+  const carpetMap = scannedSurfaces ? null : canvasTexture(256, 256, (ctx, w, h) => {
     const rand = random(151); ctx.fillStyle = '#777c75'; ctx.fillRect(0, 0, w, h);
     for (let y = 0; y < h; y += 2) for (let x = 0; x < w; x += 2) {
       const value = Math.floor(103 + (x % 8 === 0 ? 5 : 0) + rand() * 28);
@@ -184,9 +184,9 @@ export function buildArchitecture(T) {
   function paintMap(map, fallback, roughness, metalness = .02) {
     return std(map ? 0xffffff : fallback, roughness, metalness, map ? { map } : {});
   }
-  const epoxy = paintMap(mineral([146,153,147],13,431),0x929993,.65,.07);
+  const epoxy = paintMap(scannedSurfaces ? null : mineral([146,153,147],13,431),0x929993,.65,.07);
   epoxy.name='workshop concrete';
-  const stone = paintMap(mineral([193,191,180],15,1243,true),0xc1bfb4,.64,.04);
+  const stone = paintMap(scannedSurfaces ? null : mineral([193,191,180],15,1243,true),0xc1bfb4,.64,.04);
   const oak = paintMap(woodMap,0xae845e,.60);
   const carpet = paintMap(carpetMap,0x777c75,.99);
   const M = {
@@ -218,6 +218,7 @@ export function buildArchitecture(T) {
   M.walnut.name='walnut linings';M.oakLight.name='oak joinery';
   M.white.name='interior plaster';M.stone.name='terrazzo passage';M.ceiling.name='acoustic ceiling';
   M.pipe.name='galvanized air duct';M.iron.name='brushed structure';
+  for(const pane of [M.pane,M.frost,M.shade])pane.forceSinglePass=true;
 
   function add(group, geometry, material, casts = false) {
     const mesh = new T.Mesh(geometry, material);

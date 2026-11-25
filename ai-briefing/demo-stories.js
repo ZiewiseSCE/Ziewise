@@ -21,9 +21,16 @@
  const make=(tag,cls,text)=>{const el=document.createElement(tag);el.className=cls;if(text)el.textContent=text;return el;};
  for(const [id,config] of Object.entries(catalogs)){
   const root=document.getElementById(id);if(!root)continue;
-  const visual=root.querySelector('.ds-visual'),loader=root.querySelector('.ds-loading'),buttons=[...root.querySelectorAll('.ds-steps button')];
+  const status=root.querySelector('.ds-status'),visual=root.querySelector('.ds-visual'),loader=root.querySelector('.ds-loading'),buttons=[...root.querySelectorAll('.ds-steps button')];
   let frame=null,active=false,phase=-1,elapsed=0,lastPost=0,progress=0,pinned=false,lastNarrationToken=-1;
-  function send(paused=false){if(frame?.contentWindow)frame.contentWindow.postMessage({type:'ziewise:briefing',action:'step',phase:Math.max(0,phase),progress,paused},location.origin);}
+  let posted=null,cachedDuration=0,cachedRanges;
+  function send(paused=false,force=false){
+   if(!frame?.contentWindow)return;
+   const step=Math.max(0,phase);
+   if(!force&&posted?.frame===frame&&posted.step===step&&posted.progress===progress&&posted.paused===paused)return;
+   posted={frame,step,progress,paused};
+   frame.contentWindow.postMessage({type:'ziewise:briefing',action:'step',phase:step,progress,paused},location.origin);
+  }
   function show(i){
    if(i===phase)return;phase=i;root.dataset.demoPhase=i;const s=config.steps[i];
    root.querySelector('.ds-counter').textContent=String(i+1).padStart(2,'0')+' / 05';root.querySelector('.ds-board h2').textContent=s[1];root.querySelector('.ds-detail').textContent=s[2];root.querySelector('.ds-value').textContent=s[3];
@@ -33,7 +40,10 @@
    const voice=sceneVoice(id),saved=timings[id]?.[voice];
    if(voiceOn&&recordedActive&&Array.isArray(saved)&&saved.length===5)return saved;
    const duration=voiceOn&&recordedActive&&recordedNarration.duration>0?recordedNarration.duration:autoplay?estimate(NARR[NARRIDX[id]]||'')/1000:55;
-   return config.steps.map((_,i)=>({start:i*duration/5,end:(i+1)*duration/5}));
+   if(!cachedRanges||cachedDuration!==duration){
+    cachedDuration=duration;cachedRanges=config.steps.map((_,i)=>({start:i*duration/5,end:(i+1)*duration/5}));
+   }
+   return cachedRanges;
   }
   buttons.forEach((b,i)=>b.addEventListener('click',()=>{
    const ranges=bounds();progress=0;elapsed=ranges[i].start;
@@ -43,7 +53,7 @@
   }));
   root.querySelectorAll('.ds-links a').forEach(link=>link.addEventListener('click',()=>{if(autoplay)pausePlayback();else stopSpeak();send(true);}));
   root.addEventListener('keydown',e=>{if(e.target.closest('.ds-steps,.ds-links')&&[' ','ArrowLeft','ArrowRight','Home','End','PageDown','PageUp'].includes(e.key))e.stopPropagation();});
-  window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==frame?.contentWindow||e.data?.type!=='ziewise:visual-ready')return;loader.hidden=true;send(playbackPaused||document.hidden);});
+  window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==frame?.contentWindow||e.data?.type!=='ziewise:visual-ready')return;loader.hidden=true;send(playbackPaused||document.hidden,true);});
   document.addEventListener('visibilitychange',()=>{if(active&&document.hidden){if(autoplay)pausePlayback();else stopSpeak();send(true);}});
   FX[id]={
    enter(){
@@ -59,11 +69,12 @@
       let i=ranges.findIndex(r=>time<r.end);if(i<0)i=4;
       progress=Math.max(0,Math.min(1,(time-ranges[i].start)/Math.max(.1,ranges[i].end-ranges[i].start)));show(i);
      }
-     root.querySelector('.ds-status').textContent=paused?'일시정지 · 단계 선택 가능':pinned?'선택한 단계 · 자유롭게 살펴보세요':voiceOn&&recordedActive?'나레이션에 맞춰 장면 전환 중':'3D 설명 · 단계 직접 선택 가능';
+     const message=paused?'일시정지 · 단계 선택 가능':pinned?'선택한 단계 · 자유롭게 살펴보세요':voiceOn&&recordedActive?'나레이션에 맞춰 장면 전환 중':'3D 설명 · 단계 직접 선택 가능';
+     if(status.textContent!==message)status.textContent=message;
      if(now-lastPost>150){lastPost=now;send(paused);}
     });
    },
-   leave(){active=false;send(true);frame?.remove();frame=null;}
+   leave(){active=false;send(true);frame?.remove();frame=null;posted=null;}
   };
   show(0);
  }

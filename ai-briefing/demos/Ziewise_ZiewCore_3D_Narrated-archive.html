@@ -348,9 +348,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     };
     let target=views.inspect.target.clone(), wantedTarget=target.clone();
     let distance=views.inspect.distance,wantedDistance=distance,theta=views.inspect.theta,wantedTheta=theta,phi=views.inspect.phi,wantedPhi=phi;
-    let drag=null, raf=0, last=performance.now(),elapsed=0,visible=true;
+    let drag=null, raf=0, last=0,elapsed=0,visible=typeof IntersectionObserver==='undefined';
+    let width=0,height=0;
     function resetView() {
-      const v=views[state.mode]||views.inspect; wantedTarget.copy(v.target);wantedDistance=v.distance;wantedTheta=v.theta;wantedPhi=v.phi;
+      const v=views[state.mode]||views.inspect; wantedTarget.copy(v.target);wantedDistance=v.distance;wantedTheta=v.theta;wantedPhi=v.phi;resume();
     }
     function sync() {
       const fixed=state.replay==='after'||(state.replay!=='before'&&(state.phase==='repair'||state.phase==='passed'));
@@ -371,28 +372,38 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       onboarding.visible=onboard; station.visible=!onboard; stationRing.visible=!onboard;
       evidence.visible=state.mode==='records';
       conveyor.visible=!onboard; passing.forEach(p=>p.g.visible=!onboard);
-      racks.visible=!onboard;
+      racks.visible=!onboard;resume();
     }
     function resize() {
       const rect=container.getBoundingClientRect();const w=Math.max(1,rect.width),h=Math.max(1,rect.height);
-      renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+      if(w===width&&h===height)return;
+      width=w;height=h;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();resume();
     }
     const ro=new ResizeObserver(resize);ro.observe(container);resize();
     const canvas=renderer.domElement;
     function down(e) { if(e.button!==0&&e.pointerType==='mouse')return;drag={x:e.clientX,y:e.clientY,id:e.pointerId};canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing'; }
-    function move(e) { if(!drag)return;wantedTheta-=(e.clientX-drag.x)*.006;wantedPhi=Math.max(.35,Math.min(1.42,wantedPhi+(e.clientY-drag.y)*.004));drag.x=e.clientX;drag.y=e.clientY; }
+    function move(e) { if(!drag)return;wantedTheta-=(e.clientX-drag.x)*.006;wantedPhi=Math.max(.35,Math.min(1.42,wantedPhi+(e.clientY-drag.y)*.004));drag.x=e.clientX;drag.y=e.clientY;resume(); }
     function up(e) { if(drag&&canvas.hasPointerCapture(drag.id))canvas.releasePointerCapture(drag.id);drag=null;canvas.style.cursor='grab'; }
-    function wheel(e) { e.preventDefault();wantedDistance=Math.max(7,Math.min(33,wantedDistance*Math.exp(e.deltaY*.001))); }
+    function wheel(e) { e.preventDefault();wantedDistance=Math.max(7,Math.min(33,wantedDistance*Math.exp(e.deltaY*.001)));resume(); }
     canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);canvas.addEventListener('wheel',wheel,{passive:false});
     function tick(now) {
       if(disposed)return;raf=0;if(document.hidden||!visible)return;
       const dt=Math.min((now-last)/1000,.05);last=now;if(state.motion)elapsed+=dt;
       const ease=1-Math.exp(-dt*6);
       target.lerp(wantedTarget,ease);distance+=(wantedDistance-distance)*ease;theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;
+      let settling=false;
+      if(!state.motion){
+        settling=target.distanceToSquared(wantedTarget)>1e-8||Math.abs(wantedDistance-distance)>1e-4||Math.abs(wantedTheta-theta)>1e-5||Math.abs(wantedPhi-phi)>1e-5;
+        if(!settling){target.copy(wantedTarget);distance=wantedDistance;theta=wantedTheta;phi=wantedPhi;}
+      }
       camera.position.set(target.x+distance*Math.sin(phi)*Math.sin(theta),target.y+distance*Math.cos(phi),target.z+distance*Math.sin(phi)*Math.cos(theta));camera.lookAt(target);
       products.forEach((p,i)=>{
         const ey=state.exploded?1.64+i*.13:.22, ex=slots[i][0]*(state.exploded?1.6:1),ez=slots[i][1]*(state.exploded?1.65:1);
         p.position.x+=(ex-p.position.x)*ease;p.position.y+=(ey-p.position.y)*ease;p.position.z+=(ez-p.position.z)*ease;
+        if(!state.motion){
+          if(Math.max(Math.abs(ex-p.position.x),Math.abs(ey-p.position.y),Math.abs(ez-p.position.z))>1e-4)settling=true;
+          else p.position.set(ex,ey,ez);
+        }
         if(stems[i].visible){const a=stems[i].geometry.attributes.position;a.setXYZ(1,p.position.x,p.position.y,p.position.z);a.needsUpdate=true;stems[i].computeLineDistances();}
       });
       wrong.position.copy(products[3].position);
@@ -405,12 +416,16 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       });
       if(onboarding.visible) { hero.rotation.y=elapsed*.13;orbitRing.rotation.z=elapsed*.2;dataNodes.forEach((n,i)=>n.material.opacity=.86+Math.sin(elapsed*1.6+i)*.12); }
       if(evidence.visible) records.forEach((r,i)=>r.position.y=2.35+Math.sin(elapsed*1.5+i)*.035);
-      renderer.render(scene,camera);raf=requestAnimationFrame(tick);
+      renderer.render(scene,camera);
+      if(state.motion||settling)raf=requestAnimationFrame(tick);else last=0;
     }
     function resume() { if(!disposed&&!document.hidden&&visible&&!raf){last=performance.now();raf=requestAnimationFrame(tick);} }
-    function visibility() { if(document.hidden){cancelAnimationFrame(raf);raf=0;}else resume(); }
+    function visibility() { if(document.hidden||!visible){cancelAnimationFrame(raf);raf=0;last=0;}else resume(); }
     document.addEventListener('visibilitychange',visibility);
-    const io=typeof IntersectionObserver!=='undefined'?new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(!visible){cancelAnimationFrame(raf);raf=0;}else resume();},{threshold:0}):null;
+    const io=typeof IntersectionObserver!=='undefined'?new IntersectionObserver(entries=>{
+      const entry=entries[entries.length-1],next=entry.isIntersecting&&entry.intersectionRatio>0;
+      if(visible!==next){visible=next;visibility();}
+    },{threshold:[0,.001]}):null;
     if(io)io.observe(container);
     sync();resume();
     return {
@@ -419,8 +434,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       setPhase(v){if(!['idle','scanning','flagged','repair','passed'].includes(v))return;state.phase=v;state.replay='auto';sync();},
       setExploded(v){state.exploded=!!v;sync();},
       setReplay(v){state.replay=v==='after'?'after':'before';sync();},
-      setLoad(v){state.load=Math.max(.5,Math.min(2,Number(v)||1));},
-      setMotion(v){state.motion=!!v;},
+      setLoad(v){const n=Math.max(.5,Math.min(2,Number(v)||1));if(n!==state.load){state.load=n;resume();}},
+      setMotion(v){if(state.motion!==!!v){state.motion=!!v;resume();}},
       resetView,
       capture(){renderer.render(scene,camera);return canvas.toDataURL('image/png');},
       dispose(){disposed=true;cancelAnimationFrame(raf);ro.disconnect();if(io)io.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',up);canvas.removeEventListener('wheel',wheel);geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());renderer.dispose();canvas.remove();}

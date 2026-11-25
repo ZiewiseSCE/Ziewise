@@ -1,5 +1,3 @@
-import { machiningImages } from './machining-images.mjs';
-
 // The existing factory places parts in metres by scaling this unit-radius fixture.
 const top = .2805;
 const bottom = -.016;
@@ -107,8 +105,7 @@ function sleeveFinish(T) {
   texture.needsUpdate=true;return texture;
 }
 
-async function unpack(T,key) {
-  const encoded=machiningImages[key];
+async function unpack(T,key,encoded) {
   let image,bitmap=false;
   if(typeof createImageBitmap==='function') {
     try {
@@ -145,7 +142,9 @@ function library(T) {
   const back=new T.MeshStandardMaterial({name:'reverse steel face',color:0x949a99,metalness:.86,roughness:.37});
   const instrument=new T.MeshBasicMaterial({name:'photographic optical inspection HMI',color:0xffffff,toneMapped:false});
   const hasDecoder=typeof createImageBitmap==='function'||typeof Image==='function';
-  const ready=hasDecoder?Promise.all(['normal','roughness','direction','screen'].map(k=>unpack(T,k))).then(([normal,rough,direction,screen])=>{
+  const ready=hasDecoder?import('./machining-images.mjs').then(({machiningImages})=>
+    Promise.all(['normal','roughness','direction','screen'].map(k=>unpack(T,k,machiningImages[k])))
+  ).then(([normal,rough,direction,screen])=>{
     // The top half of the prepared atlas is the reference part. The lower half
     // includes a local change in surface roughness along the review sample's scratch.
     const referenceRough=rough.clone();referenceRough.repeat.set(1,.5);referenceRough.offset.y=.5;referenceRough.needsUpdate=true;
