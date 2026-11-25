@@ -27,6 +27,7 @@
   const audioGuide = document.getElementById("audio-guide");
   const stops = [...document.querySelectorAll("[data-stop]")];
   const scenes = [...document.querySelectorAll("[data-scene]")];
+  const signLinks = [...document.querySelectorAll("[data-sign]")];
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let currentCue = -1;
   let resumeAfterPanel = false;
@@ -49,8 +50,36 @@
     play.setAttribute("aria-label", ended ? "처음부터 다시 재생" : running ? "일시정지" : "재생");
     play.title = play.getAttribute("aria-label");
   }
+  function positionSigns(t) {
+    signLinks.forEach((link, i) => {
+      const {quads} = data.signs[i];
+      const last = quads.length - 1;
+      const visible = t >= quads[0][0] && t <= quads[last][0];
+      link.toggleAttribute("hidden", !visible);
+      if (!visible) return;
+      let j = 1;
+      while (j < last && quads[j][0] < t) j++;
+      const a = quads[j-1], b = quads[j];
+      const mix = Math.min(1, Math.max(0, (t-a[0]) / (b[0]-a[0])));
+      const points = [];
+      for (let n = 1; n < a.length; n += 2) {
+        const x = (a[n] + (b[n]-a[n])*mix) * 12.8;
+        const y = (a[n+1] + (b[n+1]-a[n+1])*mix) * 7.2;
+        points.push(x.toFixed(2) + "," + y.toFixed(2));
+      }
+      link.querySelector("polygon").setAttribute("points", points.join(" "));
+    });
+  }
+  if (signLinks.length && video.requestVideoFrameCallback) {
+    function trackFrame(_, frame) {
+      positionSigns(frame.mediaTime);
+      video.requestVideoFrameCallback(trackFrame);
+    }
+    video.requestVideoFrameCallback(trackFrame);
+  }
   function setPosition() {
     const t = Math.max(0, video.currentTime || 0);
+    if (signLinks.length) positionSigns(t);
     const duration = length();
     seek.value = Math.min(t, duration);
     seek.style.setProperty("--played", Math.min(100, 100*t/duration) + "%");
@@ -208,6 +237,18 @@
     dialog.querySelector("[data-close]")?.focus({preventScroll: true});
   }
   document.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => openPanel(b.dataset.open)));
+  signLinks.forEach(link => link.addEventListener("click", event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const source = link.getAttribute("href");
+    const image = document.getElementById("certificate-original");
+    image.src = source;
+    image.alt = link.dataset.label + " · 지와이즈 증서 원본";
+    document.getElementById("certificate-title").textContent = link.dataset.label;
+    document.getElementById("certificate-scope").textContent = link.dataset.scope;
+    document.getElementById("certificate-download").href = source;
+    openPanel("certificate-view");
+  }));
   document.querySelectorAll("dialog").forEach(dialog => {
     dialog.querySelector("[data-close]")?.addEventListener("click", () => dialog.close());
     dialog.addEventListener("click", e => {

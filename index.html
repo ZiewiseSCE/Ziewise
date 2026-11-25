@@ -10,30 +10,31 @@
   <link rel="icon" href="assets/symbol.png">
   <link rel="preload" href="assets/noto-kr.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/site.css">
-  <link rel="stylesheet" href="assets/walk.css">
-  <script src="assets/walk-player.js" defer></script>
+  <link rel="stylesheet" href="assets/walk.css?v=field3">
+  <script src="assets/walk-player.js?v=field3" defer></script>
 </head>
 <body class="is-home">
   <a class="skip" href="#content">본문 바로가기</a>
   <header class="mast">
     <a class="wordmark" href="index.html" aria-label="지와이즈 홈"><img src="assets/symbol.png" width="34" height="34" alt="">ziewise</a>
     <nav class="primary" aria-label="주요 메뉴">
+      <a class="llm-entry" href="llm.html" >LLM 구축</a>
       <a href="index.html" aria-current="page">현장 투어</a>
-      <button type="button" data-open="directory" aria-haspopup="dialog" class="">솔루션 <svg class="ico ico-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+      <button type="button" data-open="solutions-menu" aria-haspopup="dialog" class="">솔루션 <svg class="ico ico-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
       <a href="ai-briefing/" >AI 브리핑</a>
       <a href="roi.html" >도입 효과</a>
       <a href="company.html" >회사 소개</a>
     </nav>
-    <div class="mast-right"><a class="contact-link" href="contact.html">도입 문의 <svg class="ico ico-chat" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v12H9l-5 3V5Z"/><path d="M8 10h8"/></svg></a>
+    <div class="mast-right"><a class="contact-link" href="contact.html" aria-label="도입 문의"><span>도입 문의</span> <svg class="ico ico-chat" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v12H9l-5 3V5Z"/><path d="M8 10h8"/></svg></a>
       <button type="button" class="menu-toggle" aria-label="전체 메뉴" aria-haspopup="dialog" data-open="directory"><svg class="ico ico-menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button></div>
   </header>
   <main id="content">
     <section class="film-layout" aria-labelledby="film-title" style="--focus:50% 53%">
       <div class="viewer" id="viewer">
         <div class="picture">
-        <video id="film" muted playsinline controls preload="metadata" poster="media/index.jpg" aria-label="현장 투어 한국어 해설 워크스루">
-          <source src="media/index.mp4" type="video/mp4">
-          <track kind="captions" label="한국어" srclang="ko" src="captions/index.vtt">
+        <video id="film" muted playsinline controls preload="metadata" poster="media/index.jpg?v=f8f845046377" aria-label="현장 투어 한국어 해설 워크스루">
+          <source src="media/index.mp4?v=f8f845046377" type="video/mp4">
+          <track kind="captions" label="한국어" srclang="ko" src="captions/index.vtt?v=f8f845046377">
           <a href="media/index.mp4">영상 파일 재생</a>
         </video>
         </div>
@@ -50,40 +51,47 @@
       </div>
       <div class="intro">
         <div class="eyebrow"><span class="signal-mark" aria-hidden="true"></span><span>ZiewCore</span></div>
-        <h1 id="film-title"><span>이 부품,</span><span>출하해도 될까요?</span></h1>
+        <h1 id="film-title" style="--title-fit:12.96cqi"><span>이 부품,</span> <span>출하해도 될까요?</span></h1>
         <p class="lead">흰 부품이 놓인 작업대에서 파란 설비까지 들어갑니다. 표면 이상이 발견됐을 때 품질 담당자가 어떤 기록을 보고 재검을 결정하는지 따라가세요.</p>
-        <div class="actions"><button type="button" class="action" data-open="directory" aria-haspopup="dialog"><svg class="ico ico-grid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx=".7"/><rect x="14" y="3" width="7" height="7" rx=".7"/><rect x="3" y="14" width="7" height="7" rx=".7"/><rect x="14" y="14" width="7" height="7" rx=".7"/></svg>솔루션 둘러보기</button>
-<button type="button" class="quiet" data-open="transcript" aria-haspopup="dialog">해설 대본</button></div>
-        <div class="route-progress" aria-hidden="true"><div><span class="route-status"></span><span>현장 워크스루</span><time>00:26</time></div>
+<div class="actions"><button type="button" class="action" data-open="solutions-menu" aria-haspopup="dialog"><svg class="ico ico-grid" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="7" height="7" rx=".7"/><rect x="14" y="3" width="7" height="7" rx=".7"/><rect x="3" y="14" width="7" height="7" rx=".7"/><rect x="14" y="14" width="7" height="7" rx=".7"/></svg>솔루션 둘러보기</button>
+<button type="button" class="quiet" data-open="transcript" aria-haspopup="dialog">해설 대본</button></div>        <div class="route-progress" aria-hidden="true"><div><span class="route-status"></span><span>현장 워크스루</span><time>00:26</time></div>
           <div class="route-line"><i data-stop="0" class="active"></i><i data-stop="1" class=""></i><i data-stop="2" class=""></i><i data-stop="3" class=""></i></div></div>
       </div>
     </section>
     <section class="chapter-dock" aria-label="현재 영상의 장면 선택">
-      <div class="dock-top"><h2>이 동선에서 살펴볼 곳</h2></div>
+      <div class="dock-top"><h2>이 동선에서 살펴볼 곳</h2><button class="film-credit" type="button" data-open="credits" aria-haspopup="dialog">실사 촬영을 활용한 적용 예시 · 출처</button></div>
       <div class="dock-row" style="--count:4">
 <button type="button" class="scene current" data-scene="0" aria-label="00:00 흰 자재 묶음 장면으로 이동" aria-current="step">
-        <span class="scene-img"><img src="media/thumbs/index-0.jpg" width="96" height="58" alt=""><span class="scene-mark" aria-hidden="true"></span></span>
+        <span class="scene-img"><img src="media/thumbs/index-0.jpg?v=f8f845046377" width="96" height="58" alt=""><span class="scene-mark" aria-hidden="true"></span></span>
         <span class="scene-copy"><small>00:00</small><b>검사 대상</b></span>
       </button><button type="button" class="scene " data-scene="1" aria-label="00:06 작업 프레임 장면으로 이동" >
-        <span class="scene-img"><img src="media/thumbs/index-1.jpg" width="96" height="58" alt=""></span>
+        <span class="scene-img"><img src="media/thumbs/index-1.jpg?v=f8f845046377" width="96" height="58" alt=""></span>
         <span class="scene-copy"><small>00:06</small><b>생산 이력</b></span>
       </button><button type="button" class="scene " data-scene="2" aria-label="00:13 파란 설비 장면으로 이동" >
-        <span class="scene-img"><img src="media/thumbs/index-2.jpg" width="96" height="58" alt=""></span>
+        <span class="scene-img"><img src="media/thumbs/index-2.jpg?v=f8f845046377" width="96" height="58" alt=""></span>
         <span class="scene-copy"><small>00:13</small><b>MES × DCS</b></span>
       </button><button type="button" class="scene " data-scene="3" aria-label="00:19 설비 앞 담당자 장면으로 이동" >
-        <span class="scene-img"><img src="media/thumbs/index-3.jpg" width="96" height="58" alt=""></span>
+        <span class="scene-img"><img src="media/thumbs/index-3.jpg?v=f8f845046377" width="96" height="58" alt=""></span>
         <span class="scene-copy"><small>00:19</small><b>품질 판정</b></span>
       </button>      <a class="next-page" href="factory.html"><span>다음 페이지</span><b>공장 제품</b></a>
       </div>
     </section>
   </main>
   <footer><span>© Ziewise Co., Ltd.</span><nav aria-label="하단 메뉴"><button type="button" data-open="credits">영상 출처</button><a href="mailto:info@ziewise.com">info@ziewise.com</a><button type="button" data-open="directory">전체 메뉴</button></nav></footer>
+  <dialog class="drawer" id="solutions-menu" aria-labelledby="solutions-title">
+    <div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="메뉴 닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="solutions-title">솔루션</h2><div class="dir-group">
+      <a href="zieview.html" >Zieview(지뷰)<span>이동형 스마트 CCTV · 현장 안전 관제</span></a>
+<a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="industries.html" >산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div>
+  </dialog>
   <dialog class="drawer" id="directory" aria-labelledby="directory-title">
     <div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="메뉴 닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <h2 id="directory-title">어디로 갈까요?</h2>
+    <div class="dir-group"><a class="llm-directory" href="llm.html" >LLM 구축<span>사내 문서와 권한</span></a></div>
     <div class="dir-group"><h3>현장과 솔루션</h3>
-<a href="index.html" aria-current="page">현장 투어<span>생산라인 따라가기</span></a><a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="llm.html" >LLM 구축<span>사내 문서와 권한</span></a><a href="industries.html" >산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div><div class="dir-group"><h3>자료와 문의</h3>
-<a href="ai-briefing/" >기술 브리핑<span>해설·PDF</span></a><a href="roi.html" >도입 효과<span>시간·비용 계산</span></a><a href="company.html" >회사 소개<span>인프라·연구개발</span></a><a href="contact.html" >도입 문의<span>도입 상담</span></a>    </div>
+      <a href="zieview.html" >Zieview(지뷰)<span>이동형 스마트 CCTV</span></a>
+<a href="index.html" aria-current="page">현장 투어<span>생산라인 따라가기</span></a><a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="industries.html" >산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div><div class="dir-group"><h3>자료와 문의</h3>
+<a href="ai-briefing/" >기술 브리핑<span>해설·PDF</span></a><a href="roi.html" >도입 효과<span>시간·비용 계산</span></a><a href="company.html" >회사 소개<span>인증 간판·인프라 운영</span></a><a href="contact.html" >도입 문의<span>도입 상담</span></a>    </div>
   </dialog>
   <dialog class="drawer" id="action-panel" aria-labelledby="panel-title">
     <div class="draw-head"><span class="draw-kicker">ZiewCore</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -94,10 +102,10 @@
     <h2 id="transcript-title">영상 대본</h2><div class="info-steps"><section><small>00:00 · 흰 자재 묶음</small><h3>이 부품은 어디에서 왔을까요?</h3><p>흰 부품을 따라 라인 안으로 들어가 볼게요. 표면에 자국이 보이면 어디부터 살필까요?</p></section><section><small>00:06 · 작업 프레임</small><h3>같은 로트의 기록을 엽니다</h3><p>작업대를 지나는 동안, 이 부품과 같은 로트의 생산 기록을 열어 봅니다.</p></section><section><small>00:13 · 파란 설비</small><h3>압력과 검사 결과를 겹칩니다</h3><p>앞쪽 설비에 가까워졌습니다. 검사 시각에 압력이 어떻게 변했는지 겹쳐 봅니다.</p></section><section><small>00:19 · 설비 앞 담당자</small><h3>담당자가 재검을 결정합니다</h3><p>작업자가 있는 곳까지 왔습니다. 품질 담당자는 근거를 보고 재검 여부를 결정합니다.</p></section></div>
   </dialog>
   <dialog class="drawer" id="credits" aria-labelledby="credits-title"><div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
-    <h2 id="credits-title">이 영상의 출처</h2><p class="draw-lead">실제 촬영한 영상에서 한 동선을 발췌했습니다. 재생 속도를 조정하고 물체의 위치에 지와이즈 솔루션의 적용 예시와 한국어 합성 음성 해설을 덧붙였습니다.</p>
+    <h2 id="credits-title">이 영상의 출처</h2><p class="draw-lead">실제 촬영한 외부 영상에서 한 동선을 발췌해 솔루션의 적용 예시를 연출했습니다. 기록과 설명 표시는 지와이즈 업무를 예로 구성했고, 한국어 해설은 합성 음성으로 제작했습니다.</p>
     <div class="attributions"><div class="source-row"><strong>Usman AbdulrasheedGambo</strong><p>Industrial Factory Interior with Workers</p><a href="https://www.pexels.com/video/industrial-factory-interior-with-workers-32268483/" target="_blank" rel="noopener">촬영 원본</a> <a href="https://www.pexels.com/license/" target="_blank" rel="noopener">사용 조건</a></div></div>
     <div class="source-row"><a href="https://ziewise.com/" target="_blank" rel="noopener">공식 솔루션 설명</a></div>
   </dialog>
-  <script type="application/json" id="film-data">{"cues": [{"label": "흰 자재 묶음", "title": "이 부품은 어디에서 왔을까요?", "line": "흰 부품을 따라 라인 안으로 들어가 볼게요. 표면에 자국이 보이면 어디부터 살필까요?", "field": "검사 대상", "value": "표면 이상 후보", "start": 0.0, "speech_start": 0.3, "speech_end": 5.729, "stamp": "00:00"}, {"label": "작업 프레임", "title": "같은 로트의 기록을 엽니다", "line": "작업대를 지나는 동안, 이 부품과 같은 로트의 생산 기록을 열어 봅니다.", "field": "생산 이력", "value": "LOT 24-07", "start": 6.6, "speech_start": 6.9, "speech_end": 11.387, "stamp": "00:06"}, {"label": "파란 설비", "title": "압력과 검사 결과를 겹칩니다", "line": "앞쪽 설비에 가까워졌습니다. 검사 시각에 압력이 어떻게 변했는지 겹쳐 봅니다.", "field": "MES × DCS", "value": "압력 변화 구간", "start": 13.2, "speech_start": 13.5, "speech_end": 18.776, "stamp": "00:13"}, {"label": "설비 앞 담당자", "title": "담당자가 재검을 결정합니다", "line": "작업자가 있는 곳까지 왔습니다. 품질 담당자는 근거를 보고 재검 여부를 결정합니다.", "field": "품질 판정", "value": "출하 보류 · 재검 요청", "start": 19.8, "speech_start": 20.1, "speech_end": 25.597, "stamp": "00:19"}], "duration": 26.8, "page": "index", "legacy": {}, "contact": []}</script>
+  <script type="application/json" id="film-data">{"cues": [{"label": "흰 자재 묶음", "title": "이 부품은 어디에서 왔을까요?", "line": "흰 부품을 따라 라인 안으로 들어가 볼게요. 표면에 자국이 보이면 어디부터 살필까요?", "field": "검사 대상", "value": "표면 이상 후보", "start": 0.0, "speech_start": 0.3, "speech_end": 5.729, "stamp": "00:00"}, {"label": "작업 프레임", "title": "같은 로트의 기록을 엽니다", "line": "작업대를 지나는 동안, 이 부품과 같은 로트의 생산 기록을 열어 봅니다.", "field": "생산 이력", "value": "LOT 24-07", "start": 6.6, "speech_start": 6.9, "speech_end": 11.387, "stamp": "00:06"}, {"label": "파란 설비", "title": "압력과 검사 결과를 겹칩니다", "line": "앞쪽 설비에 가까워졌습니다. 검사 시각에 압력이 어떻게 변했는지 겹쳐 봅니다.", "field": "MES × DCS", "value": "압력 변화 구간", "start": 13.2, "speech_start": 13.5, "speech_end": 18.776, "stamp": "00:13"}, {"label": "설비 앞 담당자", "title": "담당자가 재검을 결정합니다", "line": "작업자가 있는 곳까지 왔습니다. 품질 담당자는 근거를 보고 재검 여부를 결정합니다.", "field": "품질 판정", "value": "출하 보류 · 재검 요청", "start": 19.8, "speech_start": 20.1, "speech_end": 25.597, "stamp": "00:19"}], "duration": 26.8, "page": "index", "legacy": {}, "contact": [], "signs": []}</script>
 </body>
 </html>

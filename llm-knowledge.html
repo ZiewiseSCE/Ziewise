@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1111">
+  <title>사내 문서 특화 · Ziewise</title>
+  <meta name="description" content="현업이 쓰는 약어, 품번, 규정의 시행일을 검색 기준에 반영합니다. 직원은 답변과 함께 출처 문단을 열어 어떤 규정이 적용됐는지 확인합니다.">
+  <link rel="canonical" href="https://ziewise.com/llm-knowledge.html">
+  <link rel="icon" href="assets/symbol.png">
+  <link rel="preload" href="assets/noto-kr.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/walk.css?v=field3">
+  <script src="assets/walk-player.js?v=field3" defer></script>
+</head>
+<body class="is-detail">
+  <a class="skip" href="#content">본문 바로가기</a>
+  <header class="mast">
+    <a class="wordmark" href="index.html" aria-label="지와이즈 홈"><img src="assets/symbol.png" width="34" height="34" alt="">ziewise</a>
+    <nav class="primary" aria-label="주요 메뉴">
+      <a class="llm-entry" href="llm.html" aria-current="page">LLM 구축</a>
+      <a href="index.html" >현장 투어</a>
+      <button type="button" data-open="solutions-menu" aria-haspopup="dialog" class="">솔루션 <svg class="ico ico-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+      <a href="ai-briefing/" >AI 브리핑</a>
+      <a href="roi.html" >도입 효과</a>
+      <a href="company.html" >회사 소개</a>
+    </nav>
+    <div class="mast-right"><a class="contact-link" href="contact.html" aria-label="도입 문의"><span>도입 문의</span> <svg class="ico ico-chat" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v12H9l-5 3V5Z"/><path d="M8 10h8"/></svg></a>
+      <button type="button" class="menu-toggle" aria-label="전체 메뉴" aria-haspopup="dialog" data-open="directory"><svg class="ico ico-menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button></div>
+  </header>
+  <main id="content">
+<div class="familybar">
+      <span class="crumb"><a href="index.html">홈</a><span aria-hidden="true">/</span><a href="llm.html">LLM 구축</a></span>
+<nav class="family-items" aria-label="LLM 구축 세부 페이지">
+<a href="llm.html" >구축 개요</a><a href="llm-knowledge.html" aria-current="page">사내 문서 특화</a><a href="llm-security.html" >보안 설계</a><a href="llm-api.html" >외부 API 연동</a></nav>    </div>    <section class="film-layout" aria-labelledby="film-title" style="--focus:50% 50%">
+      <div class="viewer" id="viewer">
+        <div class="picture">
+        <video id="film" muted playsinline controls preload="metadata" poster="media/llm-knowledge.jpg?v=b23998578942" aria-label="사내 문서 특화 한국어 해설 워크스루">
+          <source src="media/llm-knowledge.mp4?v=b23998578942" type="video/mp4">
+          <track kind="captions" label="한국어" srclang="ko" src="captions/llm-knowledge.vtt?v=b23998578942">
+          <a href="media/llm-knowledge.mp4">영상 파일 재생</a>
+        </video>
+        </div>
+        <div class="caption-well"><div class="subtitle" id="film-caption"><p id="cap-line">같은 규정이 두 개라면 어느 것을 쓸까요? 문서마다 시행일과 부서, 열람 권한을 함께 넣습니다.</p></div></div>
+        <div class="transport">
+          <button id="audio-guide" type="button" class="audio-guide" title="한국어 해설과 함께 처음부터 재생" aria-pressed="false"><svg class="ico ico-speaker" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m11 5-5 4H3v6h3l5 4z"/><path d="M15 8a5 5 0 0 1 0 8m3-11a9 9 0 0 1 0 14"/></svg><span>해설 듣기</span></button>
+          <button id="play" type="button" class="play-toggle" aria-label="재생"><svg class="ico ico-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m7 4 12 8-12 8z" fill="currentColor" stroke-width="1"/></svg><svg class="ico ico-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5v14m8-14v14" stroke-width="3.5"/></svg><svg class="ico ico-replay" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 9a7.5 7.5 0 1 1-.5 6M5 4v5h5"/></svg></button>
+          <span class="time"><span id="now">00:00</span><span class="time-slash">/</span><span>00:20</span></span>
+          <input id="seek" type="range" min="0" max="20.88" step="0.04" value="0" aria-label="영상 재생 위치" style="--played:0%">
+          <button id="captions" type="button" class="tool-key" aria-pressed="true" aria-label="장면 해설 자막" title="장면 해설 자막">자막</button>
+          <button id="expand" type="button" class="screen-key" aria-label="영상 크게 보기" title="영상 크게 보기"><svg class="ico ico-expand" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9V4h5m6 0h5v5m0 6v5h-5m-6 0H4v-5"/></svg></button>
+        </div>
+        <div class="media-error" id="media-error" hidden>영상을 재생할 수 없습니다. <a href="media/llm-knowledge.mp4">영상 파일 열기</a></div>
+      </div>
+      <div class="intro">
+        <div class="eyebrow"><span class="signal-mark" aria-hidden="true"></span><span>ZiewLLM · 사내 지식</span></div>
+        <h1 id="film-title" style="--title-fit:9.96cqi"><span>사내 규정에서</span> <span>답의 근거를 찾습니다.</span></h1>
+        <p class="lead">현업이 쓰는 약어, 품번, 규정의 시행일을 검색 기준에 반영합니다. 직원은 답변과 함께 출처 문단을 열어 어떤 규정이 적용됐는지 확인합니다.</p>
+        <div class="actions">
+<a class="action" href="#llm-design">구축 내용 보기</a><button type="button" class="quiet" data-open="transcript">해설 대본</button>        </div>
+        <div class="route-progress" aria-hidden="true"><div><span class="route-status"></span><span>현장 워크스루</span><time>00:20</time></div>
+          <div class="route-line"><i data-stop="0" class="active"></i><i data-stop="1" class=""></i><i data-stop="2" class=""></i></div></div>
+      </div>
+    </section>
+    <section class="chapter-dock" aria-label="현재 영상의 장면 선택">
+      <div class="dock-top"><h2>이 동선에서 살펴볼 곳</h2><button class="film-credit" type="button" data-open="credits" aria-haspopup="dialog">실사 촬영을 활용한 적용 예시 · 출처</button></div>
+      <div class="dock-row" style="--count:3">
+<button type="button" class="scene current" data-scene="0" aria-label="00:00 왼쪽 서가의 흰색 책 분류표 장면으로 이동" aria-current="step">
+        <span class="scene-img"><img src="media/thumbs/llm-knowledge-0.jpg?v=b23998578942" width="96" height="58" alt=""><span class="scene-mark" aria-hidden="true"></span></span>
+        <span class="scene-copy"><small>00:00</small><b>문서 준비</b></span>
+      </button><button type="button" class="scene " data-scene="1" aria-label="00:07 오른쪽 서가에 꽂힌 자료 장면으로 이동" >
+        <span class="scene-img"><img src="media/thumbs/llm-knowledge-1.jpg?v=b23998578942" width="96" height="58" alt=""></span>
+        <span class="scene-copy"><small>00:07</small><b>근거 검색</b></span>
+      </button><button type="button" class="scene " data-scene="2" aria-label="00:13 서가 끝 창 아래 검은 발판 장면으로 이동" >
+        <span class="scene-img"><img src="media/thumbs/llm-knowledge-2.jpg?v=b23998578942" width="96" height="58" alt=""></span>
+        <span class="scene-copy"><small>00:13</small><b>업무 적용</b></span>
+      </button>      <a class="next-page" href="llm-security.html"><span>다음 페이지</span><b>보안 설계</b></a>
+      </div>
+    </section>
+<section class="product-notes" id="llm-design" aria-labelledby="design-title">
+  <div class="notes-head"><h2 id="design-title">회사마다 다른 규정과 용어를 반영하는 방법</h2></div>
+  <div class="design-grid">
+    <article><h3>지식의 범위를 정합니다</h3><p>부서별 문서 소유자와 사용 승인을 확인하고, 문단마다 원본 위치·시행일·버전·열람 권한을 기록합니다. 폐기된 규정과 중복본을 구분해야 개정 전 기준이 답변에 섞이는 일을 줄일 수 있습니다.</p>
+</article>
+    <article><h3>질문을 사내 언어로 찾습니다</h3><p>제품 코드, 설비 별칭, 사내 약어를 검색 기준에 연결합니다. 검색 증강 생성(RAG)은 질문 때마다 관련 원문을 찾아 모델에 건네므로, 규정이 바뀌면 문서와 색인을 갱신해 새 근거를 반영할 수 있습니다.</p>
+</article>
+    <article><h3>답을 업무에서 확인합니다</h3><p>“이 구매의 결재자는 누구인가요?”라는 질문에는 담당자가 읽을 수 있는 결재 기준의 문단과 원문 위치를 함께 제시합니다. 근거가 부족하거나 규정이 충돌하면 확인이 필요한 항목으로 남깁니다.</p>
+</article>
+  </div>
+  <aside class="field-note"><h3>실증에서 보는 항목</h3><p>현업이 선정한 질문과 기준 답안을 대조해 문단을 제대로 찾았는지, 출처가 답을 뒷받침하는지, 근거가 없을 때 확인을 요청하는지 검토합니다. 출력 형식이나 어휘의 추가 학습은 데이터와 효과를 확인한 뒤 범위를 정합니다.</p><button type="button" class="text-button" data-open="action-panel">모델 연결 방식 비교</button></aside>
+</section>
+  </main>
+  <footer><span>© Ziewise Co., Ltd.</span><nav aria-label="하단 메뉴"><button type="button" data-open="credits">영상 출처</button><a href="mailto:info@ziewise.com">info@ziewise.com</a><button type="button" data-open="directory">전체 메뉴</button></nav></footer>
+  <dialog class="drawer" id="solutions-menu" aria-labelledby="solutions-title">
+    <div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="메뉴 닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="solutions-title">솔루션</h2><div class="dir-group">
+      <a href="zieview.html" >Zieview(지뷰)<span>이동형 스마트 CCTV · 현장 안전 관제</span></a>
+<a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="industries.html" >산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div>
+  </dialog>
+  <dialog class="drawer" id="directory" aria-labelledby="directory-title">
+    <div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="메뉴 닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="directory-title">어디로 갈까요?</h2>
+    <div class="dir-group"><a class="llm-directory" href="llm.html" aria-current="page">LLM 구축<span>사내 문서와 권한</span></a></div>
+    <div class="dir-group"><h3>현장과 솔루션</h3>
+      <a href="zieview.html" >Zieview(지뷰)<span>이동형 스마트 CCTV</span></a>
+<a href="index.html" >현장 투어<span>생산라인 따라가기</span></a><a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="industries.html" >산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div><div class="dir-group"><h3>자료와 문의</h3>
+<a href="ai-briefing/" >기술 브리핑<span>해설·PDF</span></a><a href="roi.html" >도입 효과<span>시간·비용 계산</span></a><a href="company.html" >회사 소개<span>인증 간판·인프라 운영</span></a><a href="contact.html" >도입 문의<span>도입 상담</span></a>    </div>
+  </dialog>
+  <dialog class="drawer" id="action-panel" aria-labelledby="panel-title">
+    <div class="draw-head"><span class="draw-kicker">ZiewLLM · 사내 지식</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="panel-title">모델 연결 방식</h2>
+      <p class="draw-lead">질문자의 권한으로 검색한 문단을 어떤 모델에서 처리할지 선택해 보세요.</p>
+      <div class="options" aria-label="연결 방식을 알아볼 모델"><button type="button" data-model="0" aria-pressed="true">사내 LLM</button><button type="button" data-model="1" aria-pressed="false">GPT</button><button type="button" data-model="2" aria-pressed="false">Claude</button><button type="button" data-model="3" aria-pressed="false">Gemini</button></div>
+      <div class="fact"><h3 id="model-title">사내 LLM</h3><p id="model-text" aria-live="polite">사내 서버에서 허용된 문단을 검색하고 로컬 모델이 근거를 붙여 답합니다.</p></div>
+      <div class="source-row"><strong>배포 전 검증</strong><p>실제 업무 질문으로 답의 근거, 권한 차단, 응답 시간을 확인합니다.</p></div>
+  </dialog>
+  <dialog class="drawer" id="transcript" aria-labelledby="transcript-title"><div class="draw-head"><span class="draw-kicker">ZiewLLM · 사내 지식</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="transcript-title">영상 대본</h2><div class="info-steps"><section><small>00:00 · 왼쪽 서가의 흰색 책 분류표</small><h3>문서의 기준을 정합니다</h3><p>같은 규정이 두 개라면 어느 것을 쓸까요? 문서마다 시행일과 부서, 열람 권한을 함께 넣습니다.</p></section><section><small>00:07 · 오른쪽 서가에 꽂힌 자료</small><h3>질문과 맞는 근거를 찾습니다</h3><p>현업의 약어와 품번을 검색에 반영합니다. 질문자가 읽을 수 있는 최신 문단을 찾습니다.</p></section><section><small>00:13 · 서가 끝 창 아래 검은 발판</small><h3>답변에서 근거를 확인합니다</h3><p>담당자는 답변의 출처를 열어 실제 조항을 확인합니다. 근거가 부족한 질문은 검토로 보냅니다.</p></section></div>
+  </dialog>
+  <dialog class="drawer" id="credits" aria-labelledby="credits-title"><div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="credits-title">이 영상의 출처</h2><p class="draw-lead">실제 촬영한 외부 영상에서 한 동선을 발췌해 솔루션의 적용 예시를 연출했습니다. 기록과 설명 표시는 지와이즈 업무를 예로 구성했고, 한국어 해설은 합성 음성으로 제작했습니다.</p>
+    <div class="attributions"><div class="source-row"><strong>Mulki</strong><p>A person walking through a library with books</p><a href="https://www.pexels.com/video/a-person-walking-through-a-library-with-books-17151509/" target="_blank" rel="noopener">촬영 원본</a> <a href="https://www.pexels.com/license/" target="_blank" rel="noopener">사용 조건</a></div></div>
+    <div class="source-row"><a href="https://ziewise.com/" target="_blank" rel="noopener">공식 솔루션 설명</a></div>
+  </dialog>
+  <script type="application/json" id="film-data">{"cues": [{"label": "왼쪽 서가의 흰색 책 분류표", "title": "문서의 기준을 정합니다", "line": "같은 규정이 두 개라면 어느 것을 쓸까요? 문서마다 시행일과 부서, 열람 권한을 함께 넣습니다.", "field": "문서 준비", "value": "시행일 · 문서 책임자", "start": 0.0, "speech_start": 0.3, "speech_end": 6.762, "stamp": "00:00"}, {"label": "오른쪽 서가에 꽂힌 자료", "title": "질문과 맞는 근거를 찾습니다", "line": "현업의 약어와 품번을 검색에 반영합니다. 질문자가 읽을 수 있는 최신 문단을 찾습니다.", "field": "근거 검색", "value": "용어 · 품번 · 규정", "start": 7.16, "speech_start": 7.46, "speech_end": 13.36, "stamp": "00:07"}, {"label": "서가 끝 창 아래 검은 발판", "title": "답변에서 근거를 확인합니다", "line": "담당자는 답변의 출처를 열어 실제 조항을 확인합니다. 근거가 부족한 질문은 검토로 보냅니다.", "field": "업무 적용", "value": "인용 문단 · 원문 링크", "start": 13.72, "speech_start": 14.02, "speech_end": 20.496, "stamp": "00:13"}], "duration": 20.88, "page": "llm-knowledge", "legacy": {}, "contact": [], "signs": []}</script>
+</body>
+</html>

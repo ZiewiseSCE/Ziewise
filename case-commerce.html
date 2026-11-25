@@ -10,21 +10,22 @@
   <link rel="icon" href="assets/symbol.png">
   <link rel="preload" href="assets/noto-kr.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/site.css">
-  <link rel="stylesheet" href="assets/walk.css">
-  <script src="assets/walk-player.js" defer></script>
+  <link rel="stylesheet" href="assets/walk.css?v=field3">
+  <script src="assets/walk-player.js?v=field3" defer></script>
 </head>
 <body class="is-detail">
   <a class="skip" href="#content">본문 바로가기</a>
   <header class="mast">
     <a class="wordmark" href="index.html" aria-label="지와이즈 홈"><img src="assets/symbol.png" width="34" height="34" alt="">ziewise</a>
     <nav class="primary" aria-label="주요 메뉴">
+      <a class="llm-entry" href="llm.html" >LLM 구축</a>
       <a href="index.html" >현장 투어</a>
-      <button type="button" data-open="directory" aria-haspopup="dialog" class="is-active">솔루션 <svg class="ico ico-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
+      <button type="button" data-open="solutions-menu" aria-haspopup="dialog" class="is-active">솔루션 <svg class="ico ico-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg></button>
       <a href="ai-briefing/" >AI 브리핑</a>
       <a href="roi.html" >도입 효과</a>
       <a href="company.html" >회사 소개</a>
     </nav>
-    <div class="mast-right"><a class="contact-link" href="contact.html">도입 문의 <svg class="ico ico-chat" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v12H9l-5 3V5Z"/><path d="M8 10h8"/></svg></a>
+    <div class="mast-right"><a class="contact-link" href="contact.html" aria-label="도입 문의"><span>도입 문의</span> <svg class="ico ico-chat" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 5h16v12H9l-5 3V5Z"/><path d="M8 10h8"/></svg></a>
       <button type="button" class="menu-toggle" aria-label="전체 메뉴" aria-haspopup="dialog" data-open="directory"><svg class="ico ico-menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7h18M3 12h18M3 17h18"/></svg></button></div>
   </header>
   <main id="content">
@@ -34,9 +35,9 @@
 <a href="industries.html" >전체</a><a href="case-safety.html" >현장 안전</a><a href="case-energy.html" >에너지</a><a href="case-commerce.html" aria-current="page">커머스</a><a href="case-document.html" >문서 검토</a><a href="case-print.html" >보안 출력</a><a href="case-network.html" >공장 IT</a></nav>    </div>    <section class="film-layout" aria-labelledby="film-title" style="--focus:50% 50%">
       <div class="viewer" id="viewer">
         <div class="picture">
-        <video id="film" muted playsinline controls preload="metadata" poster="media/case-commerce.jpg" aria-label="커머스 한국어 해설 워크스루">
-          <source src="media/case-commerce.mp4" type="video/mp4">
-          <track kind="captions" label="한국어" srclang="ko" src="captions/case-commerce.vtt">
+        <video id="film" muted playsinline controls preload="metadata" poster="media/case-commerce.jpg?v=e37c42fea6d0" aria-label="커머스 한국어 해설 워크스루">
+          <source src="media/case-commerce.mp4?v=e37c42fea6d0" type="video/mp4">
+          <track kind="captions" label="한국어" srclang="ko" src="captions/case-commerce.vtt?v=e37c42fea6d0">
           <a href="media/case-commerce.mp4">영상 파일 재생</a>
         </video>
         </div>
@@ -53,51 +54,58 @@
       </div>
       <div class="intro">
         <div class="eyebrow"><span class="signal-mark" aria-hidden="true"></span><span>ZiewCore M-Pulse</span></div>
-        <h1 id="film-title"><span>방금 살펴본 상품,</span><span>다음 추천의 단서로.</span></h1>
+        <h1 id="film-title" style="--title-fit:11.09cqi"><span>방금 살펴본 상품,</span> <span>다음 추천의 단서로.</span></h1>
         <p class="lead">동의받은 탐색 이력과 상품 정보를 연결합니다. 운영자는 고객군별 추천 반응과 구매 전환을 비교해 적용 범위를 정합니다.</p>
-        <div class="actions"><button type="button" class="action" data-open="action-panel" aria-haspopup="dialog"><svg class="ico ico-layers" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 8 9-5 9 5-9 5-9-5Zm0 5 9 5 9-5m-18 5 9 5 9-5"/></svg>작동 과정 보기</button>
-<button type="button" class="quiet" data-open="transcript" aria-haspopup="dialog">해설 대본</button></div>
-        <div class="route-progress" aria-hidden="true"><div><span class="route-status"></span><span>현장 워크스루</span><time>00:16</time></div>
+<div class="actions"><button type="button" class="action" data-open="action-panel" aria-haspopup="dialog"><svg class="ico ico-layers" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 8 9-5 9 5-9 5-9-5Zm0 5 9 5 9-5m-18 5 9 5 9-5"/></svg>작동 과정 보기</button>
+<button type="button" class="quiet" data-open="transcript" aria-haspopup="dialog">해설 대본</button></div>        <div class="route-progress" aria-hidden="true"><div><span class="route-status"></span><span>현장 워크스루</span><time>00:16</time></div>
           <div class="route-line"><i data-stop="0" class="active"></i><i data-stop="1" class=""></i><i data-stop="2" class=""></i></div></div>
       </div>
     </section>
     <section class="chapter-dock" aria-label="현재 영상의 장면 선택">
-      <div class="dock-top"><h2>이 동선에서 살펴볼 곳</h2></div>
+      <div class="dock-top"><h2>이 동선에서 살펴볼 곳</h2><button class="film-credit" type="button" data-open="credits" aria-haspopup="dialog">실사 촬영을 활용한 적용 예시 · 출처</button></div>
       <div class="dock-row" style="--count:3">
-<button type="button" class="scene current" data-scene="0" aria-label="00:00 매장 통로에 들어선 쇼핑 카트 장면으로 이동" aria-current="step">
-        <span class="scene-img"><img src="media/thumbs/case-commerce-0.jpg" width="96" height="58" alt=""><span class="scene-mark" aria-hidden="true"></span></span>
+<button type="button" class="scene current" data-scene="0" aria-label="00:00 통로 왼쪽의 둥근 관목 장면으로 이동" aria-current="step">
+        <span class="scene-img"><img src="media/thumbs/case-commerce-0.jpg?v=e37c42fea6d0" width="96" height="58" alt=""><span class="scene-mark" aria-hidden="true"></span></span>
         <span class="scene-copy"><small>00:00</small><b>탐색 이력</b></span>
-      </button><button type="button" class="scene " data-scene="1" aria-label="00:06 오른쪽 생활용품 진열대 장면으로 이동" >
-        <span class="scene-img"><img src="media/thumbs/case-commerce-1.jpg" width="96" height="58" alt=""></span>
+      </button><button type="button" class="scene " data-scene="1" aria-label="00:06 오른쪽 진열 줄의 큰 검은 화분 장면으로 이동" >
+        <span class="scene-img"><img src="media/thumbs/case-commerce-1.jpg?v=e37c42fea6d0" width="96" height="58" alt=""></span>
         <span class="scene-copy"><small>00:06</small><b>M-Pulse</b></span>
-      </button><button type="button" class="scene " data-scene="2" aria-label="00:11 통로 끝의 밝은 진열 구역 장면으로 이동" >
-        <span class="scene-img"><img src="media/thumbs/case-commerce-2.jpg" width="96" height="58" alt=""></span>
+      </button><button type="button" class="scene " data-scene="2" aria-label="00:11 안쪽 오른편의 가지치기한 나무 장면으로 이동" >
+        <span class="scene-img"><img src="media/thumbs/case-commerce-2.jpg?v=e37c42fea6d0" width="96" height="58" alt=""></span>
         <span class="scene-copy"><small>00:11</small><b>적용 판단</b></span>
       </button>      <a class="next-page" href="case-document.html"><span>다음 페이지</span><b>문서 검토</b></a>
       </div>
     </section>
   </main>
   <footer><span>© Ziewise Co., Ltd.</span><nav aria-label="하단 메뉴"><button type="button" data-open="credits">영상 출처</button><a href="mailto:info@ziewise.com">info@ziewise.com</a><button type="button" data-open="directory">전체 메뉴</button></nav></footer>
+  <dialog class="drawer" id="solutions-menu" aria-labelledby="solutions-title">
+    <div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="메뉴 닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <h2 id="solutions-title">솔루션</h2><div class="dir-group">
+      <a href="zieview.html" >Zieview(지뷰)<span>이동형 스마트 CCTV · 현장 안전 관제</span></a>
+<a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="industries.html" aria-current="page">산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div>
+  </dialog>
   <dialog class="drawer" id="directory" aria-labelledby="directory-title">
     <div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="메뉴 닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <h2 id="directory-title">어디로 갈까요?</h2>
+    <div class="dir-group"><a class="llm-directory" href="llm.html" >LLM 구축<span>사내 문서와 권한</span></a></div>
     <div class="dir-group"><h3>현장과 솔루션</h3>
-<a href="index.html" >현장 투어<span>생산라인 따라가기</span></a><a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="llm.html" >LLM 구축<span>사내 문서와 권한</span></a><a href="industries.html" aria-current="page">산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div><div class="dir-group"><h3>자료와 문의</h3>
-<a href="ai-briefing/" >기술 브리핑<span>해설·PDF</span></a><a href="roi.html" >도입 효과<span>시간·비용 계산</span></a><a href="company.html" >회사 소개<span>인프라·연구개발</span></a><a href="contact.html" >도입 문의<span>도입 상담</span></a>    </div>
+      <a href="zieview.html" >Zieview(지뷰)<span>이동형 스마트 CCTV</span></a>
+<a href="index.html" >현장 투어<span>생산라인 따라가기</span></a><a href="factory.html" >공장 제품<span>안전·관제·출력</span></a><a href="process.html" >제조 공정 AI<span>MES · DCS · ZiewCore</span></a><a href="industries.html" aria-current="page">산업별 사례<span>여섯 가지 적용 사례</span></a><a href="office.html" >업무 자동화<span>재무·인사·구매·영업</span></a>    </div><div class="dir-group"><h3>자료와 문의</h3>
+<a href="ai-briefing/" >기술 브리핑<span>해설·PDF</span></a><a href="roi.html" >도입 효과<span>시간·비용 계산</span></a><a href="company.html" >회사 소개<span>인증 간판·인프라 운영</span></a><a href="contact.html" >도입 문의<span>도입 상담</span></a>    </div>
   </dialog>
   <dialog class="drawer" id="action-panel" aria-labelledby="panel-title">
     <div class="draw-head"><span class="draw-kicker">ZiewCore M-Pulse</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <h2 id="panel-title">작동 과정 보기</h2>
-      <div class="info-steps"><section><small>00:00 · 매장 통로에 들어선 쇼핑 카트</small><h3>고객의 관심을 읽습니다</h3><p>상품을 둘러보는 동선을 따라가 볼게요. 추천은 동의받은 탐색 이력에서 시작합니다.</p></section><section><small>00:06 · 오른쪽 생활용품 진열대</small><h3>추천 후보를 비교합니다</h3><p>살펴본 상품을 바탕으로 신규 고객과 재방문 고객의 추천 후보를 나눕니다.</p></section><section><small>00:11 · 통로 끝의 밝은 진열 구역</small><h3>구매 반응을 확인합니다</h3><p>운영자는 실제 반응과 구매 전환을 보고 적용 범위를 정합니다.</p></section></div>
+      <div class="info-steps"><section><small>00:00 · 통로 왼쪽의 둥근 관목</small><h3>고객의 관심을 읽습니다</h3><p>상품을 둘러보는 동선을 따라가 볼게요. 추천은 동의받은 탐색 이력에서 시작합니다.</p></section><section><small>00:06 · 오른쪽 진열 줄의 큰 검은 화분</small><h3>추천 후보를 비교합니다</h3><p>살펴본 상품을 바탕으로 신규 고객과 재방문 고객의 추천 후보를 나눕니다.</p></section><section><small>00:11 · 안쪽 오른편의 가지치기한 나무</small><h3>구매 반응을 확인합니다</h3><p>운영자는 실제 반응과 구매 전환을 보고 적용 범위를 정합니다.</p></section></div>
   </dialog>
   <dialog class="drawer" id="transcript" aria-labelledby="transcript-title"><div class="draw-head"><span class="draw-kicker">ZiewCore M-Pulse</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
-    <h2 id="transcript-title">영상 대본</h2><div class="info-steps"><section><small>00:00 · 매장 통로에 들어선 쇼핑 카트</small><h3>고객의 관심을 읽습니다</h3><p>상품을 둘러보는 동선을 따라가 볼게요. 추천은 동의받은 탐색 이력에서 시작합니다.</p></section><section><small>00:06 · 오른쪽 생활용품 진열대</small><h3>추천 후보를 비교합니다</h3><p>살펴본 상품을 바탕으로 신규 고객과 재방문 고객의 추천 후보를 나눕니다.</p></section><section><small>00:11 · 통로 끝의 밝은 진열 구역</small><h3>구매 반응을 확인합니다</h3><p>운영자는 실제 반응과 구매 전환을 보고 적용 범위를 정합니다.</p></section></div>
+    <h2 id="transcript-title">영상 대본</h2><div class="info-steps"><section><small>00:00 · 통로 왼쪽의 둥근 관목</small><h3>고객의 관심을 읽습니다</h3><p>상품을 둘러보는 동선을 따라가 볼게요. 추천은 동의받은 탐색 이력에서 시작합니다.</p></section><section><small>00:06 · 오른쪽 진열 줄의 큰 검은 화분</small><h3>추천 후보를 비교합니다</h3><p>살펴본 상품을 바탕으로 신규 고객과 재방문 고객의 추천 후보를 나눕니다.</p></section><section><small>00:11 · 안쪽 오른편의 가지치기한 나무</small><h3>구매 반응을 확인합니다</h3><p>운영자는 실제 반응과 구매 전환을 보고 적용 범위를 정합니다.</p></section></div>
   </dialog>
   <dialog class="drawer" id="credits" aria-labelledby="credits-title"><div class="draw-head"><span class="draw-kicker">ZIEWISE</span><button type="button" class="close" data-close aria-label="닫기"><svg class="ico ico-close" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
-    <h2 id="credits-title">이 영상의 출처</h2><p class="draw-lead">실제 촬영한 영상에서 한 동선을 발췌했습니다. 재생 속도를 조정하고 물체의 위치에 지와이즈 솔루션의 적용 예시와 한국어 합성 음성 해설을 덧붙였습니다.</p>
-    <div class="attributions"><div class="source-row"><strong>Glimpses Into Reality</strong><p>Shopping Cart Journey Through Grocery Aisle</p><a href="https://www.pexels.com/video/shopping-cart-journey-through-grocery-aisle-29068393/" target="_blank" rel="noopener">촬영 원본</a> <a href="https://www.pexels.com/license/" target="_blank" rel="noopener">사용 조건</a></div></div>
+    <h2 id="credits-title">이 영상의 출처</h2><p class="draw-lead">실제 촬영한 외부 영상에서 한 동선을 발췌해 솔루션의 적용 예시를 연출했습니다. 기록과 설명 표시는 지와이즈 업무를 예로 구성했고, 한국어 해설은 합성 음성으로 제작했습니다.</p>
+    <div class="attributions"><div class="source-row"><strong>Ahmet Kurt</strong><p>A row of potted plants in a nursery</p><a href="https://www.pexels.com/video/a-row-of-potted-plants-in-a-nursery-19121081/" target="_blank" rel="noopener">촬영 원본</a> <a href="https://www.pexels.com/license/" target="_blank" rel="noopener">사용 조건</a></div></div>
     <div class="source-row"><a href="https://ziewise.com/" target="_blank" rel="noopener">공식 솔루션 설명</a></div>
   </dialog>
-  <script type="application/json" id="film-data">{"cues": [{"label": "매장 통로에 들어선 쇼핑 카트", "title": "고객의 관심을 읽습니다", "line": "상품을 둘러보는 동선을 따라가 볼게요. 추천은 동의받은 탐색 이력에서 시작합니다.", "field": "탐색 이력", "value": "동의받은 기록", "start": 0.0, "speech_start": 0.3, "speech_end": 5.823, "stamp": "00:00"}, {"label": "오른쪽 생활용품 진열대", "title": "추천 후보를 비교합니다", "line": "살펴본 상품을 바탕으로 신규 고객과 재방문 고객의 추천 후보를 나눕니다.", "field": "M-Pulse", "value": "고객군별 후보", "start": 6.2, "speech_start": 6.5, "speech_end": 11.308, "stamp": "00:06"}, {"label": "통로 끝의 밝은 진열 구역", "title": "구매 반응을 확인합니다", "line": "운영자는 실제 반응과 구매 전환을 보고 적용 범위를 정합니다.", "field": "적용 판단", "value": "반응 · 전환", "start": 11.68, "speech_start": 11.98, "speech_end": 15.963, "stamp": "00:11"}], "duration": 16.36, "page": "case-commerce", "legacy": {}, "contact": []}</script>
+  <script type="application/json" id="film-data">{"cues": [{"label": "통로 왼쪽의 둥근 관목", "title": "고객의 관심을 읽습니다", "line": "상품을 둘러보는 동선을 따라가 볼게요. 추천은 동의받은 탐색 이력에서 시작합니다.", "field": "탐색 이력", "value": "동의받은 기록", "start": 0.0, "speech_start": 0.3, "speech_end": 5.823, "stamp": "00:00"}, {"label": "오른쪽 진열 줄의 큰 검은 화분", "title": "추천 후보를 비교합니다", "line": "살펴본 상품을 바탕으로 신규 고객과 재방문 고객의 추천 후보를 나눕니다.", "field": "M-Pulse", "value": "고객군별 후보", "start": 6.2, "speech_start": 6.5, "speech_end": 11.308, "stamp": "00:06"}, {"label": "안쪽 오른편의 가지치기한 나무", "title": "구매 반응을 확인합니다", "line": "운영자는 실제 반응과 구매 전환을 보고 적용 범위를 정합니다.", "field": "적용 판단", "value": "반응 · 전환", "start": 11.68, "speech_start": 11.98, "speech_end": 15.963, "stamp": "00:11"}], "duration": 16.36, "page": "case-commerce", "legacy": {}, "contact": [], "signs": []}</script>
 </body>
 </html>
