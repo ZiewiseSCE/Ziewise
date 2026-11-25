@@ -1,18 +1,18 @@
-지와이즈 기술 브리핑 한국어 나레이션
+지와이즈 3D 기술 브리핑 한국어 음성 제작 기록
 
-16개 장 모두 Qwen3-TTS-12Hz-1.7B-CustomVoice의 한국어 기본 화자 Sohee로 새롭게 생성한 합성 음성입니다. 각 장의 완성된 문단과 장면별 낭독 지시를 입력했습니다. 고객사 이름을 가린 대본을 사용했습니다. 참여자나 실존 인물의 음성 녹음을 참조하거나 복제하지 않았습니다.
+16개 장의 해설을 최근 지와이즈 현장 영상과 같은 Supertone Supertonic 3의 기본 음성 F2로 합성했습니다. 한국어 설정, 속도 1.05, 음성 생성 8단계를 적용했습니다. 공개 모델에 포함된 음성 프리셋만 사용했으며 별도의 인물 음성이나 음악을 입력하지 않았습니다.
 
-모델 배포자  Qwen / Alibaba Cloud
-공식 모델 카드와 화자 목록  https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
-사용한 가중치 리비전  0c0e3051f131929182e2c023b9537f8b1c68adfe
-공식 구현 및 Apache License 2.0  https://github.com/QwenLM/Qwen3-TTS
-라이선스 원문  https://github.com/QwenLM/Qwen3-TTS/blob/main/LICENSE
-제작 런타임  qwen-tts 0.1.1, PyTorch 2.8 CUDA, Transformers 4.57.3
-제작용 CUDA 그래프 실행기  faster-qwen3-tts 0.3.2, MIT, https://github.com/andimarafioti/faster-qwen3-tts
+기존 브리핑의 16개 제목과 대본, 장면별 문장 63개를 유지했습니다. 제품명·영문 약어·숫자는 낭독 입력에서 한국어로 풀었습니다. 화면과 WebVTT 자막에는 기존의 영문 표기와 수치가 그대로 나옵니다.
 
-제작용 기기에서 문단별로 생성하고 음량과 긴 무음 구간을 다듬은 뒤, 44.1 kHz 모노 VBR MP3로 저장했습니다. 웹사이트는 완성된 MP3와 자막을 재생합니다. 함께 제공한 captions 폴더는 WebVTT, tracks.json은 초 단위 숫자와 실제 대본을 담은 메타데이터, voice-tracks.js는 기술 브리핑의 window.BriefVoice 형식입니다.
+모델 배포자  Supertone Inc.
+모델 카드  https://huggingface.co/Supertone/supertonic-3
+실제 사용 파일과 일치하는 모델 리비전  3cadd1ee6394adea1bd021217a0e650ede09a323
+모델 이용허락  BigScience Open RAIL-M, https://huggingface.co/Supertone/supertonic-3/blob/3cadd1ee6394adea1bd021217a0e650ede09a323/LICENSE
+F2 음성 프리셋  https://huggingface.co/Supertone/supertonic-3/blob/3cadd1ee6394adea1bd021217a0e650ede09a323/voice_styles/F2.json
+F2 파일 SHA-256  7c722c6a72707b1a77f035d67f0d1351ba187738e06f7683e8c72b1df3477fc6
+제작 환경  Supertonic Python 1.3.1, ONNX Runtime 1.32.0, 기기 내 추론
+대본 기준  지와이즈 사이트 커밋 a5e5145fe5fba653d38c65950608b5367a71d707의 ai-briefing/voice-tracks.js 및 narration/captions
 
-한국어 음성 인식 및 자막 검증 도구
-OpenAI Whisper small / large-v3-turbo  https://github.com/openai/whisper
-whisper.cpp  https://github.com/ggml-org/whisper.cpp
-한국어 wav2vec2 CTC 정렬  https://huggingface.co/kresnik/wav2vec2-large-xlsr-korean
+각 문장을 44.1 kHz 모노로 생성하고 앞뒤 무음과 음량을 현장 영상과 같은 설정으로 조정했습니다. 장마다 짧은 문장 간격을 두고 연결한 뒤 128 kbps MP3로 저장했습니다. MP3가 인코더 지연과 끝 패딩 정보를 담고 있어 재생기가 이를 보정할 수 있습니다.
+
+16개 최종 MP3의 디코딩된 파형에서 각 문장이 실제로 들리는 구간을 측정해 voice-tracks.js와 narration/captions의 WebVTT 시각을 만들었습니다. Chromium의 오디오 요소 및 Web Audio와 독립 디코더에서 재생 길이, 처음과 끝의 유음 위치를 확인했습니다. 한국어 음성 인식으로 전 장의 문장 순서와 기술 약어·수치의 낭독을 추가 점검했습니다.

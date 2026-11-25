@@ -36,7 +36,8 @@
     name.textContent=item.product;sub.textContent=item.area;mark.className='tab-mark';mark.setAttribute('aria-hidden','true');
     caption.append(name,sub);tab.append(icon(item.icon),caption,mark);tab.addEventListener('click',()=>selectCase(index));$('case-list').append(tab);
   });
-  selectCase(0);
+  const requestedCase=new URLSearchParams(location.search).get('case');
+  selectCase(Math.max(0,cases.findIndex(item=>item.id===requestedCase)));
   $('case-list').addEventListener('keydown',event=>{
     const steps={ArrowRight:1,ArrowLeft:-1,ArrowDown:1,ArrowUp:-1};let index;
     if(event.key==='Home')index=0;else if(event.key==='End')index=cases.length-1;
