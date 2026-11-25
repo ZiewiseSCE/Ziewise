@@ -10,6 +10,18 @@ export async function applyFinishes(T, scene, building) {
     return map;
   }
   const promises=[
+    ...[['terrazzo passage','terrazzo_tiles',1.75,0xc5c2b8,.39,.78],['interior plaster','plastered_wall_02',1.25,0xd9d8d2,.43,.95],
+        ['acoustic ceiling','plastered_wall_02',2.4,0xe3e3de,.36,.97]].map(async ([label,key,repeat,tint,scale,r])=>{
+      const material=wall.get(label);if(!material)return;
+      const [color,normal,rough]=await Promise.all(['diff','nor_gl','rough'].map((c,i)=>texture(key+'-'+c+'.webp',repeat,i===0)));
+      Object.assign(material,{map:color,normalMap:normal,roughnessMap:rough,roughness:r,metalness:.015});
+      material.color.setHex(tint);material.normalScale.setScalar(scale);material.needsUpdate=true;
+    }),
+    ...[['workshop concrete','hangar_concrete_floor',1.58],['workshop wall panels','corrugated_iron_03',1.07],
+        ['brushed structure','rusty_painted_metal',2.2],['galvanized air duct','rusty_painted_metal',1.4]].map(async ([label,key,repeat])=>{
+      const m=wall.get(label);if(!m)return;
+      m.roughnessMap=await texture(key+'-rough.webp',repeat,false);m.needsUpdate=true;
+    }),
     Promise.all(['color','normal','rough'].map((k,i)=>texture('oak-'+k+'.webp',1,i===0,'./office-materials/maps/'))).then(([color,normal,rough])=>{
       for(const [label,tint] of [['oak flooring',0xccaa87],['oak joinery',0xc8a17e],['walnut linings',0x93775c]]){
         const mat=wall.get(label);if(!mat)continue;
@@ -27,7 +39,7 @@ export async function applyFinishes(T, scene, building) {
     }),
     Promise.all([texture('hangar-slab-basecolor.webp',1.58,true),texture('hangar-slab-normal-gl.webp',1.58,false)]).then(([base,bump])=>{
       const mat=wall.get('workshop concrete');if(!mat)return;
-      mat.map=base;mat.normalMap=bump;mat.normalScale.set(.49,.49);mat.color.setHex(0xb3c0bf);mat.metalness=.095;mat.roughness=.70;
+      mat.map=base;mat.normalMap=bump;mat.normalScale.set(.78,.78);mat.color.setHex(0xc3c2bc);mat.metalness=.035;mat.roughness=.86;
       // Window bays project broad daylight and fine mullion shadows over the crossing lanes.
       mat.onBeforeCompile=shader=>{
         shader.vertexShader='varying vec3 vFloorWorld;\n'+shader.vertexShader.replace('#include <project_vertex>','#include <project_vertex>\nvFloorWorld=(modelMatrix*vec4(transformed,1.0)).xyz;');
@@ -37,14 +49,14 @@ export async function applyFinishes(T, scene, building) {
           float frame=smoothstep(.13,.36,along)*(1.0-smoothstep(5.15,5.55,along));
           float pane=abs(fract((along-.14)/1.40)-.5);
           float sunlight=across*frame*(.58+.42*smoothstep(.01,.09,pane));
-          diffuseColor.rgb*=mix(vec3(.70,.76,.83),vec3(1.34,1.22,1.07),sunlight);`);
+          diffuseColor.rgb*=mix(vec3(.92,.94,.97),vec3(1.035,1.025,1.01),sunlight);`);
       };
       mat.needsUpdate=true;
     }),
     Promise.all([texture('fastened-sheet-basecolor.webp',1.07,true),texture('fastened-sheet-normal-gl.webp',1.07,false)]).then(([base,bump])=>{
       const mat=wall.get('workshop wall panels');if(!mat)return;
-      mat.map=base;mat.normalMap=bump;mat.normalScale.set(.38,.38);mat.roughness=.64;mat.metalness=.33;mat.color.setHex(0xa3b4ad);mat.needsUpdate=true;
-      const lower=wall.get('workshop lower wall');if(lower){lower.color.setHex(0x788a83);lower.roughness=.72;}
+      mat.map=base;mat.normalMap=bump;mat.normalScale.set(.71,.71);mat.roughness=.81;mat.metalness=.31;mat.color.setHex(0xc4c4bf);mat.needsUpdate=true;
+      const lower=wall.get('workshop lower wall');if(lower){lower.map=base;lower.normalMap=bump;lower.normalScale.setScalar(.32);lower.color.setHex(0x9da3a0);lower.roughness=.78;lower.needsUpdate=true;}
     }),
     texture('daylight-yard-horizon.webp',0,true).then(photo=>{
       const geom=new T.SphereGeometry(84,72,18,0,2*Math.PI,T.MathUtils.degToRad(48),T.MathUtils.degToRad(56));

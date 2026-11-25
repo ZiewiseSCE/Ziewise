@@ -9,3 +9,5 @@ https://polyhaven.com/a/machine_shop_02
 https://polyhaven.com/license
 
 The renderer uses the site's locally hosted Three.js library in ai-briefing/vendor. Its MIT license is included there.
+
+The local daylight volume represents six directional diffuse samples per probe across the two connected buildings. The inspection bench, the operator desk and the CCTV station use locally baked HDR reflections. The additional workshop scans and measured finishes are credited in equipment/CREDITS-ADDITIONAL.txt. Office workstation models, synthetic seated operators and surface materials are documented in workspaces/SOURCES.txt. The Rev4-based product model and its material measurements are documented in zieview/model/SOURCES.ko.md.

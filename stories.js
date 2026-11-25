@@ -27,7 +27,7 @@ window.ZiewiseScenes = [
 
 window.ZiewiseCases = [
   {
-    id:'vision', product:'Zieview', area:'공장 · 이동형·고정형 CCTV', tag:'DEEP LEARNING CCTV', icon:'scan',
+    id:'vision', product:'Zieview', area:'제조사 A · 현장 안전', tag:'제조사 A · 안전 관제', icon:'scan',
     title:'오늘 작업하는 구역에 Zieview를 설치합니다.',
     about:'임시 작업에는 폴대형을 옮겨 세우고, 상시 점검 구역에는 같은 단말을 자석으로 고정합니다. 관제실에서 위험 장면을 확인하고 현장과 통화합니다.',
     steps:[

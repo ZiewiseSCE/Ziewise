@@ -46,16 +46,17 @@ export function createOptics(T,renderer,{mobile=false}={}) {
         color*=1.-min(.32,occlusion*.12)*strength*(1.-smoothstep(18.,34.,metres));
       }
       // Keep the working plane sharp. Limit the defocus circle to a narrow optical fringe.
-      float coc=aperture*max(0.,1.-focus/max(metres,.1));
+      float coc=min(aperture*abs(1.-focus/max(metres,.12)),5.8);
       if(coc>.22){
         vec3 sum=vec3(0.);float weight=0.;
-        for(int j=0;j<6;j++){
-          float angle=float(j)*1.04719755+.18;
-          vec2 uv=film+vec2(cos(angle),sin(angle))*coc*pixels;
-          float k=smoothstep(focus*.92,focus*1.18,-viewPoint(uv).z);
+        for(int j=0;j<12;j++){
+          float jn=float(j)+.5,angle=jn*2.3999632+.18;
+          vec2 uv=film+vec2(cos(angle),sin(angle))*sqrt(jn/12.)*coc*pixels;
+          float sampleDepth=-viewPoint(uv).z;
+          float k=metres>focus?smoothstep(focus*.95,focus*1.18,sampleDepth):1.-smoothstep(focus*.90,focus*1.05,sampleDepth);
           sum+=texture2D(radiance,uv).rgb*k;weight+=k;
         }
-        color=mix(color,sum/max(.001,weight),.60*smoothstep(.22,.75,coc)*min(1.,weight));
+        color=mix(color,sum/max(.001,weight),.87*smoothstep(.22,1.1,coc)*min(1.,weight));
       }
       gl_FragColor=vec4(color,1.);
       #include <tonemapping_fragment>
@@ -68,7 +69,9 @@ export function createOptics(T,renderer,{mobile=false}={}) {
     if(size.x!==target.width||size.y!==target.height)target.setSize(size.x,size.y);
     uniforms.invProj.value.copy(camera.projectionMatrixInverse);uniforms.pixels.value.set(1/size.x,1/size.y);
     uniforms.projectScale.value=size.y*.5*camera.projectionMatrix.elements[5];
-    uniforms.focus.value=Math.max(.28,distance);uniforms.aperture.value=inspect?Math.min(2.55,size.y*.00245):0.;
+    const distanceMM=Math.max(.28,distance)*1000,focalMM=camera.getFocalLength();
+    uniforms.focus.value=distanceMM/1000;
+    uniforms.aperture.value=inspect?.5*size.y/camera.getFilmHeight()*focalMM*focalMM/(2.8*Math.max(80,distanceMM-focalMM)):0;
     renderer.setRenderTarget(target);renderer.render(scene,camera);
     const calls=renderer.info.render.calls,triangles=renderer.info.render.triangles;
     renderer.setRenderTarget(null);renderer.render(screen,camera2d);

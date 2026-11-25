@@ -2,6 +2,10 @@ import {GLTFLoader} from './vendor/loaders/GLTFLoader.js';
 
 // Dimensions are in metres; y is the surface supporting the lowest point of the asset.
 const layout={
+  drill_press_01:[{x:4.99,z:.63,y:0,h:1.93,yaw:-1.16},{x:-5.32,z:-10.85,y:0,h:1.86,yaw:1.03}],
+  portable_welding_cart:[{x:-4.9,z:2.05,y:0,h:1.17,yaw:1.92},{x:5.08,z:-8.15,y:0,h:1.17,yaw:-.72}],
+  portable_generator:[{x:4.96,z:-16.15,y:0,h:.87,yaw:-1.08}],
+  industrial_caged_sconce:[{x:-6.70,z:2.32,y:2.16,h:.32,yaw:1.57},{x:6.70,z:-6.65,y:2.13,h:.32,yaw:-1.57}],
   metal_tool_chest:[{x:3.14,z:6.70,y:.89,h:.45,yaw:-1.55}],
   industrial_microscope:[{x:3.05,z:5.97,y:.89,h:.405,yaw:-1.17}],
   steel_frame_shelves_01:[{x:5.84,z:5.45,y:0,h:2.23,yaw:-1.56},{x:-5.72,z:-15.15,y:0,h:2.06,yaw:1.53}],
@@ -62,10 +66,10 @@ export function placeEquipment(T,scene,batchStatic) {
     }
     assets.set(key,copies);
   }
-  const tasks=Object.fromEntries(Object.keys(layout).map(key=>[key,load(key)]));
-  const ready=Promise.allSettled([bench,...Object.values(tasks)]);
-  function near(z){return Promise.allSettled([bench,...Object.keys(layout).filter(key=>layout[key].some(item=>Math.abs(item.z-z)<8)).map(key=>tasks[key])]);}
-  return {ready,near,assets,visibleFrom(z,maxDistance){
+  const tasks=new Map();
+  function demand(key){if(!tasks.has(key))tasks.set(key,load(key));return tasks.get(key);}
+  function near(z){return Promise.allSettled([bench,...Object.keys(layout).filter(key=>layout[key].some(item=>Math.abs(item.z-z)<7)).map(demand)]);}
+  return {get ready(){return Promise.all([bench,...Object.keys(layout).map(demand)]);},near,assets,visibleFrom(z,maxDistance){
     for(const groups of assets.values())for(const group of groups)group.visible=Math.abs(group.position.z-z)<maxDistance;
   }};
 }

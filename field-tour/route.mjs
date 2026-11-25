@@ -7,7 +7,7 @@ export const stops = [
   {id:'maintenance', z:-11.7, side:1, label:'예지보전', room:'밸브 점검대', area:'제조동', title:'밸브가 제때 열렸을까요?', short:'실제 밸브 응답을 개도 명령과 대조해 정비 담당자가 먼저 점검할 설비를 찾습니다.', marks:['제어 밸브','명령과 실제 응답','정비 판단'], shot:'lean'},
   {id:'count', z:-15.7, side:-1, label:'포장 검수', room:'출하 검수대', area:'제조동', title:'한 개가 모자라면 출하 전에 멈춥니다.', short:'카메라가 센 수량을 주문 기준과 대조합니다. 작업자가 빈자리를 채운 뒤 다시 확인합니다.', marks:['포장 단위','수량 대조','출하 확인'], shot:'track'},
   {id:'edge', z:-19.5, side:1, label:'엣지 운영', room:'현장 서버실', area:'제조동', title:'판정은 검사대 바로 옆에서.', short:'검증된 모델을 현장 장비에 배포합니다. 작업자가 내린 최종 판정은 다음 검증의 자료가 됩니다.', marks:['검사 입력','엣지 컴퓨터','운영 기록'], shot:'arc'},
-  {id:'knowledge', z:-23.8, side:-1, label:'사내 지식', room:'자료 열람실', area:'업무동', title:'어느 규정을 근거로 답했을까요?', short:'ZiewLLM이 직원의 열람 권한에 맞춰 사내 문서를 찾습니다. 답변 옆에서 원문을 확인합니다.', marks:['사내 문서','권한별 검색','원문 근거'], shot:'wide'},
+  {id:'knowledge', z:-23.8, side:-1, label:'LLM 구축', room:'사내 모델·API 연결실', area:'업무동', title:'어느 규정을 근거로 답했을까요?', short:'ZiewLLM이 직원의 열람 권한에 맞춰 사내 문서를 찾습니다. 답변 옆에서 원문을 확인합니다.', marks:['문서와 권한','검색·근거 답변','모델 연결 선택'], shot:'wide'},
   {id:'hr', z:-27.5, side:1, label:'인사', room:'온보딩 데스크', area:'업무동', title:'첫 출근 전에 빠진 서류를 찾습니다.', short:'인사 담당자가 로컬 LLM의 준비 목록을 확인하면 RPA가 계정과 업무 요청을 등록합니다.', marks:['입사 서류','준비 목록','권한 요청'], shot:'arc'},
   {id:'finance', z:-31, side:-1, label:'재무', room:'재무 검토석', area:'업무동', title:'영수증 한 장이 전표가 되기까지.', short:'사내 로컬 LLM이 증빙과 규정을 연결합니다. 담당자가 승인하면 RPA가 ERP에 입력합니다.', marks:['영수증과 증빙','규정 대조','ERP 전표'], shot:'lean'},
   {id:'purchase', z:-34.5, side:1, label:'구매', room:'견적 비교대', area:'업무동', title:'다른 견적서를 같은 조건에 놓습니다.', short:'구매 담당자가 규격과 납기를 비교해 승인하면 RPA가 발주 번호를 연결합니다.', marks:['공급사 견적','조건 비교','발주 승인'], shot:'track'},

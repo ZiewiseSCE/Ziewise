@@ -1,0 +1,18 @@
+지와이즈 기술 브리핑 한국어 나레이션
+
+16개 장 모두 Qwen3-TTS-12Hz-1.7B-CustomVoice의 한국어 기본 화자 Sohee로 새롭게 생성한 합성 음성입니다. 각 장의 완성된 문단과 장면별 낭독 지시를 입력했습니다. 고객사 이름을 가린 대본을 사용했습니다. 참여자나 실존 인물의 음성 녹음을 참조하거나 복제하지 않았습니다.
+
+모델 배포자  Qwen / Alibaba Cloud
+공식 모델 카드와 화자 목록  https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice
+사용한 가중치 리비전  0c0e3051f131929182e2c023b9537f8b1c68adfe
+공식 구현 및 Apache License 2.0  https://github.com/QwenLM/Qwen3-TTS
+라이선스 원문  https://github.com/QwenLM/Qwen3-TTS/blob/main/LICENSE
+제작 런타임  qwen-tts 0.1.1, PyTorch 2.8 CUDA, Transformers 4.57.3
+제작용 CUDA 그래프 실행기  faster-qwen3-tts 0.3.2, MIT, https://github.com/andimarafioti/faster-qwen3-tts
+
+제작용 기기에서 문단별로 생성하고 음량과 긴 무음 구간을 다듬은 뒤, 44.1 kHz 모노 VBR MP3로 저장했습니다. 웹사이트는 완성된 MP3와 자막을 재생합니다. 함께 제공한 captions 폴더는 WebVTT, tracks.json은 초 단위 숫자와 실제 대본을 담은 메타데이터, voice-tracks.js는 기술 브리핑의 window.BriefVoice 형식입니다.
+
+한국어 음성 인식 및 자막 검증 도구
+OpenAI Whisper small / large-v3-turbo  https://github.com/openai/whisper
+whisper.cpp  https://github.com/ggml-org/whisper.cpp
+한국어 wav2vec2 CTC 정렬  https://huggingface.co/kresnik/wav2vec2-large-xlsr-korean

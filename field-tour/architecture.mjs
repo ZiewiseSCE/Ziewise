@@ -216,10 +216,12 @@ export function buildArchitecture(T) {
   M.oak.name='oak flooring';M.carpet.name='office carpet';M.pane.name='exterior glazing';
   M.roof.name='painted roof panels';M.steel.name='painted steel beams';
   M.walnut.name='walnut linings';M.oakLight.name='oak joinery';
+  M.white.name='interior plaster';M.stone.name='terrazzo passage';M.ceiling.name='acoustic ceiling';
+  M.pipe.name='galvanized air duct';M.iron.name='brushed structure';
 
   function add(group, geometry, material, casts = false) {
     const mesh = new T.Mesh(geometry, material);
-    mesh.castShadow = casts; mesh.receiveShadow = !material.isMeshBasicMaterial && !material.transparent && material !== M.leaf;
+    mesh.castShadow = casts || [M.steel,M.steelEdge,M.trim,M.iron].includes(material); mesh.receiveShadow = !material.isMeshBasicMaterial && !material.transparent && material !== M.leaf;
     group.add(mesh); return mesh;
   }
   function box(group, x,y,z,w,h,d,mat,casts=false) {
@@ -251,7 +253,9 @@ export function buildArchitecture(T) {
   function wall(group,side,x,z0,z1,y0,y1,mat,tile=2.2) {
     const points=[[x,y0,z0],[x,y1,z0],[x,y1,z1],[x,y0,z1]];
     if(side>0) points.reverse();
-    return quad(group,points,points.map(p=>[p[2]/tile,p[1]/tile]),mat);
+    const surface=quad(group,points,points.map(p=>[p[2]/tile,p[1]/tile]),mat);
+    if(!mat.transparent){surface.castShadow=true;mat.shadowSide=T.DoubleSide;}
+    return surface;
   }
   function glass(group,side,x,z0,z1,y0,y1) { return wall(group,side,x,z0,z1,y0,y1,M.pane); }
 
@@ -279,7 +283,7 @@ export function buildArchitecture(T) {
       }
     }
     const geo=new T.BufferGeometry(); geo.setAttribute('position',new T.Float32BufferAttribute(face,3)); geo.setAttribute('uv',new T.Float32BufferAttribute(tex,2));
-    geo.setIndex(indices); geo.computeVertexNormals(); add(group,geo,mat);
+    geo.setIndex(indices);geo.computeVertexNormals();const panel=add(group,geo,mat,true);panel.material.shadowSide=T.DoubleSide;
   }
   function windowWall(group,side,z0,z1,low,high,office=false,shade=false) {
     const center=(z0+z1)/2, span=z1-z0, x=side*(halfWidth-.052);
@@ -304,7 +308,8 @@ export function buildArchitecture(T) {
   const pitchY = x => 5.94 - .056 * Math.abs(x);
   function roofStrip(group,x0,x1,z0,z1,material) {
     const points=[[x0,pitchY(x0),z0],[x1,pitchY(x1),z0],[x1,pitchY(x1),z1],[x0,pitchY(x0),z1]];
-    quad(group,points,[[0,0],[1,0],[1,1],[0,1]],material);
+    const mesh=quad(group,points,points.map(p=>[p[0]/1.9,p[2]/1.9]),material);
+    if(!material.isMeshBasicMaterial&&!material.transparent){mesh.castShadow=true;material.shadowSide=T.DoubleSide;}
   }
   function truss(group,z) {
     const xMax=6.70, bottom=5.11;
@@ -476,7 +481,11 @@ export function buildArchitecture(T) {
       floor(g,-1.73,1.73,z-.006,z+.006,M.officeSeam,1,.003);
     }
     floor(g,-.007,.007,z0,z1,M.officeSeam,1,.003);
-    box(g,0,4.25,mid,13.94,.12,span,M.ceiling);
+    const lid=[[-6.97,4.19,z0],[6.97,4.19,z0],[6.97,4.19,z1],[-6.97,4.19,z1]];
+    const ceiling=quad(g,lid,lid.map(([x,,z])=>[x/1.2,z/1.2]),M.ceiling);
+    ceiling.castShadow=true;M.ceiling.shadowSide=T.DoubleSide;
+    for(let x=-6.6;x<6.9;x+=1.2)box(g,x,4.181,mid,.014,.013,span,M.officeSeam);
+    for(let z=z0+.6;z<z1-.2;z+=1.2)box(g,0,4.181,z,13.82,.013,.016,M.officeSeam);
     // Thin recesses divide the warm plaster ceiling into broad acoustic rafts.
     for(const x of [-4.24,0,4.24]) box(g,x,4.185,mid,.024,.009,span,M.officeTrim);
     box(g,0,4.185,z0+.02,13.80,.009,.028,M.officeTrim);

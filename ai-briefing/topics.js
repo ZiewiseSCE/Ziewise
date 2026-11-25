@@ -36,9 +36,9 @@ window.BriefTopics = [
     points:[[81,39,'엣지 장비','생산 라인 가까이에서 영상을 처리하고 필요한 검사 결과를 업무 시스템에 연결합니다.'],[67,43,'작업 화면','작업자는 원본 영상과 표시된 위치로 재검 사유를 확인합니다.']]
   },
   {
-    id:'knowledge',label:'사내 지식',tag:'ZIEWLLM · RAG',title:'답변과 함께 근거 문서를 확인',
+    id:'knowledge',label:'LLM 구축',tag:'ZIEWLLM · RAG · API',title:'사내 문서는 어떤 모델이 읽을까요?',
     img:'./assets/knowledge-desk.webp',alt:'업무 담당자가 노트북에서 검색한 근거와 인쇄된 사내 절차서를 대조하는 재현 이미지',original:'sLLM',file:'07-knowledge.mp3',
-    rows:['직원의 질문, 사내 규정과 매뉴얼, 문서별 열람 권한을 연결합니다.','ZiewLLM이 권한 안의 자료를 검색해 답변과 출처를 정리합니다. 확인되지 않은 내용은 별도로 표시합니다.','담당자가 원문을 열어 근거를 확인합니다. 시스템 변경이나 업무 처리에는 승인 절차를 둡니다.'],
+    rows:['업무별로 매뉴얼과 규정의 원본·버전·열람 권한을 정리합니다. 승인된 문서를 작게 나누고 검색용 색인을 만듭니다.','사내 서버의 로컬 LLM이 질문자의 권한으로 찾은 문서를 바탕으로 답변과 출처를 만듭니다. 실제 질문으로 인용 정확도, 응답 시간과 접근 권한을 검증합니다.','고객이 원하면 허용한 질문과 발췌만 GPT·Claude·Gemini 중 선택한 API로 보냅니다. 담당자가 답변의 근거를 확인하고 승인하면 RPA가 업무 시스템에 입력합니다.'],
     points:[[67,41,'문서 검색','현재 사용자가 열람할 수 있는 자료만 검색과 답변의 근거로 사용합니다.'],[57,75,'원문 대조','인용한 문서의 위치와 버전을 확인하고 실제 업무 처리 여부를 결정합니다.']]
   },
   {
@@ -50,7 +50,7 @@ window.BriefTopics = [
 ];
 
 const systemsTopic={
-  id:'systems',label:'MES·DCS',tag:'MES × DCS × DEEP LEARNING',title:'기존 생산·제어 시스템에 딥러닝 두뇌를 연결',
+  id:'systems',label:'MES·DCS',tag:'MES × DCS × DEEP LEARNING',title:'어느 로트에서 압력이 달라졌을까요?',
   img:'../assets/field-04.webp',alt:'생산 라인, 검사 화면과 현장 컴퓨터가 연결된 재현 이미지',original:'s06',file:'09-systems.mp3',
   rows:['MES의 작업지시·로트·품질 이력과 DCS의 설정값·압력·유량·온도 신호를 설비와 시각 기준으로 연결합니다.','딥러닝이 정상 패턴을 학습해 품질 편차와 설비 이상 징후를 찾습니다. 예를 들어 같은 로트에서 생긴 흠집과 가공 전 압력 변화를 함께 확인합니다.','운영자는 원신호와 해당 로트를 검토해 점검 또는 재검을 요청합니다. 제어값 변경은 현장 권한과 승인 절차를 거칩니다.'],
   points:[[60,42,'검사 이력','로트별 판정 결과를 MES 작업지시와 연결합니다.'],[84,44,'공정 신호','DCS에서 읽은 신호를 시간순으로 맞춰 이상 징후의 맥락을 찾습니다.']]
@@ -80,4 +80,4 @@ window.BriefGroups=[
   {label:'사무 자동화',ids:['knowledge','hr','finance','purchase','sales']},
   {label:'도입 효과',ids:['roi','poc']}
 ];
-window.BriefTopics=window.BriefGroups.flatMap(group=>group.ids.map(id=>topicMap.get(id)));
+window.BriefTopics=['systems','design','vision','safety','maintenance','count','edge','observer','print','knowledge','hr','finance','purchase','sales','roi','poc'].map(id=>topicMap.get(id));

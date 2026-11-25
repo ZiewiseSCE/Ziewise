@@ -492,39 +492,9 @@ function safetyStation(L,root) {
   for(const h of [.48,.86])bar(root,[-1.42,h,-.36],[-.76,h,-.36],.036,'yellow');
   for(const h of [.48,.86])bar(root,[.83,h,-.36],[1.44,h,-.36],.036,'yellow');
   const person=dynamic(operator(L,root,-.67,.20));person.rotation.y=.42;
-  // Rev4 uses the same green enclosure and offset white PTZ on either mount.
-  function zieview(parent,x,y,z){
-    const unit=group(parent,x,y,z,'Zieview terminal');
-    housing(unit,0,0,0,.21,.21,.14,'zieviewGreen',.06);
-    box(unit,0,.003,.073,.195,.195,.012,'zieviewGreen');
-    screws(unit,0,.003,.083,.165,.163,'steel',.005);
-    bar(unit,[-.02,.04,0],[-.143,.055,.03],.018,'steel');
-    cyl(unit,-.151,.144,.033,.081,.135,'zieviewWhite','y',32);
-    ball(unit,-.151,.227,.033,.077,.087,.077,'black');
-    ring(unit,-.151,.199,.033,.078,.004,'rubber','y');return unit;
-  }
-  box(root,-1.54,.043,-1.04,.43,.086,.39,'iron');
-  box(root,-1.54,1.30,-1.04,.13,2.52,.13,'aluminum');
-  box(root,-1.54,1.69,-.951,.11,.17,.05,'iron');zieview(root,-1.54,1.70,-.845);
-  const tripod=group(root,.32,0,-.31,'Zieview mobile tripod');
-  for(let i=0;i<3;i++){
-    const ang=i*Math.PI*2/3+.20,x=Math.cos(ang)*.45,z=Math.sin(ang)*.45;
-    bar(tripod,[x,.065,z],[x*.20,1.02,z*.20],.022,'yellow');
-    bar(tripod,[0,.37,0],[x*.78,.31,z*.78],.011,'black');
-    ball(tripod,x,.055,z,.034,.042,.034,'rubber');
-  }
-  cyl(tripod,0,.77,0,.036,.91,'black');cyl(tripod,0,1.34,0,.020,.49,'aluminum');
-  for(const h of [.39,1.03,1.24])cyl(tripod,0,h,0,.050,.046,'rubber');
-  zieview(tripod,.035,1.63,0);
-  const control=group(root,1.46,0,-.83,'safety verification beacon');
-  box(control,0,.053,0,.28,.106,.24,'iron');box(control,0,.63,0,.073,1.16,.074,'aluminum');
-  housing(control,0,1.24,0,.34,.46,.20,'cream',.05);
-  screws(control,0,1.24,.108,.275,.376,'zinc',.012);
-  cyl(control,0,1.24,.13,.061,.061,'yellow','z');cyl(control,0,1.24,.171,.040,.034,'red','z');
-  const state=L.lampStack(control,0,1.49,0);
   return {
     points:[[.32,1.69,-.31],[-1.54,1.72,-.845],[1.46,1.85,-.81]],
-    update(p){person.position.x=-.67+1.21*ease(.06,.85,p);person.position.z=.20-.17*ease(.34,.75,p);state(p<.34||p>.90);}
+    update(p){person.position.x=-.67+1.21*ease(.06,.85,p);person.position.z=.20-.17*ease(.34,.75,p);}
   };
 }
 

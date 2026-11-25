@@ -20,7 +20,7 @@ window.ZiewiseOffice = [
       buttons.forEach((button,i)=>{button.setAttribute('aria-selected',String(index===i));button.tabIndex=index===i?0:-1;});
       panel.setAttribute('aria-labelledby',buttons[index].id);
       const still=host.querySelector('[data-dept-still]')||host.querySelector('img');
-      still.src=['hr','finance'].includes(item.id)?'./field-tour/photography/'+item.id+'.webp':'./ai-briefing/assets/dept-'+item.id+'.webp';
+      still.src='./field-tour/chapters/views/'+item.id+'-0.webp?v=solid1';
       still.alt=item.name+' 업무를 설명하는 재현 이미지';
       host.querySelector('h3').textContent=item.title;
       for(const key of ['input','llm','approval','rpa','measure']) host.querySelector('[data-part="'+key+'"]').textContent=item[key];

@@ -1,4 +1,5 @@
-import {stops,byId,homeRoute,homeStory,referenceMap} from './route.mjs?v=visit4';
+import {bindProvider,connectionFrame} from './provider.mjs';
+import {stops,byId,homeRoute,homeStory,referenceMap} from './route.mjs?v=solid1';
 
 const $=id=>document.getElementById(id);
 const stage=document.querySelector('[data-tour]');
@@ -10,13 +11,13 @@ const cueTurns={design:[2,3],systems:[2,3],vision:[1,3],safety:[1,3],maintenance
   knowledge:[1,2],hr:[1,3],finance:[1,2],purchase:[1,3],sales:[1,3],roi:[1,2],poc:[2,3],observer:[1,3],print:[1,3]};
 const route=brief?content.map(topic=>{
   const voice=voices[topic.file], spec=byId.get(topic.id);
-  return {...spec,topic,voice,duration:voice.duration,cuts:cueTurns[topic.id].map(i=>voice.cues[i].start/voice.duration)};
+  return {...spec,topic,voice,duration:voice.duration,cuts:cueTurns[topic.id].map(i=>voice.cues[voice.cues.length<4?(i===cueTurns[topic.id][0]?1:2):i].start/voice.duration)};
 }):homeRoute.map(([id,duration])=>({...byId.get(id),...homeStory[id],duration,cuts:[.42,.73]}));
 const starts=[];let total=0;
 for(const stop of route){starts.push(total);total+=stop.duration;}
 const timecode=seconds=>{const s=Math.floor(Math.max(0,seconds)+.001);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
 const set=(id,text)=>{const e=$(id);if(e&&e.textContent!==text)e.textContent=text;};
-const edition='visit5';
+const edition='solid1';
 const posterUrl=id=>new URL('./views/'+id+(brief?'-brief':'')+'.webp?v='+edition,import.meta.url).href;
 const audio=$('narration'),canvas=$('walk-world'),map=$('walk-plan'),routeDialog=$('walk-route');
 let index=-1,t=0,playing=!reduced.matches,ended=false,voiceOn=false,hasListened=false,audioRequest=0;
@@ -26,7 +27,23 @@ let cameraZ=7,peek=[0,0],pointer=null,budgetSamples=0,budgetTotal=0,qualityDrops
 const frameInterval=matchMedia('(pointer:coarse)').matches?32:15;
 let backup=null,backupReady=false;
 let startingVisual=true,viewRequest=0;
-const mapButtons=[];
+let entrance=null,entranceTimer=0;
+const mapButtons=[];let selectedProvider='local',connection=null;
+function resetConnection(){
+  if(!connection)return;
+  connection=null;delete stage.dataset.connection;
+  if(current())$('walk-poster').src=posterUrl(current().id);
+  if(backupReady)stage.dataset.renderer=reduced.matches?'stills':'video';
+}
+if(brief)bindProvider($('brief-model-choice'),value=>{
+  selectedProvider=value;world?.setProvider(value);
+  if(current()?.id!=='knowledge')return;
+  const from=connection?.to;
+  seekWithin((current().cuts[1]+.025)*current().duration);setPlaying(false);
+  connection={from,to:value,start:performance.now()};stage.dataset.connection=value;
+  if(!world){$('walk-poster').src=new URL('./chapters/views/knowledge-'+value+'.webp?v=solid1',import.meta.url).href;stage.dataset.renderer='stills';}
+  wake();
+});
 const current=()=>route[index];
 const fraction=()=>Math.max(0,Math.min(1,t/current().duration));
 const phase=()=>fraction()>=current().cuts[1]?2:fraction()>=current().cuts[0]?1:0;
@@ -51,16 +68,11 @@ function showNotes(stop){
   if(!brief)return;
   set('note-title',stop.label+' 작업 흐름');set('voice-transcript',stop.voice.script);
   $('walk-ref').href='./reference.html#'+stop.topic.original;
-  if($('walk-model')){
-    const model=$('walk-model'),mode=chosen.get('view')==='model';
-    model.href='./?chapter='+stop.id+(mode?'':'&view=model')+'#chapters';
-    model.textContent=mode?'현장 투어로 돌아가기':'설비 구조 3D로 보기';
-    model.hidden=['safety','hr','finance','knowledge','purchase','sales','roi','poc'].includes(stop.id)&&!mode;
-  }
+  $('brief-model-choice').hidden=stop.id!=='knowledge';
   $('walk-steps').replaceChildren();
   stepButtons=stop.marks.map((name,i)=>{
     const b=document.createElement('button'),label=document.createElement('small'),h=document.createElement('strong'),desc=document.createElement('span');
-    b.type='button';b.className='walk-step';label.textContent=['입력','모델 처리','담당자의 판단'][i];h.textContent=name;desc.textContent=stop.topic.rows[i];
+    b.type='button';b.className='walk-step';label.textContent=(stop.id==='knowledge'?['자료 준비','로컬 모델 구축','운영 방식']:stop.id==='print'?['출력 요청','사용자 인증','문서 수령']:['입력','분석','업무 적용'])[i];h.textContent=name;desc.textContent=stop.topic.rows[i];
     b.append(label,h,desc);b.addEventListener('click',()=>{
       const part=i===0?.11:current().cuts[i-1]+.025;
       seekWithin(part*current().duration);stage.scrollIntoView({behavior:reduced.matches?'instant':'smooth'});
@@ -111,13 +123,17 @@ function syncAudioTime(seconds) {
   } else pendingSeek=seconds;
 }
 function setPlaying(next) {
+  if(next)resetConnection();
   playing=!!next;lastTick=0;
+  if(entrance){if(playing)entrance.play().catch(()=>{});else entrance.pause();}
   if(playing)playAudio();
   else if(audio){++audioRequest;audio.pause();}
   updateTransport();syncBackup();wake();
 }
 function select(i,seconds=0,instant=true,updateUrl=false) {
   if(i<0||i>=route.length)return;
+  clearEntrance();
+  resetConnection();
   if(manual)leaveManual(false);
   parkInspection();const changed=i!==index;
   index=i;t=Math.max(0,Math.min(seconds,current().duration));ended=false;entryOnly=instant;lastPhase=-1;peek=[0,0];nearest=null;
@@ -151,6 +167,8 @@ function showStationWhenReady(){
   }).catch(()=>{if(viewRequest===token&&world===candidate)noHardware();});
 }
 function seekWithin(seconds) {
+  clearEntrance();
+  resetConnection();
   if(manual)leaveManual(false);
   parkInspection();t=Math.max(0,Math.min(seconds,current().duration));ended=false;entryOnly=true;
   if(brief)syncAudioTime(t);lastTick=0;syncReadout();syncBackup(true);wake();
@@ -198,6 +216,7 @@ function tick(now) {
   const dt=lastTick?Math.min((now-lastTick)/1000,.48):0;lastTick=now;
   if(playing&&!manual&&!routeDialog.open&&!inspecting){
     if(brief&&voiceOn){if(!audio.paused&&!audio.seeking)t=audio.currentTime;}
+    else if(entrance&&!entrance.paused)t=entrance.currentTime;
     else if(!startingVisual){t+=dt;if(t>=current().duration)advance();}
   }
   if(visible&&(dirty||now-lastPaint>=frameInterval)){
@@ -208,7 +227,7 @@ function tick(now) {
         if(nearest!==position.nearest&&position.nearest){nearest=position.nearest;set('walk-room',byId.get(nearest).room);set('walk-area',byId.get(nearest).area);}
         locateMarker(null);
       }else{
-        const mark=world.draw({id:current().id,previous:index>0?route[index-1].id:null,p:fraction(),phase:phase(),cuts:current().cuts,entryOnly,close:brief,reduced:reduced.matches,lean:inspecting,peek});
+        const mark=world.draw({id:current().id,previous:index>0?route[index-1].id:null,p:fraction(),phase:phase(),cuts:current().cuts,entryOnly,close:brief,reduced:reduced.matches,lean:inspecting,peek,connection:connectionFrame(connection,now,reduced.matches)});
         if(mark)cameraZ=mark.z;locateMarker(mark);
       }
       if(playing&&!manual&&since>0&&since<650){
@@ -223,7 +242,7 @@ function tick(now) {
     if(now-lastPlan>95||!playing){drawMap();lastPlan=now;}
   }
   syncReadout();
-  if((playing||manual)&&!request)request=requestAnimationFrame(tick);
+  if((playing||manual||(connection&&!reduced.matches&&now-connection.start<2300))&&!request)request=requestAnimationFrame(tick);
 }
 function leaveManual(resume) {
   manual=false;stage.classList.remove('is-manual');$('walk-manual').hidden=true;
@@ -305,6 +324,7 @@ if(brief) {
   });
 }
 function noHardware(){
+  clearEntrance();
   const previous=world;startingVisual=false;world=null;previous?.release();stage.dataset.renderer='stills';$('walk-explore').disabled=true;
   if(manual)leaveManual(false);updateTransport();
   if(!backup){
@@ -321,17 +341,34 @@ function noHardware(){
   }
   wake();
 }
+function clearEntrance(adoptTime=false){
+  clearTimeout(entranceTimer);entranceTimer=0;
+  if(!entrance)return;
+  if(adoptTime&&!voiceOn&&playing&&t<.15)t=Math.min(entrance.currentTime,current().duration-.1);
+  const player=entrance;entrance=null;player.pause();player.removeAttribute('src');player.load();player.remove();
+}
+function showEntrance(){
+  if(world||backup||reduced.matches||!playing||document.hidden||!visible)return;
+  const name=brief?{systems:'systems',knowledge:'knowledge'}[current().id]:current().id==='design'?'arrival':'';
+  if(!name)return;
+  const player=document.createElement('video');entrance=player;player.className='walk-entrance';
+  player.muted=player.defaultMuted=player.playsInline=true;player.setAttribute('aria-hidden','true');
+  player.addEventListener('playing',()=>player.classList.add('show'),{once:true});
+  player.src=new URL('./views/'+name+'-entry.mp4?v='+edition,import.meta.url).href;
+  canvas.before(player);player.play().catch(()=>{if(entrance===player)clearEntrance();});
+}
 async function bootWorld() {
   let candidate=null;
+  entranceTimer=setTimeout(showEntrance,800);
   try{
-    const equipmentView=chosen.get('view')==='model'&&brief;
-    const {createWorld}=equipmentView?await import('./world.mjs?v=visit4'):await import('./photo-world.mjs?v=visit5');
+    const {createWorld}=await import('./world.mjs?v=solid1');
     candidate=createWorld(canvas,{onLoss:noHardware});
     let active;
     do{active=current().id;await candidate.readyFor(active);}while(active!==current().id);
     if(backup){candidate.release();return;}
+    clearEntrance(true);
     candidate.draw({id:active,p:fraction(),entryOnly:true,close:brief,reduced:reduced.matches,cuts:current().cuts,phase:phase()});
-    world=candidate;startingVisual=false;
+    world=candidate;world.setProvider(selectedProvider);startingVisual=false;
     stage.dataset.renderer='webgl';$('walk-explore').disabled=false;updateTransport();lastTick=0;
     wake();
   }catch(error){candidate?.release();console.warn('3D tour:',error.message);noHardware();}
@@ -352,16 +389,6 @@ const requested=chosen.get('chapter');
 const initial=brief?route.findIndex(s=>s.id===(aliases[requested?.toLowerCase()]||requested||referenceMap[sourceId])):0;
 select(initial>=0?initial:Math.max(0,route.findIndex(s=>s.id==='systems')),0,true,false);
 if(brief){
-  const direct=initial>=0||location.hash==='#chapters';
-  document.documentElement.classList.toggle('direct-chapter',direct);
-  if(!direct){
-    setPlaying(false);
-    const auto=new IntersectionObserver(([entry])=>{
-      if(entry.intersectionRatio<.45)return;
-      auto.disconnect();if(!reduced.matches&&!playing&&!manual&&!inspecting)setPlaying(true);
-    },{threshold:[.45]});auto.observe($('walk-view'));
-    stage.addEventListener('pointerdown',()=>auto.disconnect(),{once:true});
-  }
   $('walk-desk')?.addEventListener('click',()=>{
     setPlaying(false);document.documentElement.classList.remove('direct-chapter');
     const u=new URL(location.href);u.search='';u.hash='brief-desk';history.replaceState(null,'',u);
@@ -375,8 +402,8 @@ if(brief){
     if(a.dataset.speak==='true'&&!voiceOn)$('listen-start').click();else setPlaying(true);
     requestAnimationFrame(()=>{stage.scrollIntoView({behavior:'instant'});$('walk-title').focus({preventScroll:true});});
   });
-  if(direct)ensureWorld();
-}else ensureWorld();
+  ensureWorld();
+}else if(!location.hash||location.hash==='#walkthrough')ensureWorld();
 if(brief&&sourceId&&Object.hasOwn(referenceMap,sourceId)){
   fetch('./references.json').then(r=>r.json()).then(data=>{
     if(!data[sourceId]||current().id!==referenceMap[sourceId])return;

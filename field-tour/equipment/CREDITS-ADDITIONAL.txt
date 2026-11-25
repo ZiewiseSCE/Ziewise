@@ -1,0 +1,38 @@
+Scanned workshop equipment and measured building materials
+Original source geometry and material maps are licensed CC0 1.0. https://polyhaven.com/license
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Drill Press 01 — Viktor
+https://polyhaven.com/a/drill_press_01
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/drill_press_01/drill_press_01_1k.gltf
+
+
+Portable Welding Cart — Georgii Gorbunov
+https://polyhaven.com/a/portable_welding_cart
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/portable_welding_cart/portable_welding_cart_1k.gltf
+
+
+Portable Generator — James Ray Cock
+https://polyhaven.com/a/portable_generator
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/portable_generator/portable_generator_1k.gltf
+
+
+Industrial Caged Sconce — Ulan Cabanilla
+https://polyhaven.com/a/industrial_caged_sconce
+https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/industrial_caged_sconce/industrial_caged_sconce_1k.gltf
+
+
+Terrazzo Tiles — Amal Kumar
+https://polyhaven.com/a/terrazzo_tiles
+
+Plastered Wall 02 — Charlotte Baglioni
+https://polyhaven.com/a/plastered_wall_02
+
+Hangar Concrete Floor — Dimitrios Savva
+https://polyhaven.com/a/hangar_concrete_floor
+
+Corrugated Iron 03 — Charlotte Baglioni
+https://polyhaven.com/a/corrugated_iron_03
+
+Rusty Painted Metal — Amal Kumar
+https://polyhaven.com/a/rusty_painted_metal

@@ -1,0 +1,81 @@
+Ziewise physical office workstations
+
+Geometry, materials and content
+
+The height-adjustable desks, routed veneer edges, operator chairs, five-wheel
+bases, moulded keycaps, monitors and stands, glass partitions, folders,
+document handling devices, USB accessories, stationery, camera fixture and
+software instruments were modelled for the walkthrough. The glass desk
+protectors sit on pads above the HR and finance worktops. The paper surfaces
+have curled vertices, stacked edges, printed sample text and a paper normal.
+The Korean interfaces, sample documents and demonstration records were
+authored for this scene.
+
+Three real-scale, seated, textured meshes by Innerscene use MakeHuman/MPFB
+body and system assets. The source library and embedded GLB copyright notices
+identify the models as CC0 1.0. The tour editions preserve the artists' posed
+body, hands, clothing and material UVs. Their meshes were reduced for a web
+walkthrough and their image maps resized. The original wooden chair was
+removed from the coordinator model so the colleague can use this workspace's
+ergonomic chair. Its hair and shirt colours were adjusted; its office shirt
+includes the credited woven material below.
+
+coordinator.glb — Taylor, Woman Seated on Chair. Innerscene.
+https://www.innerscene.com/tools/library/3d-parts/taylor-3d-person-woman-seated-on-chair-b792e2dc
+https://www.innerscene.com/api/library/taylor-3d-person-woman-seated-on-chair-b792e2dc/download
+
+analyst.glb — Seated Reading, Avery. Innerscene.
+https://www.innerscene.com/tools/library/3d-parts/seated-reading-3d-person-seated-a5ebe9b3
+https://www.innerscene.com/api/library/seated-reading-3d-person-seated-a5ebe9b3/download
+
+director.glb — Seated Office Figure, Ellis. Innerscene.
+https://www.innerscene.com/tools/library/3d-parts/seated-office-figure-79182d38
+https://www.innerscene.com/api/library/seated-office-figure-79182d38/download
+
+The materials below come from the existing published tour's licensed local
+surface library, resized for this pack. Colour maps are sRGB. Roughness and
+OpenGL tangent-space normal maps are sampled as linear data.
+
+Mocha Oak Veneer, Jenelle van Heerden, Poly Haven, CC0 1.0. Colour, roughness
+and normals on the primary worktops and cabinetry. The bevels use a
+metric-grain projection.
+https://polyhaven.com/a/mocha_oak_veneer
+
+Poly Wool Herringbone, colormass and Rico Cilliers, Poly Haven, CC0 1.0.
+Colour-neutralised fabric colour, roughness and normals on the sculpted
+upholstery, the work partitions and the coordinator's shirt.
+https://polyhaven.com/a/poly_wool_herringbone
+
+Metal 010 and Paper 001, Lennart Demes, ambientCG, CC0 1.0.
+https://ambientcg.com/view?id=Metal010
+https://ambientcg.com/view?id=Paper001
+
+Potted Plant 02, Rico Cilliers, Poly Haven, CC0 1.0. The pot and individual
+leaves retain their mesh, UVs and material maps, with locally quantized
+geometry and smaller image maps. Foliage is dimensional.
+https://polyhaven.com/a/potted_plant_02
+
+Licenses
+https://www.innerscene.com/tools/library
+https://polyhaven.com/license
+https://docs.ambientcg.com/license/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Integration
+
+Install the contents as field-tour/workspaces/. The module uses the existing
+field-tour/vendor/loaders/GLTFLoader.js with the renderer's Three.js. All
+image and mesh references resolve within the workspaces directory.
+
+Call buildWorkspace(T,id) for knowledge, hr, finance, purchase, sales, roi
+and poc. Each returns group, three local Vector3 anchors, update(progress)
+and ready. Call the existing batchStatic before adding to the world and await
+ready before capturing a poster. The group is in metres and faces local +Z.
+For each department the working surface is 0.757 m above the existing floor.
+
+The knowledge station also returns setProvider(name). Accepted names are
+local, gpt, claude and gemini, case-insensitive. The default and unknown
+names select local. Selection updates the physical diagnostic display and
+socket indicator. The four ports represent selectable configuration profiles
+in an illustrative deployment. This function renders a configuration
+example entirely on the client.

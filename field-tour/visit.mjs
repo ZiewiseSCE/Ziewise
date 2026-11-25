@@ -1,5 +1,6 @@
+import {bindProvider,connectionFrame} from './provider.mjs';
 const labels={
-  safety:['이동형 설치','자석 고정','AI 관제'],energy:['현장 계측','수요 예측','운영 일정'],
+  knowledge:['문서와 권한','검색·근거 답변','모델 연결'],safety:['이동형 설치','자석 고정','AI 관제'],energy:['현장 계측','수요 예측','운영 일정'],
   commerce:['탐색 이력','추천 후보','적용 판단'],finance:['증빙 서류','규정 대조','전표 승인'],
   print:['도면 대기','사용자 인증','출력·수령'],observer:['설비 상태','지표 비교','DDI 주소 대조'],
   hr:['입사 서류','준비 목록','계정 요청'],purchase:['공급사 견적','조건 비교','발주 승인'],
@@ -10,18 +11,20 @@ const physical=new Set(['energy','commerce','print','observer','research','infra
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const companyTitle={infrastructure:'서버와 네트워크 운영',research:'샘플 시험과 연구개발',credentials:'인증서 원본 열람'};
 const unit={
-  unit:['zieview-tripod-product','Zieview 제품 지명원 · 이동형 단말','흰색 PTZ 카메라와 녹색 통신 함체가 한 단말입니다. 폴대·삼각대를 옮겨 세우거나 철제 기둥에 자석으로 부착해 같은 단말을 운용합니다.','녹색 Zieview 함체와 흰색 돔 카메라, 노란 삼각대가 보이는 지명원 원본 제품'],
-  tripod:['zieview-tripod-field','지명원 수록 적용 예시 · 정기 보수 구역','임시 작업이나 야간 보수가 시작되면 노란 삼각대를 그 구역에 옮깁니다. 배터리와 LTE로 새 배선 공사 없이 관제 위치를 바꿀 수 있습니다.','생산라인 옆에 이동형 Zieview 단말을 삼각대로 세운 지명원 수록 적용 예시'],
-  magnet:['zieview-field-hero','지명원 수록 적용 예시 · 철제 기둥 부착','상시 확인할 구역은 철제 기둥에 자석으로 단말을 고정합니다. 서로 다른 공정의 영상을 관제실에서 함께 보며 필요할 때 단말을 회수해 재배치합니다.','녹색 자석 부착형 Zieview 단말과 기둥에 고정된 카메라'],
-  control:['zieview-monitoring','지명원 수록 적용 예시 · AI 통합 관제','관제 화면에서 보호구 미착용이나 제한 구역 진입 후보를 확인합니다. 담당자는 앞뒤 영상을 보고 양방향 음성으로 현장에 연락합니다.','지명원에 실린 공정별 멀티뷰와 안전 이벤트 기록']
+  unit:['zieview-tripod-product','Zieview · 이동형 단말 상세','흰색 PTZ 카메라와 녹색 통신 함체가 한 단말입니다. 폴대·삼각대를 옮겨 세우거나 철제 기둥에 자석으로 부착해 같은 단말을 운용합니다.','녹색 Zieview 함체와 흰색 돔 카메라, 노란 삼각대가 보이는 단말 3D 형상'],
+  tripod:['zieview-tripod-field','Zieview · 정기 보수 구역','임시 작업이나 야간 보수가 시작되면 노란 삼각대를 그 구역에 옮깁니다. 배터리와 LTE로 새 배선 공사 없이 관제 위치를 바꿀 수 있습니다.','생산라인 옆에 이동형 Zieview 단말을 삼각대로 세운 설치 형상'],
+  magnet:['zieview-field-hero','Zieview · 철제 기둥 부착','상시 확인할 구역은 철제 기둥에 자석으로 단말을 고정합니다. 서로 다른 공정의 영상을 관제실에서 함께 보며 필요할 때 단말을 회수해 재배치합니다.','녹색 자석 부착형 Zieview 단말과 기둥에 고정된 카메라'],
+  control:['zieview-monitoring','Zieview · AI 통합 관제','관제 화면에서 보호구 미착용이나 제한 구역 진입 후보를 확인합니다. 담당자는 앞뒤 영상을 보고 양방향 음성으로 현장에 연락합니다.','관제 단말 화면과 작업 구역 영상']
 };
-const product=document.querySelector('.product-instrument');
+const product=document.querySelector('.product-instrument'),portrait=product.querySelector('.product-portrait');
+let productMode='unit',orbit=null;
+new IntersectionObserver(([e],o)=>{if(e.isIntersecting){o.disconnect();import('./product-view.mjs?v=solid1').then(m=>{orbit=m.mountProduct(portrait);orbit(productMode);}).catch(()=>{});}},{rootMargin:'180px'}).observe(portrait);
 function setUnit(key){
   const [file,caption,text,alt]=unit[key],image=document.getElementById('unit-photo');
-  image.src='./field-tour/zieview/'+file+'.webp';image.alt=alt;image.parentElement.dataset.productFrame=key;
+  image.src='./field-tour/zieview/'+file+'.webp?v=solid1';image.alt=alt;productMode=key;orbit?.(key);image.parentElement.dataset.productFrame=key;
   document.getElementById('unit-caption').textContent=caption;document.getElementById('unit-explain').textContent=text;
   product.querySelectorAll('[data-unit]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.unit===key)));
-  const detail=document.getElementById('magnet-closeup');if(detail)detail.hidden=key!=='magnet';
+
 }
 product.querySelector('.product-modes').addEventListener('click',e=>{const b=e.target.closest('[data-unit]');if(b)setUnit(b.dataset.unit);});
 const contactCopy={'현장 안전·관제':'촬영할 작업 구역과 이동형·고정형 설치 위치를 알려주세요.','사무 자동화':'자동화할 업무와 월 처리량, 사용 중인 ERP나 그룹웨어를 알려주세요.','인프라·출력 보안':'연결할 서버·장비 수와 운영 중인 주소 관리 또는 출력 인증 방식을 알려주세요.'};
@@ -44,9 +47,7 @@ function updateUI(f){
   f.el.dataset.phase=part;
   let poster;
   if(physical.has(f.id))poster=new URL('./chapters/views/'+f.id+'-'+part+'.webp',import.meta.url);
-  else if(f.id==='safety')poster=new URL('./photography/'+['safety','safety-mounted','safety-control'][part]+'.webp',import.meta.url);
-  else if(['finance','hr'].includes(f.id))poster=new URL('./photography/'+f.id+'.webp',import.meta.url);
-  else poster=new URL('../ai-briefing/assets/dept-'+f.id+'.webp',import.meta.url);
+  else poster=new URL('./chapters/views/'+f.id+'-'+(f.connection?f.connection.to:part)+'.webp?v=solid1',import.meta.url);
   if(f.poster.src!==poster.href)f.poster.src=poster.href;
 }
 function wake(){if(!request&&!document.hidden)request=requestAnimationFrame(tick);}
@@ -57,20 +58,21 @@ function tick(now){
   if(f.world&&(now-lastPaint>32||!f.playing)){
     lastPaint=now;const phase=Math.min(2,Math.floor(f.p*3));
     if(f.type==='physical')f.world.draw(f.id,f.asset,f.p,f.lean);
-    else f.world.draw({id:f.id,p:f.p,phase,entryOnly:true,close:true,peek:f.lean});
+    else f.world.draw({id:f.id,p:f.p,phase,cuts:[.333,.667],entryOnly:true,close:true,peek:f.lean,connection:connectionFrame(f.connection,now,reduced.matches)});
   }
-  if(f.playing)wake();
+  if(f.playing||(f.connection&&!reduced.matches&&now-f.connection.start<2300))wake();
 }
 async function activate(f){
   const token=++serial;if(current&&current!==f){current.el.classList.remove('live');current.world=null;}
   current=f;last=0;if(!f)return;f.world=null;f.el.classList.remove('live');wake();
-  const type=f.type=physical.has(f.id)?'physical':'photo',canvas=canvasFor(type);
-  if(!modules[type])modules[type]=(type==='physical'?import('./chapter-world.mjs?v=visit4').then(m=>m.createChapterWorld(canvas)):
-    import('./photo-world.mjs?v=visit5').then(m=>m.createWorld(canvas))).catch(()=>null);
+  const type=f.type=physical.has(f.id)?'physical':'facility',canvas=canvasFor(type);
+  if(!modules[type])modules[type]=(type==='physical'?import('./chapter-world.mjs?v=solid1').then(m=>m.createChapterWorld(canvas)):
+    import('./world.mjs?v=solid1').then(m=>m.createWorld(canvas))).catch(()=>null);
   const world=await modules[type];if(!world||token!==serial)return;
   try{
     const asset=await (type==='physical'?world.prepare(f.id):world.readyFor(f.id));
     if(token!==serial)return;
+    if(f.id==='knowledge')world.setProvider(f.provider||'local');
     for(const other of f.screen.querySelectorAll('canvas'))if(other!==canvas)other.remove();
     f.screen.append(canvas);f.asset=asset;f.world=world;f.el.classList.add('live');
     lastPaint=0;last=0;wake();
@@ -89,6 +91,7 @@ for(const el of document.querySelectorAll('[data-visit]')){
   const f={el,screen,poster,id:el.dataset.scene,p:0,playing:!reduced.matches,lean:[0,0],world:null,ratio:0};
   frames.set(el.dataset.visit,f);updateUI(f);observer.observe(el);
   el.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    f.connection=null;
     if(b.hasAttribute('data-phase')){f.p=(Number(b.dataset.phase)+.18)/3;f.playing=false;}else if(b.classList.contains('visit-play'))f.playing=!f.playing;
     updateUI(f);if(current!==f)activate(f);else wake();
   });
@@ -104,3 +107,5 @@ document.querySelector('.company-choices').addEventListener('click',e=>{
 });
 document.addEventListener('visibilitychange',()=>{last=0;if(!document.hidden)wake();});
 window.addEventListener('resize',wake);reduced.addEventListener('change',()=>{if(reduced.matches)for(const f of frames.values()){f.playing=false;updateUI(f);}wake();});
+
+bindProvider(document.querySelector('#llm [data-provider-controls]'),value=>{const f=frames.get('llm');f.connection={from:f.connection?.to,to:value,start:performance.now()};f.provider=value;f.p=.767;f.playing=false;f.world?.setProvider(value);updateUI(f);if(current!==f){intent=f;activate(f);}else wake();});

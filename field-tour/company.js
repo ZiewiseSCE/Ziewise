@@ -24,7 +24,7 @@
     all('.case-tab').forEach((tab,i)=>{tab.setAttribute('aria-selected',String(i===index));tab.tabIndex=i===index?0:-1;});
     $('case-detail').setAttribute('aria-labelledby','case-tab-'+item.id);
     const scenes={vision:'safety',office:'finance',print:'print',observer:'observer'};
-    $('case-image').src=scenes[item.id]?'./field-tour/photography/'+scenes[item.id]+'.webp':'./assets/'+item.id+'.webp';
+    $('case-image').src='./field-tour/chapters/views/'+(scenes[item.id]||item.id)+'-0.webp?v=solid1';
     setText('case-tag',item.tag);setText('case-title',item.title);setText('case-about',item.about);
     const frame=document.querySelector('[data-visit="case"]');if(frame)frame.dataset.scene=scenes[item.id]||item.id;
     document.dispatchEvent(new CustomEvent('ziewise:visit',{detail:{kind:'case',id:scenes[item.id]||item.id}}));
@@ -53,7 +53,7 @@
   const nav=all('.desktop-nav a[href^="#"]');
   let scheduled=false;
   function markNav(){
-    let active='';for(const id of ['walkthrough','factory','solutions','office','company','contact'])if($(id).getBoundingClientRect().top<=innerHeight*.3)active=id;
+    let active='';for(const id of ['walkthrough','factory','llm','solutions','office','company','contact'])if($(id).getBoundingClientRect().top<=innerHeight*.3)active=id;
     nav.forEach(a=>{const on=a.hash==='#'+active;a.classList.toggle('active',on);if(on)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
     scheduled=false;
   }
