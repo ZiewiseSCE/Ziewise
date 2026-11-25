@@ -317,7 +317,8 @@ export function createWorld(canvas,{capture=false,onLoss=()=>{},onInvalidate=()=
   }
   function release(){
     ready=false;clearPreparation();
-    sizeObserver.disconnect();feed?.dispose();optics?.dispose();renderer.dispose();renderer.forceContextLoss();
+    sizeObserver.disconnect();feed?.dispose();optics?.dispose();renderer.dispose();
+    if(!renderer.getContext().isContextLost())renderer.forceContextLoss();
   }
   return {setProvider(value){provider=value;pool.get('knowledge')?.setProvider?.(value);},draw,lighting,prepare,clearPreparation,readyFor,rotate,startManual,stepManual,keys,lighten,resize,release,
     isReady:id=>pool.get(id)?.detailed===true,

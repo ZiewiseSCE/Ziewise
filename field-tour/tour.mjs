@@ -256,9 +256,12 @@ function checkBudget(now,since){
   budgetSamples++;
   if(since>26)lateSamples++;
   if(since>100)veryLateSamples++;
-  if(now-budgetStart<1400||budgetSamples<12)return;
-  if(qualityDrops<3&&lateSamples>budgetSamples*.55){world.lighten();qualityDrops++;}
-  else if(qualityDrops>=3&&veryLateSamples>budgetSamples*.7)noHardware();
+  const severe=budgetSamples>=3&&veryLateSamples>=budgetSamples*.8;
+  if(now-budgetStart<1400||(!severe&&budgetSamples<12))return;
+  if(qualityDrops<3&&lateSamples>budgetSamples*.55){
+    world.lighten();qualityDrops++;
+    if(severe&&qualityDrops<3){world.lighten();qualityDrops++;}
+  }else if(!manual&&qualityDrops>=3&&veryLateSamples>budgetSamples*.7)noHardware();
   budgetStart=now;budgetSamples=lateSamples=veryLateSamples=0;
 }
 function wake(){dirty=true;if(visible&&!request&&!document.hidden)request=requestAnimationFrame(tick);}
